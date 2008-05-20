@@ -548,15 +548,10 @@ CAL[[j]]<-c(cal)
 
 AA<-melt(CAL)
 ZZ<-melt(TIME)
-show(AA)
-show(ZZ)
 c(AA$L1)
 #purpose: to plot one slope and three intercepts 
 NewPred<-data.frame(batch=c(AA$L1),time=ZZ$value, PredCal=AA$value)   
 M.split<-split(NewPred, list(NewPred$batch) ) 
-show(M.split)
-show(NewPred)
-
 
 #choose min PX or PY
 DM<-data.frame(batch=ba, Upper=PX, Lower=PY)
@@ -582,27 +577,26 @@ if  (PPX>=PPY)  {
      xlab = "Time (months)" , ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2)    
      
-      #plot CI
-     
+    
     for(i in seq_along(M.split)){
      x<-M.split[[i]][["time"]] 
      y<-M.split[[i]][["PredCal"]]
      mod<-lm(y~x) 
      abline(mod,lwd=2, col=i)
       }
-     
-      newx<-data.frame(xx=seq(0,(PPY+10)))  
-    for(i in seq_along(W.split)){
-      xx<-W.split[[i]][["time"]] 
-      yy<-W.split[[i]][["assay"]]
-       points(xx,yy,pch=16, col=i)
-       mod1<-lm(yy~xx) 
-      abline(mod1,lwd=2, col=i)
-      pred<-predict(mod1, newdata=newx,interval = c("confidence"),level = 0.95,type="response")
-      lines(newx$xx,pred[,2],col=i,lty=2)
-      lines(newx$xx,pred[,3],col=i,lty=2) 
-      }  
-     axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
+    #plot CI 
+    #  newx<-data.frame(xx=seq(0,(PPY+10)))  
+    #for(i in seq_along(W.split)){
+    #  xx<-W.split[[i]][["time"]] 
+    #  yy<-W.split[[i]][["assay"]]
+    #   points(xx,yy,pch=16, col=i)
+    #   mod1<-lm(yy~xx) 
+    #  abline(mod1,lwd=2, col=i)
+    #  pred<-predict(mod1, newdata=newx,interval = c("confidence"),level = 0.95,type="response")
+    #  lines(newx$xx,pred[,2],col=i,lty=2)
+    #  lines(newx$xx,pred[,3],col=i,lty=2) 
+    #  }  
+    # axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
      #add criteria limit
      abline(h=Uper, col = "gray60")
      abline(h=Lper, col = "gray60")
@@ -624,7 +618,7 @@ else {
      xlab = "Time (months)" , ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2)    
      
-      #plot CI
+      
       
      for(i in seq_along(M.split)){
       x<-M.split[[i]][["time"]] 
@@ -632,20 +626,19 @@ else {
       mod<-lm(y~x) 
       abline(mod,lwd=2, col=i)
         }
-     
-       newx<-data.frame(xx=seq(0,(PPX+10)))  
-     for(i in seq_along(W.split)){
-      xx<-W.split[[i]][["time"]] 
-      yy<-W.split[[i]][["assay"]]
-      points(xx,yy,pch=16, col=i)
-      mod1<-lm(yy~xx) 
-      abline(mod1,lwd=2, col=i)
-      pred<-predict(mod1, newdata=newx,interval = c("confidence"),level = 0.95,type="response")
-      lines(newx$xx,pred[,2],col=i,lty=2)
-      lines(newx$xx,pred[,3],col=i,lty=2) 
-  
-      }  
-     axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
+     #plot CI
+     #  newx<-data.frame(xx=seq(0,(PPX+10)))  
+     #for(i in seq_along(W.split)){
+     # xx<-W.split[[i]][["time"]] 
+     # yy<-W.split[[i]][["assay"]]
+     # points(xx,yy,pch=16, col=i)
+     # mod1<-lm(yy~xx) 
+     # abline(mod1,lwd=2, col=i)
+     # pred<-predict(mod1, newdata=newx,interval = c("confidence"),level = 0.95,type="response")
+     # lines(newx$xx,pred[,2],col=i,lty=2)
+     # lines(newx$xx,pred[,3],col=i,lty=2) 
+     # }  
+     #axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
      #add criteria limit
      abline(h=Uper, col = "gray60")
      abline(h=Lper, col = "gray60")
