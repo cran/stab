@@ -196,7 +196,6 @@ if ((((b1)^2-(4*a1*c1))< 0) && (((b2)^2-(4*a2*c2))<0)){
    }
   }
  }   
-
 if (separateWindows) {
        get(getOption("device"))()
           }
@@ -222,7 +221,9 @@ if  (PX>=PY)  {
      y<-ANCOVAdata$assay
      plot(x,y,xlim=c(0,(PY+10)),ylim=c((Lper-10),(Uper+10)), main=main,
      xlab = "Time (months)" , ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
-     lab=c(20,10,30),lty=2,lwd=2,col="black")
+     lab=c(20,10,30),lty=2,lwd=2,col="black", xaxt="n")   
+       axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
+       axis(1,at=0:100,tcl=-.2, labels=FALSE)
      mylm<-lm(y~x)
      abline(mylm,lwd=2, col="blue")
      axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
@@ -253,7 +254,9 @@ else {
      y<-ANCOVAdata$assay
      plot(x,y,xlim=c(0,(PX+10)),ylim=c((Lper-10),(Uper+10)),main=main,
      xlab = "Time (months)" , ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
-     lab=c(20,10,30),lty=2,lwd=2,col="black")
+     lab=c(20,10,30),lty=2,lwd=2,col="black", xaxt="n")   
+       axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
+       axis(1,at=0:100,tcl=-.2, labels=FALSE)
      mylm<-lm(y~x)
      abline(mylm,lwd=2, col="blue")
      axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
@@ -287,7 +290,7 @@ else{
    }
 }
 
-
+###########################################################################################
 
 else {
   if ((Pslope >=0.25) && (Pintercept < 0.25)){
@@ -322,8 +325,8 @@ K.split<-split(Multipledata, list(Multipledata$batch) )
      }
    
    Slope<-0
-    for (i in 1:(length(W.split))){
-    Slope[i]<-coef(lm(assay ~ batch+time , data=ANCOVAdata))[i+1]
+    for (d in 1:(length(W.split))){
+    Slope[d]<-coef(lm(assay ~ batch+time , data=ANCOVAdata))[d+1]
        }
      
    ba<-0
@@ -333,22 +336,37 @@ K.split<-split(Multipledata, list(Multipledata$batch) )
    
    #collect all intercepts in a dataframe
    Intable<-data.frame(batch=ba, Intercept=c(prepreIntercept[1],preIntercept))  
-  show(Intable)
+
 #step2: calculate description statistics
      #divide data in to different group based on batches
-     cal<-0
+     
+  #number of data points
+    L<-length(ANCOVAdata$assay)
+  
+  #Residual SE (time, assay, time*assay)
+  #sum of (Xi-Xmean)^2
+    Sxx<-var(ANCOVAdata$time)*(L-1)
+    
+  #sum of (Yi-Ymean)^2
+    Syy<-var(ANCOVAdata$assay)*(L-1)
+    
+  #sum of (Xi-Xmean)* (Yi-Ymean)
+    Sxxyy<-0
+    for(i in 1:length(ANCOVAdata$time)){
+    Sxxyy[i]<-((ANCOVAdata$assay[i]-mean(ANCOVAdata$assay))*
+    (ANCOVAdata$time[i]-mean(ANCOVAdata$time)))
+     }
+    Sxy<-sum(Sxxyy)
+
+    SS<-(Syy-(Slope[d]*Sxy))/(L-2)
+   #95%CI,n-2 T value
+    T<-qt(0.975,L-2)    
+      
+     
      CAL<-NULL 
      TIME<-NULL 
-     Res<-0 
-     L<-0
-     Sxx<-0
-     Syy<-0
-     Sxy<-0 
-     KKK<-0
-     SK<-0
-     Xi<-0
-     XYi<-0
-     T<-0 
+     TT<-0   
+     LL<-0
      delta1<-0
      delta2<-0
      a1<-0
@@ -364,75 +382,49 @@ K.split<-split(Multipledata, list(Multipledata$batch) )
      PX<-0
      PY<-0 
      for (j in 1:length(W.split)){
-          
           Intercept<-0
           for(x in 1: length(unique(Intable$batch))){
                 if (W.split[[j]][["batch"]][1]==Intable$batch[[x]]){
                   Intercept<- Intable$Intercept[[x]]
                  }
                 } 
-         
+                   
           cal<-0
           Res<-0
-          Sxxyy<-0
-          KK<-0 
-          Xii<-0
-          XYii<-0
+          
           for (a in 1:length(W.split[[j]][["time"]])){    
              #Calculated assay
-               cal[a]<- (((W.split[[j]][["time"]][a])*Slope[i])+ Intercept) 
+               cal[a]<-(((W.split[[j]][["time"]][a])*Slope[d])+ Intercept) 
              #extract model residuals
                Res[a]<- cal[a]-(W.split[[j]][["assay"]][a])
-             #sum of (Xi-Xmean)* (Yi-Ymean)
-               Sxxyy[a]<-((W.split[[j]][["assay"]][a]-mean(W.split[[j]][["assay"]]))*
-              (W.split[[j]][["time"]][a]-mean(W.split[[j]][["time"]])))
-             #KK:(yi-(Intercept+Slope*Xi))^2 , KKK: sum 0f KK, SK:sqrt(KKK/L-2) 
-               KK[a]<-(W.split[[j]][["assay"]][a]-(Intercept+Slope[i]*W.split[[j]][["time"]][a]))^2 
-             #Xi: sum of (Xi)^2  
-               Xii[a]<-(W.split[[j]][["time"]][a])^2
-             #XYi: sum of (Xi*Yi)
-               XYii[i]<-(W.split[[j]][["time"]][a])*(W.split[[j]][["assay"]][a])
                }
-      
-       #number of data points
-        L[j]<-length(W.split[[j]][["time"]])  
-       #Residual SE (time, assay, time*assay)
-        #sum of (Xi-Xmean)^2
-        Sxx[j]<-var(W.split[[j]][["time"]])*(L[j]-1)
-       #sum of (Yi-Ymean)^2
-        Syy[j]<-var(W.split[[j]][["assay"]])*(L[j]-1) 
-       #sum of (Xi-Xmean)* (Yi-Ymean)
-        Sxy[j]<-sum(Sxxyy)
-       #KK:(yi-(Intercept+Slope*Xi))^2 , KKK: sum 0f KK, SK:sqrt(KKK/L-2) 
-        KKK[j]<-sum(KK)
-        SK[j]<-sqrt(KKK[j]/(L[j]-2))
-       #Xi: sum of (Xi)^2
-        Xi[j]<-sum(Xii)
-       #XYi: sum of (Xi*Yi)
-        XYi[j]<-sum(XYii)
-       #95%CI,n-2 T value
-        T[j]<-qt(0.975,L[j]-2)
-        
+       
+        #number of data points
+        LL[j]<-length(W.split[[j]][["time"]])   
+        TT[j]<-mean(W.split[[j]][["time"]]  )
 #step3: calculate possible X1,X2,Y1,Y2   
  #Slope: (Xi/(L*Sxx))*Yi+ (-mean(Singledata$time)/Sxx)*XYi
       #Intercept: (-mean(Singledata$time)/Sxx)*Yi+ (1/Sxx)*XYi
       #calculate shelf life
       #intersect 95% CI with Upper criteria
-        delta1[j]<-Intercept-Uper
-        a1[j]<-(1/Sxx[j])-(Slope[i]/(T[j]*SK[j]))^2
-        b1[j]<-2*(-mean(W.split[[j]][["time"]])/Sxx[j])-((2*Slope[i]*delta1[j])/(T[j]*SK[j])^2)
-        c1[j]<-(Xi[j]/(L[j]*Sxx[j]))-(delta1[j]/(T[j]*SK[j]))^2
+        delta1[j]<-Uper-Intercept
+        a1[j]<-(Slope[d]*Slope[d])-(T*T*SS)/Sxx
+        b1[j]<-2*(T*T*SS*TT[j])/Sxx-(2*Slope[d]*delta1[j])
+        c1[j]<-(delta1[j]*delta1[j])-(T*T*SS*TT[j]*TT[j])/Sxx-(T*T*SS/LL[j])
+               
         X1[j]<-((-b1[j])+(sqrt((b1[j])^2-(4*a1[j]*c1[j]))))/(2*a1[j])
-        X2[j]<-((-b1[j])-(sqrt((b1[j])^2-(4*a1[j]*c1[j]))))/(2*a1[j])
-     
+        X2[j]<-((-b1[j])-(sqrt((b1[j])^2-(4*a1[j]*c1[j]))))/(2*a1[j]) 
+       
      #intersect 5% CI with Lower criteria
-        delta2[j]<-Intercept-Lper
-        a2[j]<-(1/Sxx[j])-(Slope[i]/(T[j]*SK[j]))^2
-        b2[j]<-2*(-mean(W.split[[j]][["time"]])/Sxx[j])-((2*Slope[i]*delta2[j])/(T[j]*SK[j])^2)
-        c2[j]<-(Xi[j]/(L[j]*Sxx[j]))-(delta2[j]/(T[j]*SK[j]))^2
+        delta2[j]<-Lper-Intercept
+        a2[j]<-(Slope[d]*Slope[d])-(T*T*SS)/Sxx
+        b2[j]<-2*(T*T*SS*TT[j])/Sxx-(2*Slope[d]*delta2[j])
+        c2[j]<-(delta2[j]*delta2[j])-(T*T*SS*TT[j]*TT[j])/Sxx -(T*T*SS/LL[j])
+              
         Y1[j]<-((-b2[j])+(sqrt((b2[j])^2-(4*a2[j]*c2[j]))))/(2*a2[j])
-        Y2[j]<-((-b2[j])-(sqrt((b2[j])^2-(4*a2[j]*c2[j]))))/(2*a2[j])
-    
+        Y2[j]<-((-b2[j])-(sqrt((b2[j])^2-(4*a2[j]*c2[j]))))/(2*a2[j])      
+
+   
 #step4: make decision
 if ((((b1[j])^2-(4*a1[j]*c1[j]))>=0) && (((b2[j])^2-(4*a2[j]*c2[j]))>=0)){
   if ((a1[j]>0 && b1[j]>0 && c1[j]>0) || (a1[j]<0 && b1[j]<0 && c1[j]<0)){
@@ -534,9 +526,10 @@ if ((((b1[j])^2-(4*a1[j]*c1[j]))< 0) && (((b2[j])^2-(4*a2[j]*c2[j]))<0)){
 
 
 #step5: Output
+cat("\n")
 cat("<< Output and Linear regression model>>\n")
 cat("\n")
-cat("\nY=",Intercept,"+(",Slope[i],") X\n\n")
+cat("\nY=",Intercept,"+(",Slope[d],") X\n\n")
 cat("\n")
 output<-data.frame(W.split[[j]][["time"]],W.split[[j]][["assay"]],cal,Res)
 colnames(output)<-list("time","Observed assay(%)","Calculated assay(%)","Residuals")  
@@ -544,6 +537,7 @@ show(output)
 cat("\n\n")  
 TIME[[j]]<-c(W.split[[j]][["time"]])
 CAL[[j]]<-c(cal)
+
 }
 
 AA<-melt(CAL)
@@ -575,8 +569,9 @@ if  (PPX>=PPY)  {
      main<-paste(c("Shelf Life=",i, "months"),collapse=" ")    
      plot(time~assay,data=ANCOVAdata, xlim=c(0,(PPY+10)),ylim=c((Lper-10),(Uper+10)), main=main,
      xlab = "Time (months)" , ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
-     lab=c(20,10,30),lty=2,lwd=2)    
-     
+     lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
+       axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
+       axis(1,at=0:100,tcl=-.2, labels=FALSE)
     
     for(i in seq_along(M.split)){
      x<-M.split[[i]][["time"]] 
@@ -584,24 +579,37 @@ if  (PPX>=PPY)  {
      mod<-lm(y~x) 
      abline(mod,lwd=2, col=i)
       }
-    #plot CI 
-    #  newx<-data.frame(xx=seq(0,(PPY+10)))  
-    #for(i in seq_along(W.split)){
-    #  xx<-W.split[[i]][["time"]] 
-    #  yy<-W.split[[i]][["assay"]]
-    #   points(xx,yy,pch=16, col=i)
-    #   mod1<-lm(yy~xx) 
-    #  abline(mod1,lwd=2, col=i)
-    #  pred<-predict(mod1, newdata=newx,interval = c("confidence"),level = 0.95,type="response")
-    #  lines(newx$xx,pred[,2],col=i,lty=2)
-    #  lines(newx$xx,pred[,3],col=i,lty=2) 
-    #  }  
-    # axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
-     #add criteria limit
+   
+
+#plot CI
+   LX<-0
+   LY<-0
+
+   for(i in seq_along(W.split)){
+     LX<-length(ANCOVAdata$time)
+     LY<-mean(ANCOVAdata$time )
+
+     Intercept1<-0
+     for(k in 1: length(unique(Intable$batch))){
+            if (W.split[[i]][["batch"]][1]==Intable$batch[[k]]){
+                  Intercept1<- Intable$Intercept[[k]]
+                 }
+               }
+       newx<-data.frame(xx=seq(0,(PPY+10)))
+       yy<-Intercept1+newx$xx*Slope[d]
+       mod1<-lm(yy~newx$xx)
+       fit<-predict(mod1, newdata=newx,interval = c("confidence"),level = 0.95,type="response")
+       pd<-(sqrt(1/(LX) + (((newx$xx-LY)^2)/Sxx)*SS))*T
+
+       Lower<-fit[,1]-pd
+       Upper<-fit[,1]+pd
+       total<-data.frame(time=newx$xx, fit=fit[,1],  pred=pd, Lower=Lower, Upper=Upper)
+       lines(total$time,total$Lower,col=i,lty=2)
+       lines(total$time,total$Upper,col=i,lty=2)
+        }
      abline(h=Uper, col = "gray60")
      abline(h=Lper, col = "gray60")
      abline(v=PPY, col = "gray60")
-     cat("--------------------------------------------------------------------------\n")
      cat("                                                                          \n")
      cat(" Drug product with lower acceptance criteria of ",Lper,"% of label claim  \n")
      cat(" Shelf life =",PPY,"months                                                 \n\n")
@@ -616,9 +624,9 @@ else {
      main<-paste(c("Shelf Life=",i, "months"),collapse=" ")    
      plot(time~assay,data=ANCOVAdata,xlim=c(0,(PPX+10)),ylim=c((Lper-10),(Uper+10)), main=main,
      xlab = "Time (months)" , ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
-     lab=c(20,10,30),lty=2,lwd=2)    
-     
-      
+     lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
+       axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
+       axis(1,at=0:100,tcl=-.2, labels=FALSE)   
       
      for(i in seq_along(M.split)){
       x<-M.split[[i]][["time"]] 
@@ -626,25 +634,36 @@ else {
       mod<-lm(y~x) 
       abline(mod,lwd=2, col=i)
         }
-     #plot CI
-     #  newx<-data.frame(xx=seq(0,(PPX+10)))  
-     #for(i in seq_along(W.split)){
-     # xx<-W.split[[i]][["time"]] 
-     # yy<-W.split[[i]][["assay"]]
-     # points(xx,yy,pch=16, col=i)
-     # mod1<-lm(yy~xx) 
-     # abline(mod1,lwd=2, col=i)
-     # pred<-predict(mod1, newdata=newx,interval = c("confidence"),level = 0.95,type="response")
-     # lines(newx$xx,pred[,2],col=i,lty=2)
-     # lines(newx$xx,pred[,3],col=i,lty=2) 
-     # }  
-     #axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
-     #add criteria limit
+   #plot CI
+   LX<-0
+   LY<-0
+
+   for(i in seq_along(W.split)){
+     LX<-length(ANCOVAdata$time)
+     LY<-mean(ANCOVAdata$time )
+
+     Intercept1<-0
+     for(k in 1: length(unique(Intable$batch))){
+            if (W.split[[i]][["batch"]][1]==Intable$batch[[k]]){
+                  Intercept1<- Intable$Intercept[[k]]
+                 }
+               }
+       newx<-data.frame(xx=seq(0,(PPX+10)))
+       yy<-Intercept1+newx$xx*Slope[d]
+       mod1<-lm(yy~newx$xx)
+       fit<-predict(mod1, newdata=newx,interval = c("confidence"),level = 0.95,type="response")
+       pd<-(sqrt(1/(LX) + (((newx$xx-LY)^2)/Sxx)*SS))*T
+
+       Lower<-fit[,1]-pd
+       Upper<-fit[,1]+pd
+       total<-data.frame(time=newx$xx, fit=fit[,1],  pred=pd, Lower=Lower, Upper=Upper)
+       lines(total$time,total$Lower,col=i,lty=2)
+       lines(total$time,total$Upper,col=i,lty=2)
+        }
      abline(h=Uper, col = "gray60")
      abline(h=Lper, col = "gray60")
      abline(v=PPX, col = "gray60")
      
-     cat("--------------------------------------------------------------------------\n")
      cat("                                                                          \n")
      cat(" Drug product with Upper acceptance criteria of ",Uper,"% of label claim  \n")
      cat(" Shelf life =",PPX,"months                                                 \n\n")
@@ -664,6 +683,7 @@ else{
     } 
 
 } 
+########################################################################################
 else {
   if (((Pslope <0.25) && (Pintercept >= 0.25))||((Pslope < 0.25) && (Pintercept < 0.25))) {
   # get different slopes and intercepts   
@@ -713,7 +733,7 @@ K.split<-split(Multipledata, list(Multipledata$batch))
 cat("\n")     
    #collect all intercepts in a dataframe
    Intable<-data.frame(batch=ba, Intercept=c(prepreIntercept[1],preIntercept), Slope=c(preSlope[1],Slope_1))  
-   show(Intable)
+   
 cat("\n")
 #step2: calculate description statistics
      #divide data in to different group based on batches
@@ -913,6 +933,7 @@ if ((((b1[j])^2-(4*a1[j]*c1[j]))< 0) && (((b2[j])^2-(4*a2[j]*c2[j]))<0)){
  }
 
 #step5: Output
+cat("\n")
 cat("<< Output and Linear regression model>>\n")
 cat("\n")
 cat("\nY=",Intercept,"+(",Slope,") X\n\n")
@@ -932,8 +953,7 @@ PPY<-min(DM$Lower)
 
 if (separateWindows) {
        get(getOption("device"))()
-          }    
-      
+          }     
 #step6: summary and plot
 cat("**************************************************************************\n")
 cat("                               << Output >>                               \n")
@@ -947,7 +967,9 @@ if  (PPX>=PPY)  {
      main<-paste(c("Shelf Life=",i, "months"),collapse=" ")    
      plot(time~assay,data=ANCOVAdata, xlim=c(0,(PPY+10)),ylim=c((Lper-10),(Uper+10)), main=main,
      xlab = "Time (months)" , ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
-     lab=c(20,10,30),lty=2,lwd=2)    
+     lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
+       axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
+       axis(1,at=0:100,tcl=-.2, labels=FALSE) 
      
       #plot CI
      newx<-data.frame(xx=seq(0,(PPY+10))) 
@@ -981,7 +1003,9 @@ else {
      main<-paste(c("Shelf Life=",i, "months"),collapse=" ")    
      plot(time~assay,data=ANCOVAdata,xlim=c(0,(PPX+10)),ylim=c((Lper-10),(Uper+10)), main=main,
      xlab = "Time (months)" , ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
-     lab=c(20,10,30),lty=2,lwd=2)    
+     lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
+       axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
+       axis(1,at=0:100,tcl=-.2, labels=FALSE)   
      
       #plot CI
       newx<-data.frame(xx=seq(0,(PPY+10)))  

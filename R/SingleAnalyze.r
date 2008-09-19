@@ -175,11 +175,9 @@ if ((((b1)^2-(4*a1*c1))< 0) && (((b2)^2-(4*a2*c2))<0)){
    }
   }
  }   
-
 if (separateWindows) {
        get(getOption("device"))()
           }
-
 #Output
 cat("**************************************************************************\n")
 cat("                               << Output >>                               \n")
@@ -201,7 +199,10 @@ if  (PX>=PY)  {
      y<-Singledata$assay
      plot(x,y,xlim=c(0,(PY+10)),ylim=c((Lper-10),(Uper+10)), main=main,
      xlab = "Time (months)" , ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
-     lab=c(20,10,30),lty=2,lwd=2,col="black")
+     lab=c(20,10,30),lty=2,lwd=2,col="black", xaxt="n")   
+       axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
+       axis(1,at=0:100,tcl=-.2, labels=FALSE)
+       
      mylm<-lm(y~x)
      abline(mylm,lwd=2, col="blue")
      axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
@@ -232,7 +233,10 @@ else {
      y<-Singledata$assay
      plot(x,y,xlim=c(0,(PX+10)),ylim=c((Lper-10),(Uper+10)),main=main,
      xlab = "Time (months)" , ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
-     lab=c(20,10,30),lty=2,lwd=2,col="black")
+     lab=c(20,10,30),lty=2,lwd=2,col="black", xaxt="n")   
+       axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
+       axis(1,at=0:100,tcl=-.2, labels=FALSE)
+       
      mylm<-lm(y~x)
      abline(mylm,lwd=2, col="blue")
      axis(1,tcl=-.5, tick=TRUE,labels=FALSE)

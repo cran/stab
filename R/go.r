@@ -2,6 +2,11 @@
 go<-function()
 {
 options(warn=-1)
+if (noquote(unlist(format(.Platform)))[1] == "unix") {
+        windows <<- function(record) {
+        }
+     }  
+
 cat("\n")
   file.menu <- c("Start a new project",
                  "Demo",
