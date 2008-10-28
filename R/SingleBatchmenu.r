@@ -13,7 +13,7 @@ cat("*                                                                          
 cat("****************************************************************************\n")
 cat("\n")
 file.menu <- c("Input/Edit Assay Data from keyboard",
-               "Load Data Files (.CSV)",
+               "Load Data Files (.csv)",
                "Load Data Files (.RData)",   
                "Go Back to Statistical Analysis menu",
                "Quit")
@@ -84,24 +84,22 @@ cat("***************************************************************************
       
 else {   
   if (pick == 2){
-  cat("\n\n")
-  Single.file <-readline()
-  Single.file<-paste(Single.file,".csv",sep="")
-     cnames<-c("time","assay(%)")
-     Singledata<-read.csv(Single.file,header=TRUE,sep=",",row.names=NULL,col.names=cnames)
-     Singledata<-edit(Singledata)
-     Singledata<- na.omit(Singledata)
-     cat("\n\n")
-     show(Singledata)
-cat("\n\n")
-cat("****************************************************************************\n")
-cat("*                         Now, Go to analyze the data                      *\n")
-cat("****************************************************************************\n\n")   
-        return(SingleAnalyze(Singledata))
+  
+    filepath<-getwd()
+    cat("R will import your data from the directory of \n")
+    cat("",filepath,"\n")
+        return(SingleBatchcsv())     
       }      
 
 else {
   if (pick == 3){
+    
+    cat("\n\n")
+    filepath<-getwd()
+    cat("R will load your data from the directory of \n")
+    cat("",filepath,"\n")
+    cat("\n")     
+    
      cat("\nEnter data file name\n") 
      Singlename <-readline()
      Singlename<-paste(Singlename,".RData",sep="")

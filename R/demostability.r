@@ -318,7 +318,9 @@ if  (PPX>=PPY)  {
      main<-paste(c("Shelf Life=",i, "months"),collapse=" ")    
      plot(time~assay,data=ANCOVAdata, xlim=c(0,(PPY+10)),ylim=c((Lper-10),(Uper+10)), main=main,
      xlab = "Time (months)" , ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
-     lab=c(20,10,30),lty=2,lwd=2)    
+     lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
+       axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
+       axis(1,at=0:100,tcl=-.2, labels=FALSE) 
      
       #plot CI
      newx<-data.frame(xx=seq(0,(PPY+10))) 
@@ -352,7 +354,9 @@ else {
      main<-paste(c("Shelf Life=",i, "months"),collapse=" ")    
      plot(time~assay,data=ANCOVAdata,xlim=c(0,(PPX+10)),ylim=c((Lper-10),(Uper+10)), main=main,
      xlab = "Time (months)" , ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
-     lab=c(20,10,30),lty=2,lwd=2)    
+     lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
+       axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
+       axis(1,at=0:100,tcl=-.2, labels=FALSE)   
      
       #plot CI
       newx<-data.frame(xx=seq(0,(PPY+10)))  
@@ -378,7 +382,7 @@ else {
      cat(" Shelf life =",PPX,"months                                                 \n\n")
      cat("**************************************************************************\n")
      cat("\n")
-    go()
+     go()
         } 
 else{
   if ((PX=1000000000000) && (PY=1000000000000)){
@@ -390,4 +394,6 @@ else{
       }     
      }
     }    
+
+
 }            

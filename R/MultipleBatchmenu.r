@@ -14,7 +14,7 @@ cat("*                                                                          
 cat("****************************************************************************\n")
 cat("\n")
 file.menu <- c("Input/Edit Assay Data from keyboard",
-               "Load Data Files (.CSV)",
+               "Load Data Files (.csv)",
                "Load Data Files (.RData)",
                "Go Back to Statistical Analysis menu",
                "Quit")
@@ -85,24 +85,22 @@ cat("***************************************************************************
 
 else {
   if (pick == 2){
-  cat("\n\n")
-  Multiple.file <-readline()
-  Multiple.file<-paste(Multiple.file,".csv",sep="")
-     cnames<-c("batch","time","assay (%)")
-     Multipledata<-read.csv(Multiple.file,header=TRUE,sep=",",row.names=NULL,col.names=cnames)
-     Multipledata<-edit(Multipledata)
-     Multipledata<- na.omit(Multipledata)
-     cat("\n\n")
-     show(Multipledata)
-cat("\n\n")
-cat("****************************************************************************\n")
-cat("*                         Now, Go to analyze the data                      *\n")
-cat("****************************************************************************\n\n")
-        return(MultipleAnalyze(Multipledata))
+  
+    filepath<-getwd()
+    cat("R will import your data from the directory of \n")
+    cat("",filepath,"\n")
+        return(MultipleBatchcsv())     
       }
 
 else {
   if (pick == 3){
+    
+    cat("\n\n")
+    filepath<-getwd()
+    cat("R will load your data from the directory of \n")
+    cat("",filepath,"\n")
+    cat("\n")     
+     
      cat("\nEnter data file name\n")
      Multiplename <-readline()
      Multiplename<-paste(Multiplename,".RData",sep="")
