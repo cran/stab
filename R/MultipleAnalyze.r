@@ -196,9 +196,7 @@ if ((((b1)^2-(4*a1*c1))< 0) && (((b2)^2-(4*a2*c2))<0)){
    }
   }
  }   
-if (separateWindows) {
-       get(getOption("device"))()
-          }
+windows(record = TRUE )
 
 #Output
 cat("**************************************************************************\n")
@@ -553,9 +551,7 @@ DM<- na.omit(DM)
 PPX<-min(DM$Upper)
 PPY<-min(DM$Lower)
 
-if (separateWindows) {
-       get(getOption("device"))()
-          }
+windows(record = TRUE )
 #step6: summary and plot
 cat("**************************************************************************\n")
 cat("                               << Output >>                               \n")
@@ -951,9 +947,7 @@ DM<- na.omit(DM)
 PPX<-min(DM$Upper)
 PPY<-min(DM$Lower)
 
-if (separateWindows) {
-       get(getOption("device"))()
-          }     
+windows(record = TRUE )
 #step6: summary and plot
 cat("**************************************************************************\n")
 cat("                               << Output >>                               \n")

@@ -303,7 +303,7 @@ PPX<-min(DM$Upper)
 PPY<-min(DM$Lower)
 
 
-get(getOption("device"))()
+windows(record = TRUE )
            
 #step6: summary and plot
 cat("**************************************************************************\n")

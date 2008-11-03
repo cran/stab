@@ -175,9 +175,10 @@ if ((((b1)^2-(4*a1*c1))< 0) && (((b2)^2-(4*a2*c2))<0)){
    }
   }
  }   
-if (separateWindows) {
-       get(getOption("device"))()
-          }
+#if (separateWindows) {
+ #      get(getOption("device"))()
+  #        }
+windows(record = TRUE )
 #Output
 cat("**************************************************************************\n")
 cat("                               << Output >>                               \n")
@@ -268,4 +269,5 @@ else{
       }     
      }
     } 
+
 }  
