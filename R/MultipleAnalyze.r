@@ -582,7 +582,7 @@ if  (PPX>=PPY)  {
    LY<-0
 
    for(i in seq_along(W.split)){
-     LX<-length(ANCOVAdata$time)
+     LX<-length(W.split[[i]]$time)
      LY<-mean(ANCOVAdata$time )
 
      Intercept1<-0
@@ -635,7 +635,7 @@ else {
    LY<-0
 
    for(i in seq_along(W.split)){
-     LX<-length(ANCOVAdata$time)
+     LX<-length(W.split[[i]]$time)
      LY<-mean(ANCOVAdata$time )
 
      Intercept1<-0

@@ -5,7 +5,7 @@
 \title{Data Analysis for Multiple Batches}
 
 \description{
-The following steps wii be conducted as follows:
+The following steps will be conducted as follows:
 
 step1. ANCOVA can be employed to test the difference in slopes and intercepts of
 the regression lines among factors and factor combinations.

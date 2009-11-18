@@ -4,7 +4,7 @@ stabilitymenu<-function()
 cat("\n")
   file.menu <- c("Decision Tree for Data Evaluation",
                  "Statistical Approaches to Stability Data Analysis",
-                 "Back to Stability menu",
+                 "Back to Go menu",
                  "Quit")
 cat("\n")
   pick <- menu(file.menu, title = " << Stability menu >> ")
