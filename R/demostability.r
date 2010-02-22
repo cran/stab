@@ -8,12 +8,10 @@ cat("* Input/Edit :three Batches with Assay (%)                                 
 cat("****************************************************************************\n")
 cat("\n\n")
 
-Multipledata<-data.frame(batch=c(990031,990031,990031,990031,990031,990031,990031,990022,990022,   
-                        990022,990022,990022,990022,990022,990033,990033,990033,990033,990033,990033,990033), 
+Multipledata<-data.frame(batch=c(1,1,1,1,1,1,1,2,2,2,2,2,2,2,3,3,3,3,3,3,3), 
                         time=c(0,1,2,3,6,9,12,0,1,2,3,6,9,12,0,1,2,3,6,9,12),
                         assay=c(100,101,102,101,103,105,103,102,99,98,98,97,98,97,100,97,97,96,98,97,96))
-ANCOVAdata<-data.frame(batch=factor(c(990031,990031,990031,990031,990031,990031,990031,990022,990022,   
-                        990022,990022,990022,990022,990022,990033,990033,990033,990033,990033,990033,990033)), 
+ANCOVAdata<-data.frame(batch=factor(c(1,1,1,1,1,1,1,2,2,2,2,2,2,2,3,3,3,3,3,3,3)), 
                         time=c(0,1,2,3,6,9,12,0,1,2,3,6,9,12,0,1,2,3,6,9,12),
                         assay=c(100,101,102,101,103,105,103,102,99,98,98,97,98,97,100,97,97,96,98,97,96))
 
@@ -85,10 +83,14 @@ K.split<-split(Multipledata, list(Multipledata$batch))
 cat("\n")     
    #collect all intercepts in a dataframe
    Intable<-data.frame(batch=ba, Intercept=c(prepreIntercept[1],preIntercept), Slope=c(preSlope[1],Slope_1))  
-   show(Intable)
+            
 cat("\n")
 #step2: calculate description statistics
      #divide data in to different group based on batches
+     CAL<-NULL 
+     TIME<-NULL
+     RRES<-NULL 
+     OBS<-NULL
      cal<-0
      Res<-0 
      L<-0
@@ -285,6 +287,7 @@ if ((((b1[j])^2-(4*a1[j]*c1[j]))< 0) && (((b2[j])^2-(4*a2[j]*c2[j]))<0)){
  }
 
 #step5: Output
+cat("\n")
 cat("<< Output and Linear regression model>>\n")
 cat("\n")
 cat("\nY=",Intercept,"+(",Slope,") X\n\n")
@@ -292,9 +295,16 @@ cat("\n")
 output<-data.frame(W.split[[j]][["time"]],W.split[[j]][["assay"]],cal,Res)
 colnames(output)<-list("time","Observed assay(%)","Calculated assay(%)","Residuals")  
 show(output)
+TIME[[j]]<-c(W.split[[j]][["time"]])
+CAL[[j]]<-c(cal)
+RRES[[j]]<-c(Res)
+OBS[[j]]<-c(W.split[[j]][["assay"]])
 cat("\n\n")  
 }
-
+AA<-melt(CAL)
+ZZ<-melt(TIME)
+QQ<-melt(RRES)
+OO<-melt(OBS)
 
 #choose min PX or PY
 DM<-data.frame(batch=ba, Upper=PX, Lower=PY)
@@ -302,62 +312,19 @@ DM<- na.omit(DM)
 PPX<-min(DM$Upper)
 PPY<-min(DM$Lower)
 
-
 windows(record = TRUE )
-           
-#step6: summary and plot
-cat("**************************************************************************\n")
-cat("                               << Output >>                               \n")
-cat("--------------------------------------------------------------------------\n")
-cat("\n")
-if  (PPX>=PPY)  {
-     #go to plot of single batch
-     i<-formatC(PPY,format="f",digits=2) 
-     #i<-round(PPY,3)
-     #做出plot的框架 
-     main<-paste(c("Shelf Life=",i, "months"),collapse=" ")    
-     plot(time~assay,data=ANCOVAdata, xlim=c(0,(PPY+10)),ylim=c((Lper-10),(Uper+10)), main=main,
-     xlab = "Time (months)" , ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
-     lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
-       axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
-       axis(1,at=0:100,tcl=-.2, labels=FALSE) 
-     
-      #plot CI
-     newx<-data.frame(xx=seq(0,(PPY+10))) 
-    for(i in seq_along(W.split)){
-      xx<-W.split[[i]][["time"]] 
-      yy<-W.split[[i]][["assay"]]
-      points(xx,yy,pch=16, col=i)
-      mod<-lm(yy~xx) 
-      abline(mod,lwd=2, col=i)
-      pred<-predict(mod, newdata=newx,interval = c("confidence"),level = 0.95,type="response")
-      lines(newx$xx,pred[,2],col=i,lty=2)
-      lines(newx$xx,pred[,3],col=i,lty=2)
-         }
-     axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
-     #add criteria limit
-     abline(h=Uper, col = "gray60")
-     abline(h=Lper, col = "gray60")
-     abline(v=PPY, col = "gray60")
-     cat("--------------------------------------------------------------------------\n")
-     cat("                                                                          \n")
-     cat(" Drug product with lower acceptance criteria of ",Lper,"% of label claim  \n")
-     cat(" Shelf life =",PPY,"months                                                 \n\n")
-     cat("**************************************************************************\n")
-     cat("\n")
-     go()
-       }
-else {
-    if(PPY>PPX){
+
      i<-formatC(PPX,format="f",digits=2) 
       #i<-round(PX,3) 與上述效果一樣... 
      main<-paste(c("Shelf Life=",i, "months"),collapse=" ")    
      plot(time~assay,data=ANCOVAdata,xlim=c(0,(PPX+10)),ylim=c((Lper-10),(Uper+10)), main=main,
-     xlab = "Time (months)" , ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
+     xlab = "Time (months)" , ylab = "Assay (%)", pch = 16, cex.lab = 1.5, 
      lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
        axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
        axis(1,at=0:100,tcl=-.2, labels=FALSE)   
-     
+      temp <- legend("topright", legend = c(ba),
+               text.width = strwidth("1000"),
+               lty=1, col=c(Intable$batch), xjust = 1, yjust = 1)
       #plot CI
       newx<-data.frame(xx=seq(0,(PPY+10)))  
      for(i in seq_along(W.split)){
@@ -369,6 +336,8 @@ else {
       pred<-predict(mod,newdata=newx,interval = c("confidence"),level = 0.95,type="response")
       lines(newx$xx,pred[,2],col=i,lty=2)
       lines(newx$xx,pred[,3],col=i,lty=2) 
+         total<-data.frame(time=newx$xx, fit=pred[,1], Lower=pred[,2], Upper=pred[,3])
+         show(total) 
          }
      axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
      #add criteria limit
@@ -382,18 +351,14 @@ else {
      cat(" Shelf life =",PPX,"months                                                 \n\n")
      cat("**************************************************************************\n")
      cat("\n")
-     go()
-        } 
-else{
-  if ((PX=1000000000000) && (PY=1000000000000)){
-   cat("--------------------------------------------------------------------------\n")
-   cat("                    no solution                                           \n")
-   cat("**************************************************************************\n")
-   cat("\n")
-     go()
-      }     
-     }
-    }    
-
-
-}            
+          
+        qqnorm(QQ$value, las=1, main = "Normal Q-Q Plot of Residuals", col=c(QQ$L1))  
+      
+         temp <- legend("topleft", legend = c(Intable$batch),
+               text.width = strwidth("1000"),
+               lty=1, col=c(Intable$batch), xjust = 1, yjust = 1)     
+      
+      go()
+   
+}  
+ 

@@ -213,6 +213,11 @@ if  (PX>=PY)  {
      level = 0.95,type="response")
      lines(newx,prd[,2],col="red",lty=2)
      lines(newx,prd[,3],col="red",lty=2)
+      #show 95 %CI
+     total<-data.frame(time=newx, fit=prd[,1], Lower=prd[,2], Upper=prd[,3])
+       cat("\n")
+       show(total)
+       cat("\n")
      #add criteria limit
      abline(h=Uper, col = "gray60")
      abline(h=Lper, col = "gray60")
@@ -223,7 +228,7 @@ if  (PX>=PY)  {
      cat(" Shelf life =",PY,"months                                                 \n\n")
      cat("**************************************************************************\n")
      cat("\n")
-     bye()
+    
        }
 else {
     if(PY>PX){
@@ -247,6 +252,11 @@ else {
      level = 0.95,type="response")
      lines(newx,prd[,2],col="red",lty=2)
      lines(newx,prd[,3],col="red",lty=2)
+     #show 95 %CI
+     total<-data.frame(time=newx, fit=prd[,1], Lower=prd[,2], Upper=prd[,3])
+       cat("\n")
+       show(total)
+       cat("\n")
      #add criteria limit
      abline(h=Uper, col = "gray60")
      abline(h=Lper, col = "gray60")
@@ -257,7 +267,7 @@ else {
      cat(" Shelf life =",PX,"months                                                 \n\n")
      cat("**************************************************************************\n")
      cat("\n")
-     bye()
+  
         } 
 else{
   if ((PX=1000000000000) && (PY=1000000000000)){
@@ -265,9 +275,11 @@ else{
    cat("                    no solution                                           \n")
    cat("**************************************************************************\n")
    cat("\n")
-     bye()
+    
       }     
      }
     } 
-
+   qqnorm(output$Res, las=1, main = "Normal Q-Q Plot of Residuals")  
+      
+   bye()
 }  

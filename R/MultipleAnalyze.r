@@ -47,6 +47,15 @@ cat("<<Output: linear regression model: time vs. assay (%)>>\n")
 cat("\n")
 show(lm(assay ~ time, data=ANCOVAdata))
 show(anova(lm(assay ~ time, data=ANCOVAdata)))
+W.split<-split(ANCOVAdata, list(ANCOVAdata$batch) )
+ba<-0
+     for (i in 1:(length(W.split))){
+     ba[i]<-W.split[[i]][["batch"]][1]
+     }
+   
+   #collect all intercepts in a dataframe
+   Intable<-data.frame(batch=ba)
+
 #step1:get a slope and a intercept
 Intercept<-coef(lm(assay ~ time, data=ANCOVAdata))[1]
 Slope<-coef(lm(assay ~ time, data=ANCOVAdata))[2]
@@ -231,6 +240,12 @@ if  (PX>=PY)  {
      level = 0.95,type="response")
      lines(newx,prd[,2],col="red",lty=2)
      lines(newx,prd[,3],col="red",lty=2)
+     
+      #show 95 %CI
+     total<-data.frame(time=newx, fit=prd[,1], Lower=prd[,2], Upper=prd[,3])
+       cat("\n")
+       show(total)
+       cat("\n")
      #add criteria limit
      abline(h=Uper, col = "gray60")
      abline(h=Lper, col = "gray60")
@@ -241,7 +256,6 @@ if  (PX>=PY)  {
      cat(" Shelf life =",PY,"months                                                 \n\n")
      cat("**************************************************************************\n")
      cat("\n")
-     bye()
        }
 else {
     if(PY>PX){
@@ -264,6 +278,11 @@ else {
      level = 0.95,type="response")
      lines(newx,prd[,2],col="red",lty=2)
      lines(newx,prd[,3],col="red",lty=2)
+      #show 95 %CI
+     total<-data.frame(time=newx, fit=prd[,1], Lower=prd[,2], Upper=prd[,3])
+       cat("\n")
+       show(total)
+       cat("\n")
      #add criteria limit
      abline(h=Uper, col = "gray60")
      abline(h=Lper, col = "gray60")
@@ -274,7 +293,7 @@ else {
      cat(" Shelf life =",PX,"months                                                 \n\n")
      cat("**************************************************************************\n")
      cat("\n")
-     bye()
+  
         } 
 else{
   if ((PX=1000000000000) && (PY=1000000000000)){
@@ -282,10 +301,15 @@ else{
    cat("                    no solution                                           \n")
    cat("**************************************************************************\n")
    cat("\n")
-     bye()
       }     
      }
    }
+    qqnorm(output$Res, las=1, main = "Normal Q-Q Plot of Residuals", col=c(ANCOVAdata$batch))  
+      
+         temp <- legend("topleft", legend = c(Intable$batch),
+               text.width = strwidth("1000"),
+               lty=1, col=c(Intable$batch), xjust = 1, yjust = 1)     
+    bye()
 }
 
 ###########################################################################################
@@ -331,8 +355,10 @@ K.split<-split(Multipledata, list(Multipledata$batch) )
      for (i in 1:(length(K.split))){
      ba[i]<-K.split[[i]][["batch"]][1]
      }
-   
+  
    #collect all intercepts in a dataframe
+   ba1<- na.omit(ba)
+   show(ba1)
    Intable<-data.frame(batch=ba, Intercept=c(prepreIntercept[1],preIntercept))  
 
 #step2: calculate description statistics
@@ -362,7 +388,9 @@ K.split<-split(Multipledata, list(Multipledata$batch) )
       
      
      CAL<-NULL 
-     TIME<-NULL 
+     TIME<-NULL
+     RRES<-NULL 
+     OBS<-NULL
      TT<-0   
      LL<-0
      delta1<-0
@@ -535,14 +563,17 @@ show(output)
 cat("\n\n")  
 TIME[[j]]<-c(W.split[[j]][["time"]])
 CAL[[j]]<-c(cal)
-
+RRES[[j]]<-c(Res)
+OBS[[j]]<-c(W.split[[j]][["assay"]])
 }
 
 AA<-melt(CAL)
 ZZ<-melt(TIME)
+QQ<-melt(RRES)
+OO<-melt(OBS)
 c(AA$L1)
 #purpose: to plot one slope and three intercepts 
-NewPred<-data.frame(batch=c(AA$L1),time=ZZ$value, PredCal=AA$value)   
+NewPred<-data.frame(batch=c(AA$L1),time=ZZ$value, PredCal=AA$value, RES=QQ$value)   
 M.split<-split(NewPred, list(NewPred$batch) ) 
 
 #choose min PX or PY
@@ -552,6 +583,7 @@ PPX<-min(DM$Upper)
 PPY<-min(DM$Lower)
 
 windows(record = TRUE )
+                                        
 #step6: summary and plot
 cat("**************************************************************************\n")
 cat("                               << Output >>                               \n")
@@ -568,15 +600,18 @@ if  (PPX>=PPY)  {
      lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
        axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
        axis(1,at=0:100,tcl=-.2, labels=FALSE)
-    
+       
+   
+    temp <- legend("topright", legend = c(Intable$batch),
+               text.width = strwidth("1000"),
+               lty=1, col=c(Intable$batch), xjust = 1, yjust = 1)
+   
     for(i in seq_along(M.split)){
      x<-M.split[[i]][["time"]] 
      y<-M.split[[i]][["PredCal"]]
      mod<-lm(y~x) 
-     abline(mod,lwd=2, col=i)
+     abline(mod,lwd=2, col=i)   
       }
-   
-
 #plot CI
    LX<-0
    LY<-0
@@ -591,6 +626,7 @@ if  (PPX>=PPY)  {
                   Intercept1<- Intable$Intercept[[k]]
                  }
                }
+               
        newx<-data.frame(xx=seq(0,(PPY+10)))
        yy<-Intercept1+newx$xx*Slope[d]
        mod1<-lm(yy~newx$xx)
@@ -599,7 +635,10 @@ if  (PPX>=PPY)  {
 
        Lower<-fit[,1]-pd
        Upper<-fit[,1]+pd
-       total<-data.frame(time=newx$xx, fit=fit[,1],  pred=pd, Lower=Lower, Upper=Upper)
+       total<-data.frame(time=newx$xx, fit=fit[,1], Lower=Lower, Upper=Upper)
+       cat("\n")
+       show(total)
+       cat("\n")
        lines(total$time,total$Lower,col=i,lty=2)
        lines(total$time,total$Upper,col=i,lty=2)
         }
@@ -611,7 +650,6 @@ if  (PPX>=PPY)  {
      cat(" Shelf life =",PPY,"months                                                 \n\n")
      cat("**************************************************************************\n")
      cat("\n")
-     bye()
        }
 else {
     if(PPY>PPX){
@@ -624,6 +662,9 @@ else {
        axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
        axis(1,at=0:100,tcl=-.2, labels=FALSE)   
       
+     temp <- legend("topright", legend = c(Intable$batch),
+               text.width = strwidth("1000"),
+               lty=1, col=c(Intable$batch), xjust = 1, yjust = 1)
      for(i in seq_along(M.split)){
       x<-M.split[[i]][["time"]] 
       y<-M.split[[i]][["PredCal"]]
@@ -652,9 +693,11 @@ else {
 
        Lower<-fit[,1]-pd
        Upper<-fit[,1]+pd
-       total<-data.frame(time=newx$xx, fit=fit[,1],  pred=pd, Lower=Lower, Upper=Upper)
+       total<-data.frame(time=newx$xx, fit=fit[,1], Lower=Lower, Upper=Upper)
+       show(total)
        lines(total$time,total$Lower,col=i,lty=2)
        lines(total$time,total$Upper,col=i,lty=2)
+      
         }
      abline(h=Uper, col = "gray60")
      abline(h=Lper, col = "gray60")
@@ -665,7 +708,7 @@ else {
      cat(" Shelf life =",PPX,"months                                                 \n\n")
      cat("**************************************************************************\n")
      cat("\n")
-     bye()
+   
         } 
 else{
   if ((PX=1000000000000) && (PY=1000000000000)){
@@ -673,11 +716,16 @@ else{
    cat("                    no solution                                           \n")
    cat("**************************************************************************\n")
    cat("\n")
-     bye()
+    
       }     
      }
     } 
-
+  qqnorm(QQ$value, las=1, main = "Normal Q-Q Plot of Residuals", col=c(QQ$L1))  
+      
+         temp <- legend("topleft", legend = c(Intable$batch),
+               text.width = strwidth("1000"),
+               lty=1, col=c(Intable$batch), xjust = 1, yjust = 1)   
+ bye()
 } 
 ########################################################################################
 else {
@@ -726,13 +774,18 @@ K.split<-split(Multipledata, list(Multipledata$batch))
      ba[i]<-K.split[[i]][["batch"]][1]
      }
      
+  
 cat("\n")     
    #collect all intercepts in a dataframe
    Intable<-data.frame(batch=ba, Intercept=c(prepreIntercept[1],preIntercept), Slope=c(preSlope[1],Slope_1))  
-   
+    
 cat("\n")
 #step2: calculate description statistics
      #divide data in to different group based on batches
+     CAL<-NULL 
+     TIME<-NULL
+     RRES<-NULL 
+     OBS<-NULL
      cal<-0
      Res<-0 
      L<-0
@@ -937,9 +990,16 @@ cat("\n")
 output<-data.frame(W.split[[j]][["time"]],W.split[[j]][["assay"]],cal,Res)
 colnames(output)<-list("time","Observed assay(%)","Calculated assay(%)","Residuals")  
 show(output)
+TIME[[j]]<-c(W.split[[j]][["time"]])
+CAL[[j]]<-c(cal)
+RRES[[j]]<-c(Res)
+OBS[[j]]<-c(W.split[[j]][["assay"]])
 cat("\n\n")  
 }
-
+AA<-melt(CAL)
+ZZ<-melt(TIME)
+QQ<-melt(RRES)
+OO<-melt(OBS)
 
 #choose min PX or PY
 DM<-data.frame(batch=ba, Upper=PX, Lower=PY)
@@ -964,6 +1024,10 @@ if  (PPX>=PPY)  {
      lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
        axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
        axis(1,at=0:100,tcl=-.2, labels=FALSE) 
+    
+     temp <- legend("topright", legend = c(ba),
+               text.width = strwidth("1000"),
+               lty=1, col=c(Intable$batch), xjust = 1, yjust = 1) 
      
       #plot CI
      newx<-data.frame(xx=seq(0,(PPY+10))) 
@@ -976,6 +1040,8 @@ if  (PPX>=PPY)  {
       pred<-predict(mod, newdata=newx,interval = c("confidence"),level = 0.95,type="response")
       lines(newx$xx,pred[,2],col=i,lty=2)
       lines(newx$xx,pred[,3],col=i,lty=2)
+       total<-data.frame(time=newx$xx, fit=pred[,1], Lower=pred[,2], Upper=pred[,3])
+       show(total) 
          }
      axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
      #add criteria limit
@@ -988,7 +1054,6 @@ if  (PPX>=PPY)  {
      cat(" Shelf life =",PPY,"months                                                 \n\n")
      cat("**************************************************************************\n")
      cat("\n")
-     bye()
        }
 else {
     if(PPY>PPX){
@@ -1000,7 +1065,9 @@ else {
      lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
        axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
        axis(1,at=0:100,tcl=-.2, labels=FALSE)   
-     
+      temp <- legend("topright", legend = c(ba),
+               text.width = strwidth("1000"),
+               lty=1, col=c(Intable$batch), xjust = 1, yjust = 1)
       #plot CI
       newx<-data.frame(xx=seq(0,(PPY+10)))  
      for(i in seq_along(W.split)){
@@ -1012,6 +1079,8 @@ else {
       pred<-predict(mod,newdata=newx,interval = c("confidence"),level = 0.95,type="response")
       lines(newx$xx,pred[,2],col=i,lty=2)
       lines(newx$xx,pred[,3],col=i,lty=2) 
+         total<-data.frame(time=newx$xx, fit=pred[,1], Lower=pred[,2], Upper=pred[,3])
+         show(total) 
          }
      axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
      #add criteria limit
@@ -1025,7 +1094,6 @@ else {
      cat(" Shelf life =",PPX,"months                                                 \n\n")
      cat("**************************************************************************\n")
      cat("\n")
-     bye()
         } 
 else{
   if ((PX=1000000000000) && (PY=1000000000000)){
@@ -1033,10 +1101,18 @@ else{
    cat("                    no solution                                           \n")
    cat("**************************************************************************\n")
    cat("\n")
-     bye()
+   
       }     
      }
     }    
+        qqnorm(QQ$value, las=1, main = "Normal Q-Q Plot of Residuals", col=c(QQ$L1))  
+      
+         temp <- legend("topleft", legend = c(Intable$batch),
+               text.width = strwidth("1000"),
+               lty=1, col=c(Intable$batch), xjust = 1, yjust = 1)     
+      
+      bye()
+   
    }  
   }
  }  
