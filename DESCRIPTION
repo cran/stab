@@ -1,16 +1,14 @@
 Package: stab
-Version: 0.0.7
-Date: 2010-02-22
+Version: 0.0.8
+Date: 2010-04-28
 Title: data analysis of drug stability
-Author: Hsin-ya Lee <hsinyalee@gmail.com>, Yung-jin Lee
-        <pkpd.taiwan@gmail.com>
-Maintainer: Hsin-ya Lee <hsinyalee@gmail.com>
-Depends: R (>= 2.7.0), stats4, MASS, reshape
+Author: Hsin-ya Lee, Yung-jin Lee <mobilePK@gmail.com>
+Maintainer: Yung-jin Lee <mobilePK@gmail.com>
+Depends: R (>= 2.11.0), stats4, MASS, reshape
 Description: A menu-driven package for data analysis of drug stability
-        based on ICH guideline(such as estimation of shelf-life from a
-        3-batch profile.)
+        based on ICH Q1E guideline.
 License: GPL (>= 2)
 URL: http://pkpd.kmu.edu.tw/stability
-Packaged: 2010-02-22 16:39:45 UTC; Administrator
+Packaged: 2010-04-29 07:04:23 UTC; datawalker
 Repository: CRAN
-Date/Publication: 2010-02-23 07:33:50
+Date/Publication: 2010-04-29 09:21:12

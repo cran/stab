@@ -4,7 +4,7 @@ cat("\n")
   file.menu <- c("Back to stability menu",
                  "Quit")
   cat("\n")
-  pick <- menu(file.menu, title = " << Try again or bye~ >> ")
+  pick <- menu(file.menu, title = " << Try again or quit now. >> ")
     if (pick == 1){
      cat("\n")
      go()}

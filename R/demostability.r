@@ -38,14 +38,14 @@ cat("Intercept:  P<0.25\n")
 cat("Slope:  P<0.25\n")
 cat("\n")
 cat("--------------------------------------------------------------------------\n")
-cat("          << ANCOVA Output: Testing for poolability of batches >>         \n")
+cat("        << ANCOVA output: Testing for poolability of batches >>           \n")
 cat("--------------------------------------------------------------------------\n")
 cat("                                                                          \n")
-cat(" The test rejects the hypothesis of equality of slopes (there is a significant\n")
-cat(" difference in slopes among batches).                                     \n")
+cat(" The test rejects the hypothesis of equality of slopes (there is a        \n")
+cat(" significant difference in slopes among batches).                         \n")
 cat("                                                                          \n")
 cat("                            <<Suggestion>>                                \n")
-cat("  It is not considered appropriate to combine the data from all batches.  \n")
+cat("     It is not appropriate to combine the data from all batches.          \n")
 cat("--------------------------------------------------------------------------\n")     
 cat("<<Output: linear regression model: time vs. assay (%)>>\n")
 cat("\n")
@@ -316,7 +316,7 @@ windows(record = TRUE )
 
      i<-formatC(PPX,format="f",digits=2) 
       #i<-round(PX,3) 與上述效果一樣... 
-     main<-paste(c("Shelf Life=",i, "months"),collapse=" ")    
+     main<-paste(c("Shelf Life=",i, "months (PgDn to switch plots)"),collapse=" ")    
      plot(time~assay,data=ANCOVAdata,xlim=c(0,(PPX+10)),ylim=c((Lper-10),(Uper+10)), main=main,
      xlab = "Time (months)" , ylab = "Assay (%)", pch = 16, cex.lab = 1.5, 
      lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
@@ -352,7 +352,7 @@ windows(record = TRUE )
      cat("**************************************************************************\n")
      cat("\n")
           
-        qqnorm(QQ$value, las=1, main = "Normal Q-Q Plot of Residuals", col=c(QQ$L1))  
+        qqnorm(QQ$value, las=1, main = "Normal QQ Plot of Residuals (PgUp to switch plots)", col=c(QQ$L1))  
       
          temp <- legend("topleft", legend = c(Intable$batch),
                text.width = strwidth("1000"),

@@ -36,8 +36,8 @@ cat("--------------------------------------------------------------------------\
 cat("          << ANCOVA Output: Testing for poolability of batches >>         \n")
 cat("--------------------------------------------------------------------------\n")
 cat("                                                                          \n")
-cat(" The tests for equality of slopes and equality of intercepts do not result\n")
-cat(" at a level of significance of 0.25 (there is no significant difference   \n")
+cat(" The tests for equality of slopes and equality of intercepts are not      \n")
+cat(" significant at a level of 0.25 (there is no significant difference       \n")
 cat(" in slope and intercepts among the batches).                              \n")
 cat("                                                                          \n")
 cat("                            <<Suggestion>>                                \n")
@@ -298,7 +298,7 @@ else {
 else{
   if ((PX=1000000000000) && (PY=1000000000000)){
    cat("--------------------------------------------------------------------------\n")
-   cat("                    no solution                                           \n")
+   cat("                    no solution at all!                                   \n")
    cat("**************************************************************************\n")
    cat("\n")
       }     
@@ -713,7 +713,7 @@ else {
 else{
   if ((PX=1000000000000) && (PY=1000000000000)){
    cat("--------------------------------------------------------------------------\n")
-   cat("                    no solution                                           \n")
+   cat("                    no solution at all                                    \n")
    cat("**************************************************************************\n")
    cat("\n")
     
@@ -735,11 +735,11 @@ cat("--------------------------------------------------------------------------\
 cat("          << ANCOVA Output: Testing for poolability of batches >>         \n")
 cat("--------------------------------------------------------------------------\n")
 cat("                                                                          \n")
-cat(" The test rejects the hypothesis of equality of slopes (there is a significant\n")
-cat(" difference in slopes among batches).                                     \n")
+cat(" The test rejects the hypothesis of equality of slopes (there is a        \n")
+cat(" significant difference in slopes among batches).                         \n")
 cat("                                                                          \n")
 cat("                            <<Suggestion>>                                \n")
-cat("  It is not considered appropriate to combine the data from all batches.  \n")
+cat("     It is not appropriate to combine the data from all batches.          \n")
 cat("--------------------------------------------------------------------------\n")     
 cat("<<Output: linear regression model: time vs. assay (%)>>\n")
 cat("\n")
@@ -1010,7 +1010,7 @@ PPY<-min(DM$Lower)
 windows(record = TRUE )
 #step6: summary and plot
 cat("**************************************************************************\n")
-cat("                               << Output >>                               \n")
+cat("                       << Summary and plots >>                            \n")
 cat("--------------------------------------------------------------------------\n")
 cat("\n")
 if  (PPX>=PPY)  {
@@ -1018,7 +1018,7 @@ if  (PPX>=PPY)  {
      i<-formatC(PPY,format="f",digits=2) 
      #i<-round(PPY,3)
      #°µ¥Xplotªº®Ø¬[ 
-     main<-paste(c("Shelf Life=",i, "months"),collapse=" ")    
+     main<-paste(c("Shelf Life=",i, "months (PgDn to switch plots)"),collapse=" ")    
      plot(time~assay,data=ANCOVAdata, xlim=c(0,(PPY+10)),ylim=c((Lper-10),(Uper+10)), main=main,
      xlab = "Time (months)" , ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
@@ -1090,7 +1090,7 @@ else {
      
      cat("--------------------------------------------------------------------------\n")
      cat("                                                                          \n")
-     cat(" Drug product with Upper acceptance criteria of ",Uper,"% of label claim  \n")
+     cat(" Drug product with upper acceptance criteria of ",Uper,"% of label claim  \n")
      cat(" Shelf life =",PPX,"months                                                 \n\n")
      cat("**************************************************************************\n")
      cat("\n")
@@ -1098,14 +1098,14 @@ else {
 else{
   if ((PX=1000000000000) && (PY=1000000000000)){
    cat("--------------------------------------------------------------------------\n")
-   cat("                    no solution                                           \n")
+   cat("                    no solution at all                                    \n")
    cat("**************************************************************************\n")
    cat("\n")
    
       }     
      }
     }    
-        qqnorm(QQ$value, las=1, main = "Normal Q-Q Plot of Residuals", col=c(QQ$L1))  
+        qqnorm(QQ$value, las=1, main = "Normal QQ Plot of Residuals (PgUp to switch plots", col=c(QQ$L1))  
       
          temp <- legend("topleft", legend = c(Intable$batch),
                text.width = strwidth("1000"),
