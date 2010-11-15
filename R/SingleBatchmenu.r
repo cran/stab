@@ -124,7 +124,7 @@ cat("***************************************************************************
                 }
   else {
   if (pick == 5){
-      cat("\nBye~~ \n\n")
+      cat("\nThanks for using stab for R. Bye now.\n\n")
                 }  
      } 
     }

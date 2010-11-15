@@ -51,7 +51,7 @@ if (pick == 1){
                 cat("\n")
                 }
                 else{
-                cat("\nEnter name you want to call this data\n")
+                cat("\nEnter file name for your data: \n")
                 Multiplename <-readline()
                 Multiplename<-paste(Multiplename,".RData",sep="")
                 repeat{
@@ -101,7 +101,7 @@ else {
     cat("",filepath,"\n")
     cat("\n")     
      
-     cat("\nEnter data file name\n")
+     cat("\nEnter data file name (no extension): \n")
      Multiplename <-readline()
      Multiplename<-paste(Multiplename,".RData",sep="")
      load(Multiplename)

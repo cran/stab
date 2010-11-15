@@ -9,7 +9,7 @@ if (noquote(unlist(format(.Platform)))[1] == "unix") {
 
 cat("\n")
   file.menu <- c("Start a new project",
-                 "Demo",
+                 "Run demo",
                  "Quit")
    cat("\n")
   pick <- menu(file.menu, title = " << Go menu >> ")
@@ -25,7 +25,7 @@ cat("\n")
 
     else {
     if (pick == 3){
-        cat("\nBye~~ \n\n")}
+        cat("\nThanks for using stab for R. Bye now.\n\n")}
          }
    }
 }
