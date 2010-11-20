@@ -13,6 +13,8 @@ twosided   = FALSE
 noPX = FALSE
 noPY = FALSE
 noSolution = FALSE
+PPX<-0
+PPY<-0
 
 filepath<-getwd()
 cat("\n")
@@ -73,7 +75,7 @@ if(onesidedlo){
 zz <- file(outputfile, open="wt")
 sink(zz)
 cat("\n")
-cat("------------------ stab for R v0.1.2 -------------------\n")
+cat("------------------ stab for R v0.1.3 -------------------\n")
 cat("\n developed by Hsin-ya Lee and Yung-jin Lee, 2007-2010.\n")
 cat("\n generated on",date(),"\n")
 cat("\n\n")
@@ -1413,9 +1415,7 @@ cat("\n")
      Y1<-0
      Y2<-0
      PX<-0
-     PY<-0 
-     PPY<-0
-     PPX<-0
+     PY<-0
      for (j in 1:length(W.split)){
           Intercept<-0
           Slope<-0
@@ -1566,7 +1566,7 @@ else {
 if(twosided){
 if ((((b1[j])^2-(4*a1[j]*c1[j]))>=0) && (((b2[j])^2-(4*a2[j]*c2[j]))>=0)){
   if ((a1[j]>0 && b1[j]>0 && c1[j]>0) || (a1[j]<0 && b1[j]<0 && c1[j]<0)){
-      PX<-c(1000000000000)
+      PX[j]<-c(1000000000000)
 
       }
   else{

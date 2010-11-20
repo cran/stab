@@ -29,6 +29,9 @@ twosided   = FALSE
 noPX = FALSE
 noPY = FALSE
 noSolution = FALSE
+PPY<-0
+PPX<-0
+
 
 file.menu <- c("the one-sided lower LC analysis",
                "the one-sided upper LC analysis",
@@ -79,7 +82,7 @@ if(onesidedlo){
        }
 
 cat("\n")
-cat("------------------ stab for R v0.1.2 -------------------\n")
+cat("------------------ stab for R v0.1.3 -------------------\n")
 cat("\n developed by Hsin-ya Lee and Yung-jin Lee, 2007-2010.\n")
 cat("\n generated on",date(),"\n")
 cat("\n\n")
@@ -1414,8 +1417,6 @@ cat("\n")
      Y2<-0
      PX<-0
      PY<-0 
-     PPY<-0
-     PPX<-0
      for (j in 1:length(W.split)){
           Intercept<-0
           Slope<-0
