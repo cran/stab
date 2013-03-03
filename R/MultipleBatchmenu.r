@@ -76,9 +76,6 @@ if (pick == 1){
            save(Multipledata,file=Multiplename)
           }
 cat("\n\n")
-cat("****************************************************************************\n")
-cat("*                         Now, Go to analyze the data                      *\n")
-cat("****************************************************************************\n\n")
         return(MultipleAnalyze(Multipledata))
       }
     }
@@ -112,9 +109,6 @@ else {
      show(Multipledata)
      save(Multipledata,file=Multiplename)
 cat("\n\n")
-cat("****************************************************************************\n")
-cat("*                         Now, Go to analyze the data                      *\n")
-cat("****************************************************************************\n\n")
         return(MultipleAnalyze(Multipledata))
       }
 

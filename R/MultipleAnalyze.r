@@ -16,20 +16,11 @@ noSolution = FALSE
 PPX<-0
 PPY<-0
 
-filepath<-getwd()
+file.menu <- c(" the one-sided lower LC analysis  ",
+               " the one-sided upper LC analysis  ",
+               " the two-sided LC analysis        ")
 cat("\n")
-outputfile <- readline("Enter the output filename with no extension: ")
-outputfile <- paste(outputfile,".txt",sep="")
-cat("*******************************************************************\n\n")
-cat(" Note: The output file (",outputfile,") will be created \n")
-cat(" and placed at",filepath,"\n")
-cat("*******************************************************************\n\n")
-
-file.menu <- c("the one-sided lower LC analysis",
-               "the one-sided upper LC analysis",
-               "the two-sided analysis")
-cat("\n")
-pick <- menu(file.menu, title = "<< Stability analysis for Multiple batches >> ", graphics=TRUE)
+pick <- menu(file.menu, title = "<< Types of Analysis:- Multiple batches >>", graphics=TRUE)
 if (pick == 1){
     cat("\n")
     onesidedlo = TRUE
@@ -49,7 +40,7 @@ else {
               }
             }
       }
-         
+
 cat("\n")
 if(onesidedlo){
    cat("\n")
@@ -64,19 +55,27 @@ if(onesidedlo){
       cat("\n")
                  }
      else{
-      upperstr<- readline("Enter the upper limit = ____ % of label claim: ")
-      Uper <- as.numeric(upperstr)
-      cat("\n")
       lowerstr<- readline("Enter the lower limit = ____ % of label claim: ")
       Lper<-as.numeric(lowerstr)
       cat("\n")
+      upperstr<- readline("Enter the upper limit = ____ % of label claim: ")
+      Uper <- as.numeric(upperstr)
+      cat("\n")
            }
        }
+
+filepath<-getwd()
+cat("\n")
+outputfile <- readline("Enter the output filename with no extension: ")
+outputfile <- paste(outputfile,".txt",sep="")
+cat("*****************************************************************\n")
+cat("*                 Analyzing the data now...                     *\n")
+cat("*****************************************************************\n\n")
 zz <- file(outputfile, open="wt")
 sink(zz)
 cat("\n")
-cat("------------------ stab for R v0.1.3 -------------------\n")
-cat("\n developed by Hsin-ya Lee and Yung-jin Lee, 2007-2010.\n")
+cat("------------------ stab for R v0.1.4 -------------------\n")
+cat("\n developed by Hsin-ya Lee and Yung-jin Lee, 2007-2012.\n")
 cat("\n generated on",date(),"\n")
 cat("\n\n")
 cat("<< --- List of input data --- >>\n\n")
@@ -255,12 +254,18 @@ if ((b2)^2-(4*a2*c2)>=0){
   else {
    if((a2>0 && b2>0 && c2<0) || (a2<0 && b2>0 && c2>0) || (a2>0 && b2<0 && c2<0)||
       (a2<0 && b2<0 && c2>0)){
-       if ((Y1<= 0)) Y1<-c(1000000000000)
-       if ((Y2<= 0)) Y2<-c(1000000000000)
+       if ((Y1> 84)) Y1<-c(84)
+       if ((Y2> 84)) Y2<-c(84)
+       if ((Y1<= 6)) Y1<-c(1000000000000)
+       if ((Y2<= 6)) Y2<-c(1000000000000)
        DF<-data.frame(Y=c(Y1,Y2))
        PY<-min(DF)
         }
    else {
+       if ((Y1> 84)) Y1<-c(84)
+       if ((Y2> 84)) Y2<-c(84)
+       if ((Y1<= 6)) Y1<-c(1000000000000)
+       if ((Y2<= 6)) Y2<-c(1000000000000)
        DF<-data.frame(Y=c(Y1,Y2))
        PY<-min(DF)
         }
@@ -280,12 +285,18 @@ if ((b1)^2-(4*a1*c1)>=0){
   else {
    if((a1>0 && b1>0 && c1<0) || (a1<0 && b1>0 && c1>0) || (a1>0 && b1<0 && c1<0)||
       (a1<0 && b1<0 && c1>0)){
-       if ((X1<= 0)) X1<-c(1000000000000)
-       if ((X2<= 0)) X2<-c(1000000000000)
+       if ((X1> 84)) X1<-c(84)
+       if ((X2> 84)) X2<-c(84)
+       if ((X1<= 6)) X1<-c(1000000000000)
+       if ((X2<= 6)) X2<-c(1000000000000)
        DF<-data.frame(X=c(X1,X2))
        PX<-min(DF)
         }
    else {
+      if ((X1> 84)) X1<-c(84)
+      if ((X2> 84)) X2<-c(84)
+      if ((X1<= 6)) X1<-c(1000000000000)
+      if ((X2<= 6)) X2<-c(1000000000000)
       DF<-data.frame(X=c(X1,X2))
       PX<-min(DF)
         }
@@ -306,14 +317,20 @@ if ((((b1)^2-(4*a1*c1))>=0) && (((b2)^2-(4*a2*c2))>=0)){
   else{
   if ((a1>0 && b1>0 && c1<0) || (a1<0 && b1>0 && c1>0) || (a1>0 && b1<0 && c1<0)||
       (a1<0 && b1<0 && c1>0)){
-      if ((X1<= 0)) X1<-c(1000000000000)
-      if ((X2<= 0)) X2<-c(1000000000000)
+      if ((X1> 84)) X1<-c(84)
+      if ((X2> 84)) X2<-c(84)
+      if ((X1<= 6)) X1<-c(1000000000000)
+      if ((X2<= 6)) X2<-c(1000000000000)
       DF<-data.frame(X=c(X1,X2))
       PX<-min(DF)
 
       }
   else{
     if ((a1>0 && b1<0 && c1>0) ||(a1<0 && b1>0 && c1<0)){
+      if ((X1> 84)) X1<-c(84)
+      if ((X2> 84)) X2<-c(84)
+      if ((X1<= 6)) X1<-c(1000000000000)
+      if ((X2<= 6)) X2<-c(1000000000000)
       DF<-data.frame(X=c(X1,X2))
       PX<-min(DF)
       
@@ -327,14 +344,20 @@ if ((((b1)^2-(4*a1*c1))>=0) && (((b2)^2-(4*a2*c2))>=0)){
   else{
    if((a2>0 && b2>0 && c2<0) || (a2<0 && b2>0 && c2>0) || (a2>0 && b2<0 && c2<0)||
       (a2<0 && b2<0 && c2>0)){
-       if ((Y1<= 0)) Y1<-c(1000000000000)
-       if ((Y2<= 0)) Y2<-c(1000000000000)
+       if ((Y1> 84)) Y1<-c(84)
+       if ((Y2> 84)) Y2<-c(84)
+       if ((Y1<= 6)) Y1<-c(1000000000000)
+       if ((Y2<= 6)) Y2<-c(1000000000000)
        DF<-data.frame(Y=c(Y1,Y2))
        PY<-min(DF)
         
         }
    else {
       if ((a2>0 && b2<0 && c2>0) ||(a2<0 && b2>0 && c2<0)){
+      if ((Y1> 84)) Y1<-c(84)
+      if ((Y2> 84)) Y2<-c(84)
+      if ((Y1<= 6)) Y1<-c(1000000000000)
+      if ((Y2<= 6)) Y2<-c(1000000000000)
       DF<-data.frame(Y=c(Y1,Y2))
       PY<-min(DF)
        
@@ -353,8 +376,10 @@ if ((((b1)^2-(4*a1*c1))>=0) && (((b2)^2-(4*a2*c2))<0)){
   else{
   if ((a1>0 && b1>0 && c1<0) || (a1<0 && b1>0 && c1>0) || (a1>0 && b1<0 && c1<0)||
       (a1<0 && b1<0 && c1>0)){
-      if ((X1<= 0)) X1<-c(1000000000000)
-      if ((X2<= 0)) X2<-c(1000000000000)
+      if ((X1> 84)) X1<-c(84)
+      if ((X2> 84)) X2<-c(84)
+      if ((X1<= 6)) X1<-c(1000000000000)
+      if ((X2<= 6)) X2<-c(1000000000000)
       DF<-data.frame(X=c(X1,X2))
       PX<-min(DF)
       PY<-c(1000000000000)
@@ -362,6 +387,10 @@ if ((((b1)^2-(4*a1*c1))>=0) && (((b2)^2-(4*a2*c2))<0)){
       }
   else{
     if ((a1>0 && b1<0 && c1>0) ||(a1<0 && b1>0 && c1<0)){
+      if ((X1> 84)) X1<-c(84)
+      if ((X2> 84)) X2<-c(84)
+      if ((X1<= 6)) X1<-c(1000000000000)
+      if ((X2<= 6)) X2<-c(1000000000000)
       DF<-data.frame(X=c(X1,X2))
       PX<-min(DF)
       PY<-c(1000000000000)
@@ -381,8 +410,10 @@ if ((((b1)^2-(4*a1*c1))< 0) && (((b2)^2-(4*a2*c2))>=0)){
    else{
    if((a2>0 && b2>0 && c2<0) || (a2<0 && b2>0 && c2>0) || (a2>0 && b2<0 && c2<0)||
       (a2<0 && b2<0 && c2>0)){
-       if ((Y1<= 0)) Y1<-c(1000000000000)
-       if ((Y2<= 0)) Y2<-c(1000000000000)
+       if ((Y1> 84)) Y1<-c(84)
+       if ((Y2> 84)) Y2<-c(84)
+       if ((Y1<= 6)) Y1<-c(1000000000000)
+       if ((Y2<= 6)) Y2<-c(1000000000000)
        DF<-data.frame(Y=c(Y1,Y2))
        PY<-min(DF)
        PX<-c(1000000000000)
@@ -390,6 +421,10 @@ if ((((b1)^2-(4*a1*c1))< 0) && (((b2)^2-(4*a2*c2))>=0)){
         }
    else {
       if ((a2>0 && b2<0 && c2>0) ||(a2<0 && b2>0 && c2<0)){
+      if ((Y1> 84)) Y1<-c(84)
+      if ((Y2> 84)) Y2<-c(84)
+      if ((Y1<= 6)) Y1<-c(1000000000000)
+      if ((Y2<= 6)) Y2<-c(1000000000000)
       DF<-data.frame(Y=c(Y1,Y2))
       PY<-min(DF)
       PX<-c(1000000000000)
@@ -441,7 +476,7 @@ else {
      main<-paste(c("Shelf life =",shelflife, "months/weeks (PgDn to switch plots)"),collapse=" ")
      x<-ANCOVAdata$time
      y<-ANCOVAdata$assay
-     plot(x,y,xlim=c(0,2.0*max(ANCOVAdata$time)),ylim=c((Lper-10),(Lper+30)),main=main,
+     plot(x,y,xlim=c(0,84),ylim=c((Lper-10),(Lper+30)),main=main,
      xlab = "Time (months/weeks)" , ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2,col="black", xaxt="n")   
        axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
@@ -450,20 +485,19 @@ else {
      abline(mylm,lwd=2, col="blue")
      axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
      #plot CI
-     newx<-seq(0,(2.0*max(ANCOVAdata$time)))
-     prd<-predict(mylm,newdata=data.frame(x=newx),interval = c("confidence"),
-     level = 0.90,type="response")
+     newx<-seq(0,84)
+     prd<-predict(mylm,newdata=data.frame(x=newx),interval = c("confidence"),level = 0.90,type="response")
      lines(newx,prd[,2],col="red",lty=2)
 ###
 ### no legend here; data have been combined all together.
 #show 95 %CI
-     total<-data.frame(time=newx, fit=prd[,1], Lower=prd[,2])
+     total<-data.frame(time=newx, Lower=prd[,2], fit=prd[,1])
      cat("\n")
      show(total)
      cat("\n")
      #add criteria limit
      abline(h=Lper, col = "gray60")
-     abline(v=PY, col = "gray60")
+     abline(v=shelflife, col = "gray60")
      cat("------------------------------------------------------------------\n\n")
      cat(" Drug product with lower acceptance limit of",Lper,"% of label claim\n")
      cat(" Shelf life =",shelflife,"(months/weeks)                          \n\n")
@@ -495,7 +529,7 @@ else {
      main<-paste(c("Shelf life =",shelflife, "months/weeks (PgDn to switch plots)"),collapse=" ")
      x<-ANCOVAdata$time
      y<-ANCOVAdata$assay
-     plot(x,y,xlim=c(0,2.0*max(ANCOVAdata$time)),ylim=c((Uper-30),(Uper+10)),main=main,
+     plot(x,y,xlim=c(0,84),ylim=c((Uper-30),(Uper+10)),main=main,
      xlab = "Time (months/weeks)" , ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2,col="black", xaxt="n")   
        axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
@@ -504,9 +538,8 @@ else {
      abline(mylm,lwd=2, col="blue")
      axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
      #plot CI
-     newx<-seq(0,(2.0*max(ANCOVAdata$time)))
-     prd<-predict(mylm,newdata=data.frame(x=newx),interval = c("confidence"),
-     level = 0.90,type="response")
+     newx<-seq(0,84)
+     prd<-predict(mylm,newdata=data.frame(x=newx),interval = c("confidence"),level = 0.90,type="response")
      lines(newx,prd[,3],col="red",lty=2)
      
 #show 95 %CI
@@ -516,7 +549,7 @@ else {
      cat("\n")
      #add criteria limit
      abline(h=Uper, col = "gray60")
-     abline(v=PX, col = "gray60")
+     abline(v=shelflife, col = "gray60")
      cat("------------------------------------------------------------------\n\n")
      cat(" Drug product with upper acceptance limiy of",Uper,"% of label claim\n")
      cat(" Shelf life =",shelflife,"(months/weeks)                           \n\n")
@@ -549,7 +582,7 @@ if  (PX>=PY)  {
      main<-paste(c("Shelf life =",shelflife, "months/weeks (PgDn to switch plots)"),collapse=" ")
      x<-ANCOVAdata$time
      y<-ANCOVAdata$assay
-     plot(x,y,xlim=c(0,2.0*max(ANCOVAdata$time)),ylim=c((Lper-10),(Uper+10)), main=main,
+     plot(x,y,xlim=c(0,84),ylim=c((Lper-10),(Uper+10)), main=main,
      xlab = "Time (months/weeks)" , ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2,col="black", xaxt="n")   
        axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
@@ -558,21 +591,21 @@ if  (PX>=PY)  {
      abline(mylm,lwd=2, col="blue")
      axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
      #plot CI
-     newx<-seq(0,(2.0*max(ANCOVAdata$time)))
+     newx<-seq(0,84)
      prd<-predict(mylm,newdata=data.frame(x=newx),interval = c("confidence"),
      level = 0.95,type="response")
      lines(newx,prd[,2],col="red",lty=2)
      lines(newx,prd[,3],col="red",lty=2)
      
      #show 95 %CI
-     total<-data.frame(time=newx, fit=prd[,1], Lower=prd[,2], Upper=prd[,3])
+     total<-data.frame(time=newx, Lower=prd[,2], fit=prd[,1], Upper=prd[,3])
      cat("\n")
      show(total)
      cat("\n")
      #add criteria limit
      abline(h=Uper, col = "gray60")
      abline(h=Lper, col = "gray60")
-     abline(v=PY, col = "gray60")
+     abline(v=shelflife, col = "gray60")
      cat("------------------------------------------------------------------\n\n")
      cat(" Drug product with lower acceptance limit of",Lper,"% of label claim\n")
      cat(" Shelf life =",shelflife,"(months/weeks)                          \n\n")
@@ -594,7 +627,7 @@ else {
      main<-paste(c("Shelf life =",shelflife, "months/weeks (PgDn to switch plots)"),collapse=" ")
      x<-ANCOVAdata$time
      y<-ANCOVAdata$assay
-     plot(x,y,xlim=c(0,2.0*max(ANCOVAdata$time)),ylim=c((Lper-10),(Uper+10)),main=main,
+     plot(x,y,xlim=c(0,84),ylim=c((Lper-10),(Uper+10)),main=main,
      xlab = "Time (months/weeks)" , ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2,col="black", xaxt="n")   
        axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
@@ -603,21 +636,20 @@ else {
      abline(mylm,lwd=2, col="blue")
      axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
      #plot CI
-     newx<-seq(0,(2.0*max(ANCOVAdata$time)))
-     prd<-predict(mylm,newdata=data.frame(x=newx),interval = c("confidence"),
-     level = 0.95,type="response")
+     newx<-seq(0,84)
+     prd<-predict(mylm,newdata=data.frame(x=newx),interval = c("confidence"),level = 0.95,type="response")
      lines(newx,prd[,2],col="red",lty=2)
      lines(newx,prd[,3],col="red",lty=2)
      
 #show 95 %CI
-     total<-data.frame(time=newx, fit=prd[,1], Lower=prd[,2], Upper=prd[,3])
+     total<-data.frame(time=newx, Lower=prd[,2], fit=prd[,1], Upper=prd[,3])
      cat("\n")
      show(total)
      cat("\n")
      #add criteria limit
      abline(h=Uper, col = "gray60")
      abline(h=Lper, col = "gray60")
-     abline(v=PX, col = "gray60")
+     abline(v=shelflife, col = "gray60")
      cat("----------------------------------------------------------------\n\n")
      cat(" Drug product with upper acceptance limit of",Uper,"% of label claim\n")
      cat(" Shelf life =",shelflife,"(months/weeks)                        \n\n")
@@ -646,7 +678,9 @@ if (!noSolution) {
     bye()
 }
 
-###########################################################################################
+##################################  END OF MODEL #1 #############################
+#
+################################## BEGIN OF MODEL #2 ############################
 
 else {
   if ((Pslope >=0.25) && (Pintercept < 0.25)){
@@ -710,7 +744,7 @@ K.split<-split(Multipledata, list(Multipledata$batch))
    Intable<-data.frame(batch=ba, Intercept=c(prepreIntercept[1],preIntercept))  
 
 #step2: calculate description statistics
-     #divide data in to different group based on batches
+   #divide data in to different group based on batches
 		     CAL<-NULL 
 		     TIME<-NULL
 		     RRES<-NULL 
@@ -801,8 +835,8 @@ K.split<-split(Multipledata, list(Multipledata$batch))
         if(onesidedlo || onesidedup){
            T[j]<-qt(0.95,L[j]-2)}
         else {
-           T[j]<-qt(0.975,L[j]-2)}
-        
+           T[j]<-qt(0.975,L[j]-2)
+        }
         LL[j]<-length(W.split[[j]][["time"]])   
         TT[j]<-mean(W.split[[j]][["time"]])
        
@@ -859,13 +893,18 @@ if ((b2[j])^2-(4*a2[j]*c2[j])>=0){
   else {
    if((a2[j]>0 && b2[j]>0 && c2[j]<0) || (a2[j]<0 && b2[j]>0 && c2[j]>0) || 
       (a2[j]>0 && b2[j]<0 && c2[j]<0)|| (a2[j]<0 && b2[j]<0 && c2[j]>0)){
-       if ((Y1[j]<= 0)) Y1[j]<-c(1000000000000)
-       if ((Y2[j]<= 0)) Y2[j]<-c(1000000000000)
+       if ((Y1[j]> 84)) Y1[j]<-c(84)
+       if ((Y2[j]> 84)) Y2[j]<-c(84)
+       if ((Y1[j]<= 6)) Y1[j]<-c(1000000000000)
+       if ((Y2[j]<= 6)) Y2[j]<-c(1000000000000)
        DF<-data.frame(Y=c(Y1[j],Y2[j]))
        PY[j]<-min(DF)
-
         }
    else {
+      if ((Y1[j]> 84)) Y1[j]<-c(84)
+      if ((Y2[j]> 84)) Y2[j]<-c(84)
+      if ((Y1[j]<= 6)) Y1[j]<-c(1000000000000)
+      if ((Y2[j]<= 6)) Y2[j]<-c(1000000000000)
       DF<-data.frame(Y=c(Y1[j],Y2[j]))
       PY[j]<-min(DF)
         }
@@ -879,44 +918,55 @@ else {
 if(onesidedup){
 if ((b1[j])^2-(4*a1[j]*c1[j])>=0){
   if ((a1[j]>0 && b1[j]>0 && c1[j]>0) || (a1[j]<0 && b1[j]<0 && c1[j]<0)){
-       PX<-c(1000000000000)
+       PX[j]<-c(1000000000000)
         }
   else {
    if((a1[j]>0 && b1[j]>0 && c1[j]<0) || (a1[j]<0 && b1[j]>0 && c1[j]>0) || 
       (a1[j]>0 && b1[j]<0 && c1[j]<0)|| (a1[j]<0 && b1[j]<0 && c1[j]>0)){
-       if ((X1[j]<= 0)) X1[j]<-c(1000000000000)
-       if ((X2[j]<= 0)) X2[j]<-c(1000000000000)
+       if ((X1[j]> 84)) X1[j]<-c(84)
+       if ((X2[j]> 84)) X2[j]<-c(84)
+       if ((X1[j]<= 6)) X1[j]<-c(1000000000000)
+       if ((X2[j]<= 6)) X2[j]<-c(1000000000000)
        DF<-data.frame(X=c(X1[j],X2[j]))
        PX[j]<-min(DF)
         }
    else {
+      if ((X1[j]> 84)) X1[j]<-c(84)
+      if ((X2[j]> 84)) X2[j]<-c(84)
+      if ((X1[j]<= 6)) X1[j]<-c(1000000000000)
+      if ((X2[j]<= 6)) X2[j]<-c(1000000000000)
       DF<-data.frame(X=c(X1[j],X2[j]))
       PX[j]<-min(DF)
         }
      }
    }
 else {
-      PX<-c(1000000000000)
+      PX[j]<-c(1000000000000)
      }
 }
 #######
 if(twosided){
 if ((((b1[j])^2-(4*a1[j]*c1[j]))>=0) && (((b2[j])^2-(4*a2[j]*c2[j]))>=0)){
   if ((a1[j]>0 && b1[j]>0 && c1[j]>0) || (a1[j]<0 && b1[j]<0 && c1[j]<0)){
-      PX<-c(1000000000000)
-
+      PX[j]<-c(1000000000000)
       }
   else{
   if ((a1[j]>0 && b1[j]>0 && c1[j]<0) || (a1[j]<0 && b1[j]>0 && c1[j]>0) || 
       (a1[j]>0 && b1[j]<0 && c1[j]<0)|| (a1[j]<0 && b1[j]<0 && c1[j]>0)){
-      if ((X1[j]<= 0)) X1[j]<-c(1000000000000)
-      if ((X2[j]<= 0)) X2[j]<-c(1000000000000)
+      if ((X1[j]> 84)) X1[j]<-c(84)
+      if ((X2[j]> 84)) X2[j]<-c(84)
+      if ((X1[j]<= 6)) X1[j]<-c(1000000000000)
+      if ((X2[j]<= 6)) X2[j]<-c(1000000000000)
       DF<-data.frame(X=c(X1[j],X2[j]))
       PX[j]<-min(DF)
 
       }
   else{
     if ((a1[j]>0 && b1[j]<0 && c1[j]>0) ||(a1[j]<0 && b1[j]>0 && c1[j]<0)){
+      if ((X1[j]> 84)) X1[j]<-c(84)
+      if ((X2[j]> 84)) X2[j]<-c(84)
+      if ((X1[j]<= 6)) X1[j]<-c(1000000000000)
+      if ((X2[j]<= 6)) X2[j]<-c(1000000000000)
       DF<-data.frame(X=c(X1[j],X2[j]))
       PX[j]<-min(DF)
       
@@ -930,17 +980,21 @@ if ((((b1[j])^2-(4*a1[j]*c1[j]))>=0) && (((b2[j])^2-(4*a2[j]*c2[j]))>=0)){
   else{
    if((a2[j]>0 && b2[j]>0 && c2[j]<0) || (a2[j]<0 && b2[j]>0 && c2[j]>0) || 
       (a2[j]>0 && b2[j]<0 && c2[j]<0)|| (a2[j]<0 && b2[j]<0 && c2[j]>0)){
-       if ((Y1[j]<= 0)) Y1[j]<-c(1000000000000)
-       if ((Y2[j]<= 0)) Y2[j]<-c(1000000000000)
+       if ((Y1[j]> 84)) Y1[j]<-c(84)
+       if ((Y2[j]> 84)) Y2[j]<-c(84)
+       if ((Y1[j]<= 6)) Y1[j]<-c(1000000000000)
+       if ((Y2[j]<= 6)) Y2[j]<-c(1000000000000)
        DF<-data.frame(Y=c(Y1[j],Y2[j]))
        PY[j]<-min(DF)
-        
         }
    else {
       if ((a2[j]>0 && b2[j]<0 && c2[j]>0) ||(a2[j]<0 && b2[j]>0 && c2[j]<0)){
+      if ((Y1[j]> 84)) Y1[j]<-c(84)
+      if ((Y2[j]> 84)) Y2[j]<-c(84)
+      if ((Y1[j]<= 6)) Y1[j]<-c(1000000000000)
+      if ((Y2[j]<= 6)) Y2[j]<-c(1000000000000)
       DF<-data.frame(Y=c(Y1[j],Y2[j]))
       PY[j]<-min(DF)
-       
        }
       }
     }
@@ -956,8 +1010,10 @@ if ((((b1[j])^2-(4*a1[j]*c1[j]))>=0) && (((b2[j])^2-(4*a2[j]*c2[j]))<0)){
   else{
   if ((a1[j]>0 && b1[j]>0 && c1[j]<0) || (a1[j]<0 && b1[j]>0 && c1[j]>0) || 
       (a1[j]>0 && b1[j]<0 && c1[j]<0)|| (a1[j]<0 && b1[j]<0 && c1[j]>0)){
-      if ((X1[j]<= 0)) X1[j]<-c(1000000000000)
-      if ((X2[j]<= 0)) X2[j]<-c(1000000000000)
+      if ((X1[j]> 84)) X1[j]<-c(84)
+      if ((X2[j]> 84)) X2[j]<-c(84)
+      if ((X1[j]<= 6)) X1[j]<-c(1000000000000)
+      if ((X2[j]<= 6)) X2[j]<-c(1000000000000)
       DF<-data.frame(X=c(X1[j],X2[j]))
       PX[j]<-min(DF)
       PY[j]<-c(1000000000000)
@@ -966,6 +1022,10 @@ if ((((b1[j])^2-(4*a1[j]*c1[j]))>=0) && (((b2[j])^2-(4*a2[j]*c2[j]))<0)){
   else{
     if ((a1[j]>0 && b1[j]<0 && c1[j]>0) ||(a1[j]<0 && b1[j]>0 && c1[j]<0)){
       DF<-data.frame(X=c(X1[j],X2[j]))
+      if ((X1[j]> 84)) X1[j]<-c(84)
+      if ((X2[j]> 84)) X2[j]<-c(84)
+      if ((X1[j]<= 6)) X1[j]<-c(1000000000000)
+      if ((X2[j]<= 6)) X2[j]<-c(1000000000000)
       PX[j]<-min(DF)
       PY[j]<-c(1000000000000)
       
@@ -984,8 +1044,10 @@ if ((((b1[j])^2-(4*a1[j]*c1[j]))< 0) && (((b2[j])^2-(4*a2[j]*c2[j]))>=0)){
    else{
    if((a2[j]>0 && b2[j]>0 && c2[j]<0) || (a2[j]<0 && b2[j]>0 && c2[j]>0) ||
       (a2[j]>0 && b2[j]<0 && c2[j]<0)|| (a2[j]<0 && b2[j]<0 && c2[j]>0)){
-       if ((Y1[j]<= 0)) Y1[j]<-c(1000000000000)
-       if ((Y2[j]<= 0)) Y2[j]<-c(1000000000000)
+       if ((Y1[j]> 84)) Y1[j]<-c(84)
+       if ((Y2[j]> 84)) Y2[j]<-c(84)
+       if ((Y1[j]<= 6)) Y1[j]<-c(1000000000000)
+       if ((Y2[j]<= 6)) Y2[j]<-c(1000000000000)
        DF<-data.frame(Y=c(Y1[j],Y2[j]))
        PY[j]<-min(DF)
        PX[j]<-c(1000000000000)
@@ -993,6 +1055,10 @@ if ((((b1[j])^2-(4*a1[j]*c1[j]))< 0) && (((b2[j])^2-(4*a2[j]*c2[j]))>=0)){
         }
    else {
       if ((a2[j]>0 && b2[j]<0 && c2[j]>0) ||(a2[j]<0 && b2[j]>0 && c2[j]<0)){
+      if ((Y1[j]> 84)) Y1[j]<-c(84)
+      if ((Y2[j]> 84)) Y2[j]<-c(84)
+      if ((Y1[j]<= 6)) Y1[j]<-c(1000000000000)
+      if ((Y2[j]<= 6)) Y2[j]<-c(1000000000000)
       DF<-data.frame(Y=c(Y1[j],Y2[j]))
       PY[j]<-min(DF)
       PX<-c(1000000000000)
@@ -1003,8 +1069,8 @@ if ((((b1[j])^2-(4*a1[j]*c1[j]))< 0) && (((b2[j])^2-(4*a2[j]*c2[j]))>=0)){
     }
 else {
 if ((((b1[j])^2-(4*a1[j]*c1[j]))< 0) && (((b2[j])^2-(4*a2[j]*c2[j]))<0)){
-     PY<-c(1000000000000)
-     PX<-c(1000000000000)
+     PY[j]<-c(1000000000000)
+     PX[j]<-c(1000000000000)
 
     }
    }
@@ -1034,10 +1100,10 @@ AA<-melt(CAL)
 ZZ<-melt(TIME)
 QQ<-melt(RRES)
 OO<-melt(OBS)
-###c(AA$L1)
-####purpose: to plot one slope and three intercepts 
-###NewPred<-data.frame(batch=c(AA$L1),time=ZZ$value, PredCal=AA$value, RES=QQ$value)   
-###M.split<-split(NewPred, list(NewPred$batch) ) 
+c(AA$L1)
+#purpose: to plot one slope and three intercepts 
+NewPred<-data.frame(batch=c(AA$L1),time=ZZ$value, PredCal=AA$value, RES=QQ$value)   
+M.split<-split(NewPred, list(NewPred$batch) ) 
 
 #choose min PX or PY
 if(onesidedlo){
@@ -1089,8 +1155,8 @@ else {
      #### oultine plot box 
      shelflife<-as.integer(PPY)
      
-     main<-paste(c("Shelf life =",shelflife, "months/weeks (PgDn to switch plots)"),collapse=" ")    
-     plot(time~assay,data=ANCOVAdata, xlim=c(0,2.0*max(ANCOVAdata$time)),ylim=c((Lper-10),(Lper+30)), main=main,
+     main<-paste(c("Shelf life =",shelflife, "months/weeks (PgUp/PgDn to switch plots)"),collapse=" ")    
+     plot(time~assay,data=ANCOVAdata, xlim=c(0,84),ylim=c((Lper-10),(Lper+30)), main=main,
      xlab = "Time (months/weeks)", ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
      axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
@@ -1100,27 +1166,56 @@ else {
      temp <- legend("topright", legend = LLegend,
                text.width = strwidth("10000000"),
                lty=1, col=c(Intable$batch), xjust = 1, yjust = 1)
-
+               
+     for(i in seq_along(M.split)){
+     x<-M.split[[i]][["time"]] 
+     y<-M.split[[i]][["PredCal"]]
+     mod<-lm(y~x) 
+     abline(mod,lwd=2, col=i)   
+      }
+      
 #plot CI
-      ## newx<-data.frame(xx=seq(0,(max(ANCOVAdata$time)+10)))
-      newx<-data.frame(xx=seq(0,(2.0*max(ANCOVAdata$time)))) 
-      for(i in seq_along(W.split)){
-      xx<-W.split[[i]][["time"]] 
-      yy<-W.split[[i]][["assay"]]
-      points(xx,yy,pch=16, col=i)
-      mod<-lm(yy~xx) 
-      abline(mod,lwd=2, col=i)
-      pred<-predict(mod, newdata=newx,interval = c("confidence"),level = 0.90,type="response")
-      lines(newx$xx,pred[,2],col=i,lty=2)
+##  ## newx<-data.frame(xx=seq(0,(max(ANCOVAdata$time)+10)))
+##  newx<-data.frame(xx=seq(0,84)) 
+##  for(i in seq_along(W.split)){
+##  xx<-W.split[[i]][["time"]] 
+##  yy<-W.split[[i]][["assay"]]
+##  points(xx,yy,pch=16, col=i)
+##  mod<-lm(yy~xx) 
+##  abline(mod,lwd=2, col=i)         
+   LX<-0
+   LY<-0
+
+   for(i in seq_along(W.split)){
+     LX<-length(W.split[[i]]$time)
+     LY<-mean(ANCOVAdata$time )
+
+     Intercept1<-0
+     for(k in 1: length(unique(Intable$batch))){
+            if (W.split[[i]][["batch"]][1]==Intable$batch[[k]]){
+                  Intercept1<- Intable$Intercept[[k]]
+                 }
+               }
+               
+      newx<-data.frame(xx=seq(0,84))
+      yy<-Intercept1+newx$xx*Slope[d]
+      mod1<-lm(yy~newx$xx)
+      pred<-predict(mod1, newdata=newx,interval = c("confidence"),level = 0.95,type="response")
+      pd<-(sqrt(1/(LX) + (((newx$xx-LY)^2)/Sxx)*SS))*T
+      Lower<-pred[,1]-pd
+#      lines(newx$xx,pred[,2],col=i,lty=2)
+      lines(total$time,total$Lower,col=i,lty=2)
       total<-data.frame(time=newx$xx, fit=pred[,1], Lower=pred[,2])
-      show(total) 
+#      total<-data.frame(time=newx$xx, fit=pred[,1], Lower=Lower)
+      show(total)
+      cat("\n\n")
          }
      axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
      #add criteria limit
      abline(h=Lper, col = "gray60")
-     abline(v=PPY, col = "gray60")
+     abline(v=shelflife, col = "gray60")
      cat(" -----------------------------------------------------------------\n\n")
-     cat(" Drug product with lower acceptance limit of ",Lper,"% of label claim\n")
+     cat(" Drug product with lower acceptance limit of",Lper,"% of label claimed\n")
      cat(" Shelf life =",shelflife,"(months/weeks)                          \n\n")
      cat("******************************************************************\n")
      cat("\n")
@@ -1148,7 +1243,7 @@ else {
      #i<-round(PX,3) same output as the above... 
      shelflife<-as.integer(PPX)
      main<-paste(c("Shelf life =",shelflife, "months/weeks (PgDn to switch plots)"),collapse=" ")    
-     plot(time~assay,data=ANCOVAdata,xlim=c(0,2.0*max(ANCOVAdata$time)),ylim=c((Uper-30),(Uper+10)), main=main,
+     plot(time~assay,data=ANCOVAdata,xlim=c(0,84),ylim=c((Uper-30),(Uper+10)), main=main,
      xlab = "Time (months/weeks)", ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
      axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
@@ -1160,7 +1255,7 @@ else {
                lty=1, col=c(Intable$batch), xjust = 1, yjust = 1)
 #plot CI
       # newx<-data.frame(xx=seq(0,(max(ANCOVAdata$time)+10)))
-      newx<-data.frame(xx=seq(0,(2.0*max(ANCOVAdata$time))))
+      newx<-data.frame(xx=seq(0,84))
       for(i in seq_along(W.split)){
       xx<-W.split[[i]][["time"]] 
       yy<-W.split[[i]][["assay"]]
@@ -1170,15 +1265,16 @@ else {
       pred<-predict(mod,newdata=newx,interval = c("confidence"),level = 0.90,type="response")
       lines(newx$xx,pred[,3],col=i,lty=2) 
       total<-data.frame(time=newx$xx, fit=pred[,1], Upper=pred[,3])
-      show(total) 
+      show(total)
+      cat("\n\n")
       }
      axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
      #add criteria limit
      abline(h=Uper, col = "gray60")
-     abline(v=PPX, col = "gray60")
+     abline(v=shelflife, col = "gray60")
      
      cat(" -----------------------------------------------------------------\n\n")
-     cat(" Drug product with upper acceptance limit of ",Uper,"% of label claim\n")
+     cat(" Drug product with upper acceptance limit of",Uper,"% of label claim\n")
      cat(" Shelf life =",shelflife,"(months/weeks)                        \n\n")
      cat("******************************************************************\n")
      cat("\n")
@@ -1194,56 +1290,129 @@ cat("**************************************************************************\
    noSolution = TRUE
 }
 else {
-if  (PPX>=PPY)  {
+     windows(record = TRUE)
+     if  (PPX>PPY)  {
      allSF<-data.frame(ba,PY)
      colnames(allSF)<-c(" batch#", "  shelf life*")
      show(allSF)
      cat("-------------------------\n")
      cat("*: estimated shelf life\n\n")
      cat("\n\n")
-     windows(record = TRUE )  ### now start preparing to plot...
+#####     windows(record = TRUE )  ### now start preparing to plot...
+#####     #go to plot of single batch
+#####     #i<-formatC(PPY,format="f",digits=2) 
+#####     #i<-round(PPY,3)
+#####     #### oultine plot box 
+#####     shelflife<-as.integer(PPY)
+#####     main<-paste(c("Shelf life =",shelflife, "months/weeks (PgDn to switch plots)"),collapse=" ")    
+#####     plot(time~assay,data=ANCOVAdata, xlim=c(0,84),ylim=c((Lper-10),(Uper+10)), main=main,
+#####     xlab = "Time (months/weeks)", ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
+#####     lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
+#####       axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
+#####       axis(1,at=0:100,tcl=-.2, labels=FALSE)
+#####       
+#####   
+#####     LLegend<-paste("batch#",c(Intable$batch))   
+#####     temp <- legend("topright", legend = LLegend,
+#####               text.width = strwidth("10000000"),
+#####               lty=1, col=c(Intable$batch), xjust = 1, yjust = 1)
+#####
+######plot CI
+#####      ## newx<-data.frame(xx=seq(0,(max(ANCOVAdata$time)+10))) 
+#####      newx<-data.frame(xx=seq(0,84))
+#####      for(i in seq_along(W.split)){
+#####      xx<-W.split[[i]][["time"]] 
+#####      yy<-W.split[[i]][["assay"]]
+#####      points(xx,yy,pch=16, col=i)
+#####      mod<-lm(yy~xx) 
+#####      abline(mod,lwd=2, col=i)
+#####      pred<-predict(mod, newdata=newx,interval = c("confidence"),level = 0.95,type="response")
+#####      lines(newx$xx,pred[,2],col=i,lty=2)
+#####      lines(newx$xx,pred[,3],col=i,lty=2)
+#####      total<-data.frame(time=newx$xx, Lower=pred[,2], fit=pred[,1], Upper=pred[,3])
+#####      show(total)
+#####      cat("\n\n")
+#####         }
+#####     axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
+#####     #add criteria limit
+#####     abline(h=Uper, col = "gray60")
+#####     abline(h=Lper, col = "gray60")
+#####     abline(v=shelflife, col = "gray60")
+#####     cat(" -----------------------------------------------------------------\n\n")
+#####     cat(" Drug product with lower acceptance limit of",Lper,"% of label claim\n")
+#####     cat(" Shelf life =",shelflife,"(months/weeks)                        \n\n")
+#####     cat("******************************************************************\n")
+#####     cat("\n")            
      #go to plot of single batch
-     #i<-formatC(PPY,format="f",digits=2) 
-     #i<-round(PPY,3)
-     #### oultine plot box 
+     #i<-formatC(PPY,format="f",digits=2)
      shelflife<-as.integer(PPY)
-     main<-paste(c("Shelf life =",shelflife, "months/weeks (PgDn to switch plots)"),collapse=" ")    
-     plot(time~assay,data=ANCOVAdata, xlim=c(0,2.0*max(ANCOVAdata$time)),ylim=c((Lper-10),(Uper+10)), main=main,
-     xlab = "Time (months/weeks)", ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
+     #i<-round(PPY,3)
+     #outline plot box
+     main<-paste(c("Shelf Life=",shelflife, "months/weeks (PgDn to switch plots)"),collapse=" ")    
+     plot(time~assay,data=ANCOVAdata, xlim=c(0,84),ylim=c((Lper-10),(Uper+10)), main=main,
+     xlab = "Time (months/weeks)" , ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
        axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
        axis(1,at=0:100,tcl=-.2, labels=FALSE)
-       
    
-     LLegend<-paste("batch#",c(Intable$batch))   
-     temp <- legend("topright", legend = LLegend,
-               text.width = strwidth("10000000"),
+    temp <- legend("topright", legend = c(Intable$batch),
+               text.width = strwidth("1000"),
                lty=1, col=c(Intable$batch), xjust = 1, yjust = 1)
+   
+    for(i in seq_along(M.split)){
+     x<-M.split[[i]][["time"]] 
+     y<-M.split[[i]][["PredCal"]]
+     points(x,y,pch=16, col=i)
+     mod<-lm(y~x) 
+     abline(mod,lwd=2, col=i)   
+      }
 
 #plot CI
-      ## newx<-data.frame(xx=seq(0,(max(ANCOVAdata$time)+10))) 
-      newx<-data.frame(xx=seq(0,(2.0*max(ANCOVAdata$time))))
-      for(i in seq_along(W.split)){
-      xx<-W.split[[i]][["time"]] 
-      yy<-W.split[[i]][["assay"]]
-      points(xx,yy,pch=16, col=i)
-      mod<-lm(yy~xx) 
-      abline(mod,lwd=2, col=i)
-      pred<-predict(mod, newdata=newx,interval = c("confidence"),level = 0.95,type="response")
-      lines(newx$xx,pred[,2],col=i,lty=2)
-      lines(newx$xx,pred[,3],col=i,lty=2)
-      total<-data.frame(time=newx$xx, fit=pred[,1], Lower=pred[,2], Upper=pred[,3])
-      show(total) 
-         }
-     axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
-     #add criteria limit
+   LX<-0
+   LY<-0
+
+   for(i in seq_along(W.split)){
+     LX<-length(W.split[[i]]$time)
+     LY<-mean(ANCOVAdata$time )
+
+     Intercept1<-0
+     for(k in 1: length(unique(Intable$batch))){
+            if (W.split[[i]][["batch"]][1]==Intable$batch[[k]]){
+                  Intercept1<- Intable$Intercept[[k]]
+                 }
+     }
+       newx<-data.frame(xx=seq(0,84))
+       yy<-Intercept1+newx$xx*Slope
+       mod1<-lm(yy~newx$xx)
+       fit<-predict(mod1, newdata=newx,interval = c("confidence"),level = 0.95,type="response")
+       show(fit)
+       cat("\n\n")
+###
+### Statistical Design and Analysis in Pharmaceutical Science. 
+### CHow SC, Liu LP. p.362 & 371 (pdf.p.381 & 390)
+###
+       pd<-(sqrt(1/(LX) + (((newx$xx-LY)^2)/Sxx[j])*SS[j]))*T[j]
+###
+### the above Sxx[j] & SS[j] is no longer the same as previously calculated here!!
+### They need to re-calculate here.
+###
+
+       Lower<-fit[,1]-pd
+       Upper<-fit[,1]+pd
+       total<-data.frame(time=newx$xx, Lower=Lower, Predict=fit[,1], Upper=Upper)
+       cat("\n")
+       show(total)
+       cat("\n\n")
+       lines(total$time,total$Lower,col=i,lty=2)
+       lines(total$time,total$Upper,col=i,lty=2)
+        }
      abline(h=Uper, col = "gray60")
      abline(h=Lper, col = "gray60")
      abline(v=PPY, col = "gray60")
-     cat(" -----------------------------------------------------------------\n\n")
-     cat(" Drug product with lower acceptance limit of ",Lper,"% of label claim\n")
-     cat(" Shelf life =",shelflife,"(months/weeks)                        \n\n")
-     cat("******************************************************************\n")
+     cat("                                                                      \n")
+     cat(" Drug product with lower acceptance limit of",Lper,"% of label claim  \n")
+     cat(" Shelf life =",PPY,"months/weeks                                    \n\n")
+     cat("**********************************************************************\n")
      cat("\n")
      }
 else {
@@ -1254,46 +1423,108 @@ else {
       cat("-------------------------\n")
       cat("*: estimated shelf life\n\n")
       cat("\n\n")
-      windows(record = TRUE )  ### now start preparing to plot...
+#####      windows(record = TRUE )  ### now start preparing to plot...
+#####     #i<-formatC(PPX,format="f",digits=2) 
+#####     #i<-round(PX,3) same output as the above... 
+#####     shelflife<-as.integer(PPX)
+#####     main<-paste(c("Shelf life =",shelflife, "months/weeks (PgDn to switch plots)"),collapse=" ")    
+#####     plot(time~assay,data=ANCOVAdata,xlim=c(0,84),ylim=c((Lper-10),(Uper+10)), main=main,
+#####     xlab = "Time (months/weeks)", ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
+#####     lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
+#####       axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
+#####       axis(1,at=0:100,tcl=-.2, labels=FALSE)   
+#####      
+#####     LLegend<-paste("batch#",c(Intable$batch))   
+#####     temp <- legend("topright", legend = LLegend,
+#####               text.width = strwidth("10000000"),
+#####               lty=1, col=c(Intable$batch), xjust = 1, yjust = 1)
+######plot CI
+#####      ## newx<-data.frame(xx=seq(0,(max(ANCOVAdata$time)+10)))
+#####      newx<-data.frame(xx=seq(0,84))
+#####      for(i in seq_along(W.split)){
+#####      xx<-W.split[[i]][["time"]] 
+#####      yy<-W.split[[i]][["assay"]]
+#####      points(xx,yy,pch=16, col=i)
+#####      mod<-lm(yy~xx) 
+#####      abline(mod,lwd=2, col=i)
+#####      pred<-predict(mod,newdata=newx,interval = c("confidence"),level = 0.95,type="response")
+#####      lines(newx$xx,pred[,2],col=i,lty=2)
+#####      lines(newx$xx,pred[,3],col=i,lty=2) 
+#####      total<-data.frame(time=newx$xx, Lower=pred[,2], fit=pred[,1], Upper=pred[,3])
+#####      show(total)
+#####      cat("\n\n")
+#####      }
+#####     axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
+#####     #add criteria limit
+#####     abline(h=Uper, col = "gray60")
+#####     abline(h=Lper, col = "gray60")
+#####     abline(v=shelflife, col = "gray60")
+#####     
+#####     cat(" -----------------------------------------------------------------\n\n")
+#####     cat(" Drug product with upper acceptance limit of",Uper,"% of label claim\n")
+#####     cat(" Shelf life =",shelflife,"(months/weeks)                        \n\n")
+#####     cat("******************************************************************\n")
+#####     cat("\n")
+
      #i<-formatC(PPX,format="f",digits=2) 
-     #i<-round(PX,3) same output as the above... 
+     #i<-round(PX,3) same as above...
      shelflife<-as.integer(PPX)
-     main<-paste(c("Shelf life =",shelflife, "months/weeks (PgDn to switch plots)"),collapse=" ")    
-     plot(time~assay,data=ANCOVAdata,xlim=c(0,2.0*max(ANCOVAdata$time)),ylim=c((Lper-10),(Uper+10)), main=main,
-     xlab = "Time (months/weeks)", ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
+     main<-paste(c("Shelf Life=",shelflife, "months/weeks (PgDn to switch plots)"),collapse=" ")    
+     plot(time~assay,data=ANCOVAdata,xlim=c(0,84),ylim=c((Lper-10),(Uper+10)), main=main,
+     xlab = "Time (months)" , ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
        axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
        axis(1,at=0:100,tcl=-.2, labels=FALSE)   
       
-     LLegend<-paste("batch#",c(Intable$batch))   
-     temp <- legend("topright", legend = LLegend,
-               text.width = strwidth("10000000"),
+     temp <- legend("topright", legend = c(Intable$batch),
+               text.width = strwidth("1000"),
                lty=1, col=c(Intable$batch), xjust = 1, yjust = 1)
-#plot CI
-      ## newx<-data.frame(xx=seq(0,(max(ANCOVAdata$time)+10)))
-      newx<-data.frame(xx=seq(0,(2.0*max(ANCOVAdata$time))))
-      for(i in seq_along(W.split)){
-      xx<-W.split[[i]][["time"]] 
-      yy<-W.split[[i]][["assay"]]
-      points(xx,yy,pch=16, col=i)
-      mod<-lm(yy~xx) 
+     for(i in seq_along(M.split)){
+      x<-M.split[[i]][["time"]] 
+      y<-M.split[[i]][["PredCal"]]
+      points(x,y,pch=16, col=i)
+      mod<-lm(y~x) 
       abline(mod,lwd=2, col=i)
-      pred<-predict(mod,newdata=newx,interval = c("confidence"),level = 0.95,type="response")
-      lines(newx$xx,pred[,2],col=i,lty=2)
-      lines(newx$xx,pred[,3],col=i,lty=2) 
-         total<-data.frame(time=newx$xx, fit=pred[,1], Lower=pred[,2], Upper=pred[,3])
-         show(total) 
-         }
-     axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
-     #add criteria limit
+        }
+   #plot CI
+   LX<-0
+   LY<-0
+
+   for(i in seq_along(W.split)){
+     LX<-length(W.split[[i]]$time)
+     LY<-mean(ANCOVAdata$time )
+
+     Intercept1<-0
+     for(k in 1: length(unique(Intable$batch))){
+            if (W.split[[i]][["batch"]][1]==Intable$batch[[k]]){
+                  Intercept1<- Intable$Intercept[[k]]
+                 }
+               }
+       newx<-data.frame(xx=seq(0,84))
+       yy<-Intercept1+newx$xx*Slope
+       mod1<-lm(yy~newx$xx)
+       fit<-predict(mod1, newdata=newx,interval = c("confidence"),level = 0.95,type="response")
+       show(fit)
+       cat("\n\n")
+       pd<-(sqrt(1/(LX) + (((newx$xx-LY)^2)/Sxx[j])*SS[j]))*T[j]
+
+       Lower<-fit[,1]-pd
+       Upper<-fit[,1]+pd
+       total<-data.frame(time=newx$xx, Lower=Lower, Predict=fit[,1], Upper=Upper)
+       show(total)
+       cat("\n\n")
+       lines(total$time,total$Lower,col=i,lty=2)
+       lines(total$time,total$Upper,col=i,lty=2)
+      
+        }
      abline(h=Uper, col = "gray60")
      abline(h=Lper, col = "gray60")
      abline(v=PPX, col = "gray60")
      
-     cat(" -----------------------------------------------------------------\n\n")
-     cat(" Drug product with upper acceptance limit of ",Uper,"% of label claim\n")
-     cat(" Shelf life =",shelflife,"(months/weeks)                        \n\n")
-     cat("******************************************************************\n")
+     cat("                                                                      \n")
+     cat(" Drug product with Upper acceptance limit of",Uper,"% of label claim  \n")
+     cat(" Shelf life =",shelflife,"months/weeks                              \n\n")
+     cat("**********************************************************************\n")
      cat("\n")
       } 
     }
@@ -1522,13 +1753,18 @@ if ((b2[j])^2-(4*a2[j]*c2[j])>=0){
   else {
    if((a2[j]>0 && b2[j]>0 && c2[j]<0) || (a2[j]<0 && b2[j]>0 && c2[j]>0) || 
       (a2[j]>0 && b2[j]<0 && c2[j]<0)|| (a2[j]<0 && b2[j]<0 && c2[j]>0)){
-       if ((Y1[j]<= 0)) Y1[j]<-c(1000000000000)
-       if ((Y2[j]<= 0)) Y2[j]<-c(1000000000000)
+       if ((Y1[j]> 84)) Y1[j]<-c(84)
+       if ((Y2[j]> 84)) Y2[j]<-c(84)
+       if ((Y1[j]<= 6)) Y1[j]<-c(1000000000000)
+       if ((Y2[j]<= 6)) Y2[j]<-c(1000000000000)
        DF<-data.frame(Y=c(Y1[j],Y2[j]))
        PY[j]<-min(DF)
-
         }
    else {
+      if ((Y1[j]> 84)) Y1[j]<-c(84)
+      if ((Y2[j]> 84)) Y2[j]<-c(84)
+      if ((Y1[j]<= 6)) Y1[j]<-c(1000000000000)
+      if ((Y2[j]<= 6)) Y2[j]<-c(1000000000000)
       DF<-data.frame(Y=c(Y1[j],Y2[j]))
       PY[j]<-min(DF)
         }
@@ -1542,24 +1778,30 @@ else {
 if(onesidedup){
 if ((b1[j])^2-(4*a1[j]*c1[j])>=0){
   if ((a1[j]>0 && b1[j]>0 && c1[j]>0) || (a1[j]<0 && b1[j]<0 && c1[j]<0)){
-       PX<-c(1000000000000)
+       PX[j]<-c(1000000000000)
         }
   else {
    if((a1[j]>0 && b1[j]>0 && c1[j]<0) || (a1[j]<0 && b1[j]>0 && c1[j]>0) || 
       (a1[j]>0 && b1[j]<0 && c1[j]<0)|| (a1[j]<0 && b1[j]<0 && c1[j]>0)){
-       if ((X1[j]<= 0)) X1[j]<-c(1000000000000)
-       if ((X2[j]<= 0)) X2[j]<-c(1000000000000)
+       if ((X1[j]> 84)) X1[j]<-c(84)
+       if ((X2[j]> 84)) X2[j]<-c(84)
+       if ((X1[j]<= 6)) X1[j]<-c(1000000000000)
+       if ((X2[j]<= 6)) X2[j]<-c(1000000000000)
        DF<-data.frame(X=c(X1[j],X2[j]))
        PX[j]<-min(DF)
         }
    else {
+      if ((X1[j]> 84)) X1[j]<-c(84)
+      if ((X2[j]> 84)) X2[j]<-c(84)
+      if ((X1[j]<= 6)) X1[j]<-c(1000000000000)
+      if ((X2[j]<= 6)) X2[j]<-c(1000000000000)
       DF<-data.frame(X=c(X1[j],X2[j]))
       PX[j]<-min(DF)
         }
      }
    }
 else {
-      PX<-c(1000000000000)
+      PX[j]<-c(1000000000000)
      }
 }
 #######
@@ -1572,14 +1814,20 @@ if ((((b1[j])^2-(4*a1[j]*c1[j]))>=0) && (((b2[j])^2-(4*a2[j]*c2[j]))>=0)){
   else{
   if ((a1[j]>0 && b1[j]>0 && c1[j]<0) || (a1[j]<0 && b1[j]>0 && c1[j]>0) || 
       (a1[j]>0 && b1[j]<0 && c1[j]<0)|| (a1[j]<0 && b1[j]<0 && c1[j]>0)){
-      if ((X1[j]<= 0)) X1[j]<-c(1000000000000)
-      if ((X2[j]<= 0)) X2[j]<-c(1000000000000)
+      if ((X1[j]> 84)) X1[j]<-c(84)
+      if ((X2[j]> 84)) X2[j]<-c(84)
+      if ((X1[j]<= 6)) X1[j]<-c(1000000000000)
+      if ((X2[j]<= 6)) X2[j]<-c(1000000000000)
       DF<-data.frame(X=c(X1[j],X2[j]))
       PX[j]<-min(DF)
 
       }
   else{
     if ((a1[j]>0 && b1[j]<0 && c1[j]>0) ||(a1[j]<0 && b1[j]>0 && c1[j]<0)){
+      if ((X1[j]> 84)) X1[j]<-c(84)
+      if ((X2[j]> 84)) X2[j]<-c(84)
+      if ((X1[j]<= 6)) X1[j]<-c(1000000000000)
+      if ((X2[j]<= 6)) X2[j]<-c(1000000000000)
       DF<-data.frame(X=c(X1[j],X2[j]))
       PX[j]<-min(DF)
       
@@ -1593,14 +1841,20 @@ if ((((b1[j])^2-(4*a1[j]*c1[j]))>=0) && (((b2[j])^2-(4*a2[j]*c2[j]))>=0)){
   else{
    if((a2[j]>0 && b2[j]>0 && c2[j]<0) || (a2[j]<0 && b2[j]>0 && c2[j]>0) || 
       (a2[j]>0 && b2[j]<0 && c2[j]<0)|| (a2[j]<0 && b2[j]<0 && c2[j]>0)){
-       if ((Y1[j]<= 0)) Y1[j]<-c(1000000000000)
-       if ((Y2[j]<= 0)) Y2[j]<-c(1000000000000)
+       if ((Y1[j]> 84)) Y1[j]<-c(84)
+       if ((Y2[j]> 84)) Y2[j]<-c(84)
+       if ((Y1[j]<= 6)) Y1[j]<-c(1000000000000)
+       if ((Y2[j]<= 6)) Y2[j]<-c(1000000000000)
        DF<-data.frame(Y=c(Y1[j],Y2[j]))
        PY[j]<-min(DF)
         
         }
    else {
       if ((a2[j]>0 && b2[j]<0 && c2[j]>0) ||(a2[j]<0 && b2[j]>0 && c2[j]<0)){
+      if ((Y1[j]> 84)) Y1[j]<-c(84)
+      if ((Y2[j]> 84)) Y2[j]<-c(84)
+      if ((Y1[j]<= 6)) Y1[j]<-c(1000000000000)
+      if ((Y2[j]<= 6)) Y2[j]<-c(1000000000000)
       DF<-data.frame(Y=c(Y1[j],Y2[j]))
       PY[j]<-min(DF)
        
@@ -1619,8 +1873,10 @@ if ((((b1[j])^2-(4*a1[j]*c1[j]))>=0) && (((b2[j])^2-(4*a2[j]*c2[j]))<0)){
   else{
   if ((a1[j]>0 && b1[j]>0 && c1[j]<0) || (a1[j]<0 && b1[j]>0 && c1[j]>0) || 
       (a1[j]>0 && b1[j]<0 && c1[j]<0)|| (a1[j]<0 && b1[j]<0 && c1[j]>0)){
-      if ((X1[j]<= 0)) X1[j]<-c(1000000000000)
-      if ((X2[j]<= 0)) X2[j]<-c(1000000000000)
+      if ((X1[j]> 84)) X1[j]<-c(84)
+      if ((X2[j]> 84)) X2[j]<-c(84)
+      if ((X1[j]<= 6)) X1[j]<-c(1000000000000)
+      if ((X2[j]<= 6)) X2[j]<-c(1000000000000)
       DF<-data.frame(X=c(X1[j],X2[j]))
       PX[j]<-min(DF)
       PY[j]<-c(1000000000000)
@@ -1629,6 +1885,10 @@ if ((((b1[j])^2-(4*a1[j]*c1[j]))>=0) && (((b2[j])^2-(4*a2[j]*c2[j]))<0)){
   else{
     if ((a1[j]>0 && b1[j]<0 && c1[j]>0) ||(a1[j]<0 && b1[j]>0 && c1[j]<0)){
       DF<-data.frame(X=c(X1[j],X2[j]))
+      if ((X1[j]> 84)) X1[j]<-c(84)
+      if ((X2[j]> 84)) X2[j]<-c(84)
+      if ((X1[j]<= 6)) X1[j]<-c(1000000000000)
+      if ((X2[j]<= 6)) X2[j]<-c(1000000000000)
       PX[j]<-min(DF)
       PY[j]<-c(1000000000000)
       
@@ -1647,8 +1907,10 @@ if ((((b1[j])^2-(4*a1[j]*c1[j]))< 0) && (((b2[j])^2-(4*a2[j]*c2[j]))>=0)){
    else{
    if((a2[j]>0 && b2[j]>0 && c2[j]<0) || (a2[j]<0 && b2[j]>0 && c2[j]>0) ||
       (a2[j]>0 && b2[j]<0 && c2[j]<0)|| (a2[j]<0 && b2[j]<0 && c2[j]>0)){
-       if ((Y1[j]<= 0)) Y1[j]<-c(1000000000000)
-       if ((Y2[j]<= 0)) Y2[j]<-c(1000000000000)
+       if ((Y1[j]> 84)) Y1[j]<-c(84)
+       if ((Y2[j]> 84)) Y2[j]<-c(84)
+       if ((Y1[j]<= 6)) Y1[j]<-c(1000000000000)
+       if ((Y2[j]<= 6)) Y2[j]<-c(1000000000000)
        DF<-data.frame(Y=c(Y1[j],Y2[j]))
        PY[j]<-min(DF)
        PX[j]<-c(1000000000000)
@@ -1656,6 +1918,10 @@ if ((((b1[j])^2-(4*a1[j]*c1[j]))< 0) && (((b2[j])^2-(4*a2[j]*c2[j]))>=0)){
         }
    else {
       if ((a2[j]>0 && b2[j]<0 && c2[j]>0) ||(a2[j]<0 && b2[j]>0 && c2[j]<0)){
+      if ((Y1[j]> 84)) Y1[j]<-c(84)
+      if ((Y2[j]> 84)) Y2[j]<-c(84)
+      if ((Y1[j]<= 6)) Y1[j]<-c(1000000000000)
+      if ((Y2[j]<= 6)) Y2[j]<-c(1000000000000)
       DF<-data.frame(Y=c(Y1[j],Y2[j]))
       PY[j]<-min(DF)
       PX<-c(1000000000000)
@@ -1666,8 +1932,8 @@ if ((((b1[j])^2-(4*a1[j]*c1[j]))< 0) && (((b2[j])^2-(4*a2[j]*c2[j]))>=0)){
     }
 else {
 if ((((b1[j])^2-(4*a1[j]*c1[j]))< 0) && (((b2[j])^2-(4*a2[j]*c2[j]))<0)){
-     PY<-c(1000000000000)
-     PX<-c(1000000000000)
+     PY[j]<-c(1000000000000)
+     PX[j]<-c(1000000000000)
 
     }
    }
@@ -1745,7 +2011,7 @@ else {
      #### oultine plot box 
      shelflife<-as.integer(PPY)
      main<-paste(c("Shelf life =",shelflife,"months/weeks (PgDn to switch plots)"),collapse=" ")    
-     plot(time~assay,data=ANCOVAdata, xlim=c(0,2.0*max(ANCOVAdata$time)),ylim=c((Lper-10),(Lper+30)), main=main,
+     plot(time~assay,data=ANCOVAdata, xlim=c(0,84),ylim=c((Lper-10),(Lper+30)), main=main,
      xlab = "Time (months)", ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
        axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
@@ -1757,7 +2023,7 @@ else {
                lty=1, col=c(Intable$batch), xjust = 1, yjust = 1) 
      
 #plot CI
-    newx<-data.frame(xx=seq(0,2.0*max(ANCOVAdata$time))) 
+    newx<-data.frame(xx=seq(0,84)) 
     for(i in seq_along(W.split)){
       xx<-W.split[[i]][["time"]] 
       yy<-W.split[[i]][["assay"]]
@@ -1767,12 +2033,13 @@ else {
       pred<-predict(mod, newdata=newx,interval = c("confidence"),level = 0.90,type="response")
       lines(newx$xx,pred[,2],col=i,lty=2)
       total<-data.frame(time=newx$xx, fit=pred[,1], Lower=pred[,2])
-      show(total) 
+      show(total)
+      cat("\n\n")
          }
      axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
      #add criteria limit
      abline(h=Lper, col = "gray60")
-     abline(v=PPY, col = "gray60")
+     abline(v=shelflife, col = "gray60")
      cat("------------------------------------------------------------------\n")
      cat("                                                                  \n")
      cat(" Drug product with lower acceptance limit of",Lper,"% of label claim\n")
@@ -1803,7 +2070,7 @@ else {
      #i<-round(PX,3) ### same output as the above... 
      shelflife<-as.integer(PPX)
      main<-paste(c("Shelf life =",shelflife, "months/weeks (PgDn to switch plots)"),collapse=" ")    
-     plot(time~assay,data=ANCOVAdata,xlim=c(0,2.0*max(ANCOVAdata$time)),ylim=c((Uper-30),(Uper+10)), main=main,
+     plot(time~assay,data=ANCOVAdata,xlim=c(0,84),ylim=c((Uper-30),(Uper+10)), main=main,
      xlab = "Time (months/weeks)", ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
      axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
@@ -1815,7 +2082,7 @@ else {
                lty=1, col=c(Intable$batch), xjust = 1, yjust = 1)
                
 #plot CI
-      newx<-data.frame(xx=seq(0,2.0*max(ANCOVAdata$time)))  
+      newx<-data.frame(xx=seq(0,84))  
       for(i in seq_along(W.split)){
       xx<-W.split[[i]][["time"]] 
       yy<-W.split[[i]][["assay"]]
@@ -1825,12 +2092,13 @@ else {
       pred<-predict(mod,newdata=newx,interval = c("confidence"),level = 0.90,type="response")
       lines(newx$xx,pred[,3],col=i,lty=2) 
       total<-data.frame(time=newx$xx, fit=pred[,1], Upper=pred[,3])
-      show(total) 
+      show(total)
+      cat("\n\n")
          }
       axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
       #add criteria limit
       abline(h=Uper, col = "gray60")
-      abline(v=PPX, col = "gray60")
+      abline(v=shelflife, col = "gray60")
      
      cat("------------------------------------------------------------------\n\n")
      cat(" Drug product with upper acceptance limit of",Uper,"% of label claim\n")
@@ -1863,7 +2131,7 @@ if  (PPX>=PPY)  {
      #### oultine plot box 
      shelflife<-as.integer(PPY)
      main<-paste(c("Shelf life =",shelflife,"months/weeks (PgDn to switch plots)"),collapse=" ")    
-     plot(time~assay,data=ANCOVAdata, xlim=c(0,2.0*max(ANCOVAdata$time)),ylim=c((Lper-10),(Uper+10)), main=main,
+     plot(time~assay,data=ANCOVAdata, xlim=c(0,84),ylim=c((Lper-10),(Uper+10)), main=main,
      xlab = "Time (months)", ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
        axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
@@ -1875,7 +2143,7 @@ if  (PPX>=PPY)  {
                lty=1, col=c(Intable$batch), xjust = 1, yjust = 1) 
      
 #plot CI
-     newx<-data.frame(xx=seq(0,2.0*max(ANCOVAdata$time))) 
+     newx<-data.frame(xx=seq(0,84)) 
      for(i in seq_along(W.split)){
       xx<-W.split[[i]][["time"]] 
       yy<-W.split[[i]][["assay"]]
@@ -1885,14 +2153,15 @@ if  (PPX>=PPY)  {
       pred<-predict(mod, newdata=newx,interval = c("confidence"),level = 0.95,type="response")
       lines(newx$xx,pred[,2],col=i,lty=2)
       lines(newx$xx,pred[,3],col=i,lty=2)
-      total<-data.frame(time=newx$xx, fit=pred[,1], Lower=pred[,2], Upper=pred[,3])
-      show(total) 
+      total<-data.frame(time=newx$xx, Lower=pred[,2], fit=pred[,1], Upper=pred[,3])
+      show(total)
+      cat("\n\n")
       }
      axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
      #add criteria limit
      abline(h=Uper, col = "gray60")
      abline(h=Lper, col = "gray60")
-     abline(v=PPY, col = "gray60")
+     abline(v=shelflife, col = "gray60")
      cat("------------------------------------------------------------------\n")
      cat("                                                                  \n")
      cat(" Drug product with lower acceptance limit of",Lper,"% of label claim\n")
@@ -1913,7 +2182,7 @@ else {
      #i<-round(PX,3) ### same as the above...
      shelflife<-as.integer(PPX)
      main<-paste(c("Shelf life =",shelflife, "months/weeks (PgDn to switch plots)"),collapse=" ")    
-     plot(time~assay,data=ANCOVAdata,xlim=c(0,2.0*max(ANCOVAdata$time)),ylim=c((Lper-10),(Uper+10)), main=main,
+     plot(time~assay,data=ANCOVAdata,xlim=c(0,84),ylim=c((Lper-10),(Uper+10)), main=main,
      xlab = "Time (months/weeks)" , ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
        axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
@@ -1924,7 +2193,7 @@ else {
                text.width = strwidth("10000000"),
                lty=1, col=c(Intable$batch), xjust = 1, yjust = 1)
 #plot CI
-      newx<-data.frame(xx=seq(0,2.0*max(ANCOVAdata$time)))  
+      newx<-data.frame(xx=seq(0,84))  
       for(i in seq_along(W.split)){
       xx<-W.split[[i]][["time"]] 
       yy<-W.split[[i]][["assay"]]
@@ -1934,14 +2203,15 @@ else {
       pred<-predict(mod,newdata=newx,interval = c("confidence"),level = 0.95,type="response")
       lines(newx$xx,pred[,2],col=i,lty=2)
       lines(newx$xx,pred[,3],col=i,lty=2) 
-      total<-data.frame(time=newx$xx, fit=pred[,1], Lower=pred[,2], Upper=pred[,3])
-      show(total) 
+      total<-data.frame(time=newx$xx, Lower=pred[,2], fit=pred[,1], Upper=pred[,3])
+      show(total)
+      cat("\n\n")
       }
      axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
      #add criteria limit
      abline(h=Uper, col = "gray60")
      abline(h=Lper, col = "gray60")
-     abline(v=PPX, col = "gray60")
+     abline(v=shelflife, col = "gray60")
      
      cat("------------------------------------------------------------------\n")
      cat("                                                                  \n")

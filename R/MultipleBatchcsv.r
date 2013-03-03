@@ -16,13 +16,13 @@ cat("\n")
 pick <- menu(file.menu, title = " << Separator type and Decimal type >> ")
 if (pick == 1){
   cat("\n\n")
-        cat("\nEnter Data file name (without extention): \n")
+        cat("\nEnter Data file name(without file extension of .csv)\n")
         Multiple.file <-readline()
         Multiple.file<-paste(Multiple.file,".csv",sep="")
         cnames<-c("batch","time","assay (%)")
         Multipledata<-read.csv(Multiple.file,header=TRUE,row.names=NULL,col.names=cnames, sep=",",dec=".")
         Multipledata<-edit(Multipledata)
-        Multipledata<- na.omit(Multipledata)
+        Multipledata<-na.omit(Multipledata)
         cat("\n\n")
         show(Multipledata)
         cat("\n\n")
@@ -35,7 +35,7 @@ if (pick == 1){
  else {
   if (pick == 2){
   cat("\n\n")
-        cat("\nEnter Data file name (without extention): \n")
+        cat("\nEnter Data file name(without file extension of.csv)\n")
         Multiple.file <-readline()
         Multiple.file<-paste(Multiple.file,".csv",sep="")
         cnames<-c("batch","time","assay (%)")
@@ -53,7 +53,7 @@ if (pick == 1){
  else {
   if (pick == 3){
   cat("\n\n")
-        cat("\nEnter Data file name (without extention): \n")
+        cat("\nEnter Data file name(without file extension of.csv)\n")
         Multiple.file <-readline()
         Multiple.file<-paste(Multiple.file,".csv",sep="")
         cnames<-c("batch","time","assay (%)")
@@ -71,7 +71,7 @@ if (pick == 1){
 else {
   if (pick == 4){
   cat("\n\n")
-        cat("\nEnter Data file name (without extention): \n")
+        cat("\nEnter Data file name(without file extension of.csv)\n")
         Multiple.file <-readline()
         Multiple.file<-paste(Multiple.file,".csv",sep="")
         cnames<-c("batch","time","assay (%)")
@@ -89,7 +89,7 @@ else {
 else {
   if (pick == 5){
   cat("\n\n")
-        cat("\nEnter Data file name (without extention): \n")
+        cat("\nEnter Data file name(without file extension of.csv)\n")
         Multiple.file <-readline()
         Multiple.file<-paste(Multiple.file,".csv",sep="")
         cnames<-c("batch","time","assay (%)")
@@ -108,7 +108,7 @@ else {
 else {
   if (pick == 6){
   cat("\n\n")
-        cat("\nEnter Data file name (without extention): \n")
+        cat("\nEnter Data file name(without file extension of.csv)\n")
         Multiple.file <-readline()
         Multiple.file<-paste(Multiple.file,".csv",sep="")
         cnames<-c("batch","time","assay (%)")
@@ -126,7 +126,7 @@ else {
 else {
   if (pick == 7){
   cat("\n\n")
-        cat("\nEnter Data file name (without extention): \n")
+        cat("\nEnter Data file name(without file extension of.csv)\n")
         Multiple.file <-readline()
         Multiple.file<-paste(Multiple.file,".csv",sep="")
         cnames<-c("batch","time","assay (%)")
@@ -144,7 +144,7 @@ else {
 else {
   if (pick == 8){
   cat("\n\n")
-        cat("\nEnter Data file name (without extention): \n")
+        cat("\nEnter Data file name(without file extension of.csv)\n")
         Multiple.file <-readline()
         Multiple.file<-paste(Multiple.file,".csv",sep="")
         cnames<-c("batch","time","assay (%)")
@@ -162,7 +162,7 @@ else {
 else {
   if (pick == 9){
   cat("\n\n")
-        cat("\nEnter Data file name (without extention): \n")
+        cat("\nEnter Data file name(without file extension of.csv)\n")
         Multiple.file <-readline()
         Multiple.file<-paste(Multiple.file,".csv",sep="")
         cnames<-c("batch","time","assay (%)")
