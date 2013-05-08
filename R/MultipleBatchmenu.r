@@ -23,7 +23,7 @@ pick <- menu(file.menu, title = " << Data Analysis for Multiple Batches menu >> 
 if (pick == 1){
      cat("\n")
      Multipledata<-data.frame (batch=c(0), time=c(0), assay=c(0))
-     colnames(Multipledata)<-list("batch","time","assay (%)")
+     colnames(Multipledata)<-list("batch","time","assay")
      Multipledata<-edit(Multipledata)
      Multipledata<- na.omit(Multipledata)
      show(Multipledata)
@@ -35,7 +35,7 @@ if (pick == 1){
         return(statistical())
         }
      else {
-        cat("Enter name you want to call this data\n")
+        cat("\nEnter the file name to save data (no file extension!): \n")
         Multiplename <-readline()
         Multiplename<-paste(Multiplename,".RData",sep="")
            if(file.exists(Multiplename)){
@@ -51,7 +51,7 @@ if (pick == 1){
                 cat("\n")
                 }
                 else{
-                cat("\nEnter file name for your data: \n")
+                cat("\nEnter the file name to save data (no file extension!): \n")
                 Multiplename <-readline()
                 Multiplename<-paste(Multiplename,".RData",sep="")
                 repeat{
@@ -59,8 +59,8 @@ if (pick == 1){
                       {
                       cat("\n")
                       cat("***********************************\n")
-                      cat("* The file name have been existed *\n")
-                      cat("* Enter name again, OK.           *\n")
+                      cat("* The file name have been existed. *\n")
+                      cat("* Please try again.                *\n")
                       cat("***********************************\n")
                       Multiplename<-readline()
                       Multiplename<-paste(Multiplename,".RData",sep="")
@@ -70,10 +70,10 @@ if (pick == 1){
                            }
                     }
              }
-              save(Multipledata,file=Multiplename)
+              saveRDS(Multipledata,file=Multiplename)
            }
         else{
-           save(Multipledata,file=Multiplename)
+           saveRDS(Multipledata,file=Multiplename)
           }
 cat("\n\n")
         return(MultipleAnalyze(Multipledata))
@@ -86,7 +86,7 @@ else {
     filepath<-getwd()
     cat("R will import your data from the directory of \n")
     cat("",filepath,"\n")
-        return(MultipleBatchcsv())     
+    return(MultipleBatchcsv())     
       }
 
 else {
@@ -94,20 +94,22 @@ else {
     
     cat("\n\n")
     filepath<-getwd()
-    cat("R will load your data from the directory of \n")
+    cat("R will load your data (.RData) from the directory of \n")
     cat("",filepath,"\n")
-    cat("\n")     
+    cat("\n")
+    readline(" Press Enter to continue...")
      
-     cat("\nEnter data file name (no extension): \n")
-     Multiplename <-readline()
-     Multiplename<-paste(Multiplename,".RData",sep="")
-     load(Multiplename)
+     ### cat("\nEnter data file name (no extension): \n")
+     ### Multiplename <-readline()
+     ### Multiplename<-paste(Multiplename,".RData",sep="")
+     Multipledata<-readRDS(file.choose())                        
+     ### load(Multiplename)
      Multipledata<-edit(Multipledata )
      Multipledata<- na.omit(Multipledata)
-     colnames(Multipledata)<-list("batch","time","assay (%)")
+     colnames(Multipledata)<-list("batch","time","assay")
      cat("\n\n")
      show(Multipledata)
-     save(Multipledata,file=Multiplename)
+     
 cat("\n\n")
         return(MultipleAnalyze(Multipledata))
       }
@@ -119,7 +121,8 @@ cat("\n\n")
                 }
   else {
   if (pick == 5){
-      cat("\nBye~~ \n\n")
+      cat("\n  Thank you for using stab for R. Bye~~ \n\n")
+      graphics.off()
                 }
      }
     }

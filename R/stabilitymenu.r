@@ -25,7 +25,8 @@ cat("\n")
 
     else {
     if (pick == 4){
-        cat("\nThanks for using stab for R. Bye now. \n\n")}
+        cat("\n  Thanks for using stab for R. Bye now. \n\n")
+        graphics.off()}
          }
      }
   }

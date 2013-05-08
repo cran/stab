@@ -81,11 +81,7 @@ if(onesidedlo){
            }
        }
 
-cat("\n")
-cat("------------------ stab for R v0.1.4 -------------------\n")
-cat("\n developed by Hsin-ya Lee and Yung-jin Lee, 2007-2010.\n")
-cat("\n generated on",date(),"\n")
-cat("\n\n")
+stab.version()
 cat("<< --- List of input data --- >>\n\n")
 show(Multipledata)
 cat("\n\n")

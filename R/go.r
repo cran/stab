@@ -12,7 +12,7 @@ cat("\n")
                  "Run demo",
                  "Quit")
    cat("\n")
-  pick <- menu(file.menu, title = " << Go menu >> ")
+  pick <- menu(file.menu, title = " << Top menu >> ")
     if (pick == 1){
       cat("\n")
       stabilitymenu()}
@@ -25,7 +25,8 @@ cat("\n")
 
     else {
     if (pick == 3){
-        cat("\nThanks for using stab for R. Bye now.\n\n")}
+        cat("\n  Thanks for using stab for R. Bye now.\n\n")
+        graphics.off()}
          }
    }
 }

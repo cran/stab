@@ -30,7 +30,7 @@ cat("\n")
         }
     else {
     if (pick == 5){
-        cat("\nThanks for using stab for R. Bye now.\n\n")}
+        cat("\n  Thanks for using stab for R. Bye now.\n\n")}
          }
      }
    }

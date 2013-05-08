@@ -12,17 +12,17 @@ cat("* quantitative attribute for which there is a proposed acceptance criterion
 cat("*                                                                          *\n")
 cat("****************************************************************************\n")
 cat("\n")
-file.menu <- c("Input/Edit Assay Data from keyboard",
+file.menu <- c("Input/Edit Assay Data from Keyboard",
                "Load Data Files (.csv)",
                "Load Data Files (.RData)",   
-               "Go Back to Statistical Analysis menu",
+               "Go Back to Statistical Analysis Menu",
                "Quit")
 cat("\n")
 pick <- menu(file.menu, title = " << Data Analysis for a Single Batch menu >> ")
 if (pick == 1){
      cat("\n")
      Singledata<-data.frame (time=c(0), assay=c(0))
-     colnames(Singledata)<-list("time","assay(%)")
+     colnames(Singledata)<-list("time","assay")
      Singledata<-edit(Singledata)
      Singledata<- na.omit(Singledata)	
      show(Singledata)
@@ -97,19 +97,19 @@ else {
     cat("\n\n")
     filepath<-getwd()
     cat("R will load your data from the directory of \n")
-    cat("",filepath,"\n")
-    cat("\n")     
+    cat("",filepath,"\n\n")
+    readline(" Press Enter to continue...")
     
-     cat("\nEnter data file name\n") 
-     Singlename <-readline()
-     Singlename<-paste(Singlename,".RData",sep="")
-     load(Singlename)
+     ### cat("\nEnter data file name\n") 
+     ### Singlename <-readline()
+     ### Singlename<-paste(Singlename,".RData",sep="")
+     ### load(Singlename)
+     Singledata<-readRDS(file.choose())
      Singledata<-edit(Singledata)
      Singledata<- na.omit(Singledata)
-     colnames(Singledata)<-list("time","assay (%)")
+     colnames(Singledata)<-list("time","assay")
      cat("\n\n")
      show(Singledata)
-     save(Singledata,file=Singlename)
 cat("\n\n")
 cat("****************************************************************************\n")
 cat("*                         Now, Go to analyze the data                      *\n")
@@ -124,7 +124,8 @@ cat("***************************************************************************
                 }
   else {
   if (pick == 5){
-      cat("\nThanks for using stab for R. Bye now.\n\n")
+      cat("\n  Thanks for using stab for R. Bye now.\n\n")
+      graphics.off()
                 }  
      } 
     }

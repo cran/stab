@@ -10,6 +10,7 @@ cat("\n")
      go()}
     else {
      if (pick == 2){
-        cat("\nThanks for using stab for R. Bye now.\n\n")}
+        cat("\n Thanks for using stab for R. Bye now.\n\n")
+        graphics.off()}
         }
   }

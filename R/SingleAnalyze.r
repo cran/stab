@@ -1,6 +1,6 @@
-#Input assay data Menu for Data Analysis for a Single Batch
-library(stats4)
-library(MASS)
+### Input assay data Menu for Data Analysis for a Single Batch
+### library(stats4)   ### not required any more. -YJ
+### library(MASS)
 #predict req. stats4 package
 #confidence interval req. MASS package
 SingleAnalyze<-function(Singledata, Uper, Lper, separateWindows = TRUE)
@@ -8,14 +8,20 @@ SingleAnalyze<-function(Singledata, Uper, Lper, separateWindows = TRUE)
 onesidedlo = FALSE
 onesidedup = FALSE
 twosided   = FALSE
-noPX = FALSE
+PY<-0
+PPY<-0
 noPY = FALSE
 noSolution = FALSE
+ltmp<-0
+switch_UL= FALSE
+assay<-NULL
+pdf_activate=FALSE  ### set pdf device activate as FALSE at beginning
 
 filepath<-getwd()
 cat("\n")
-outputfile <- readline("Enter the output file name with no extension: ")
-outputfile <- paste(outputfile,".txt",sep="")
+outputfile <- readline("Enter the output file name (no extension!): ")
+output_to_txt <- paste(outputfile,".txt",sep="")
+plots_to_pdf <- paste(outputfile,".pdf",sep="")
 cat("*******************************************************************\n\n")
 cat(" Note: The output file (",outputfile,") will be created \n")
 cat(" and placed at",filepath,"\n")
@@ -65,16 +71,14 @@ if(onesidedlo){
       cat("\n")
       lowerstr<- readline("Enter the lower limit = ____ % of label claim: ")
       Lper<-as.numeric(lowerstr)
+      if(Lper>Uper){ltmp<-Lper;Lper<-Uper;Uper<-ltmp;switch_UL=TRUE}
+      if(identical(Lper,Uper)) stop("\n\n Error: The lower limit cannot be the same as the upper limit.\n\n")
       cat("\n")
            }
        }
-zz <- file(outputfile, open="wt")
-sink(zz)
-cat("\n")
-cat("------------------ stab for R v0.1.4 ------------------\n")
-cat("\n developed by Hsin-ya Lee and Yung-jin Lee, 2007-2011.\n")
-cat("\n generated on",date(),"\n")
-cat("\n\n")
+zz <- file(output_to_txt, open="wt")
+sink(zz,split=TRUE)
+stab.version()
 
 cat(" Setting of this analysis:\n")
 cat(" -----------------------------------------------------------\n")
@@ -88,6 +92,9 @@ else {
   else {
      cat(" Single batch with the lower acceptance limit of",Lper,"%.\n")
      cat(" & the upper acceptance limit of",Uper,"%.\n\n")
+    if(switch_UL) {
+    cat("*** You input conflict data with the Upper and Lower limits.\n")
+    cat("    They have been switched automatically.\n\n")}  ### to avoid accidentally input err. -YJ
     }
 }
 cat("\n\n")
@@ -119,45 +126,51 @@ Res<-residuals(lm(Singledata$assay~Singledata$time))
 #number of data points
 L<-length(Singledata$assay)
 #Residual SE (time, assay, time*assay)
- #sum of (Xi-Xmean)^2
-Sxx<-var(Singledata$time)*(L-1)
- #sum of (Yi-Ymean)^2
-Syy<-var(Singledata$assay)*(L-1)
-  #sum of (Xi-Xmean)* (Yi-Ymean)
-Sxxyy<-0
-for(i in 1:length(Singledata$time)){
- Sxxyy[i]<-((Singledata$assay[i]-mean(Singledata$assay))*(Singledata$time[i]-mean(Singledata$time)))
- }
-Sxy<-sum(Sxxyy)
-#KK:(yi-(Intercept+Slope*Xi))^2 , KKK: sum 0f KK, SK:sqrt(KKK/L-2)
-KK<-0
-for(i in 1:length(Singledata$time)){
- KK[i]<-(Singledata$assay[i]-(Intercept+Slope*Singledata$time[i]))^2
- }
-KKK<-sum(KK)
-SK<-sqrt(KKK/(L-2))
-#Xi: sum of (Xi)^2
-Xii<-0
-for(i in 1:length(Singledata$time)){
- Xii[i]<-(Singledata$time[i])^2
- }
-Xi<-sum(Xii)
 
-#XYi: sum of (Xi*Yi)
-XYii<-0
-for(i in 1:length(Singledata$time)){
- XYii[i]<-(Singledata$time[i])*(Singledata$assay[i])
- }
-XYi<-sum(XYii)
-#95%CI,n-2 T value
+#95%CI, n-2 T value
  if(onesidedlo || onesidedup){
-    T<-qt(0.95,L-2)}
+    T<-qt(0.95,L-2)
+    x<-Singledata$time
+    y<-Singledata$assay
+    mylm<-lm(y~x)
+    newx<-data.frame(xx=seq(0,84))
+    pred<-predict(mylm,newdata=data.frame(x=newx$xx),interval = c("confidence"),level = 0.90,type="response")
+    if (onesidedlo) {
+       total<-data.frame(time=newx$xx, Lower=pred[,2], fit=pred[,1])
+       PY<-0
+       for (i in 1:length(newx$xx)){if (total$Lower[i]<Lper){PY<-(i-2);break()}}
+       if (PY==0||PY<0) {PY<-84} 
+            }
+        
+    if (onesidedup) {
+          total<-data.frame(time=newx$xx, fit=pred[,1], Upper=pred[,3])
+          PY<-0
+          for (i in 1:length(newx$xx)){if (total$Upper[i]>Uper){PY<-(i-2);break() }}
+          if (PY==0||PY<0) {PY<-84}
+          }
+       }
  else {
     T<-qt(0.975,L-2)
+    x<-Singledata$time
+    y<-Singledata$assay
+    mylm<-lm(y~x)
+    newx<-data.frame(xx=seq(0,84))
+    pred<-predict(mylm,newdata=data.frame(x=newx$xx),interval = c("confidence"),level = 0.95,type="response")
+       total<-data.frame(time=newx$xx, Lower=pred[,2], fit=pred[,1], Upper=pred[,3])
+       PY<-0
+       PY1<-0
+       PY2<-0
+       for (i in 1:length(newx$xx)){if (total$Lower[i]<Lper){PY1<-(i-2);break()}}
+       if (PY1==0||PY1<0) {PY1<-84}
+
+       for (i in 1:length(newx$xx)){if (total$Upper[i]>Uper){PY2<-(i-2);break() }}
+       if (PY2==0||PY2<0) {PY2<-84}
+       PY<-min(PY1,PY2)
  }
 
-#Slope: (Xi/(L*Sxx))*Yi+ (-mean(Singledata$time)/Sxx)*XYi
-#Intercept: (-mean(Singledata$time)/Sxx)*Yi+ (1/Sxx)*XYi
+PPY<-PY             # only one 'PY' for model#1.  -YJ
+if ((PPY==84)) noPY = TRUE
+
 if(onesidedlo){
 cat("                  <<one-sided lower LC analysis>>             \n")
               }
@@ -170,209 +183,7 @@ cat("                     <<two-sided LC analysis>>                \n")
         }
 }
 cat("\n")
-#calculate shelf life
-
-if (onesidedlo) {
-   #intersect 95% CI with Lower criteria
-   delta<-Intercept-Lper
-   a2<-(1/Sxx)-(Slope/(T*SK))^2
-   b2<-2*(-mean(Singledata$time)/Sxx)-((2*Slope*delta)/(T*SK)^2)
-   c2<-(Xi/(L*Sxx))-(delta/(T*SK))^2
-   Y1<-((-b2)+(sqrt((b2)^2-(4*a2*c2))))/(2*a2)
-   Y2<-((-b2)-(sqrt((b2)^2-(4*a2*c2))))/(2*a2)
-}
-if (onesidedup) {
-   #intersect 95% CI with Upper criteria
-   delta<-Intercept-Uper
-   a1<-(1/Sxx)-(Slope/(T*SK))^2
-   b1<-2*(-mean(Singledata$time)/Sxx)-((2*Slope*delta)/(T*SK)^2)
-   c1<-(Xi/(L*Sxx))-(delta/(T*SK))^2
-   X1<-((-b1)+(sqrt((b1)^2-(4*a1*c1))))/(2*a1)
-   X2<-((-b1)-(sqrt((b1)^2-(4*a1*c1))))/(2*a1)
-}
-if (twosided) {
-   #intersect 95% CI with Upper criteria
-   delta<-Intercept-Uper
-   a1<-(1/Sxx)-(Slope/(T*SK))^2
-   b1<-2*(-mean(Singledata$time)/Sxx)-((2*Slope*delta)/(T*SK)^2)
-   c1<-(Xi/(L*Sxx))-(delta/(T*SK))^2
-   X1<-((-b1)+(sqrt((b1)^2-(4*a1*c1))))/(2*a1)
-   X2<-((-b1)-(sqrt((b1)^2-(4*a1*c1))))/(2*a1)
-
-
-   #intersect 95% CI with Lower criteria
-   delta<-Intercept-Lper
-   a2<-(1/Sxx)-(Slope/(T*SK))^2
-   b2<-2*(-mean(Singledata$time)/Sxx)-((2*Slope*delta)/(T*SK)^2)
-   c2<-(Xi/(L*Sxx))-(delta/(T*SK))^2
-   Y1<-((-b2)+(sqrt((b2)^2-(4*a2*c2))))/(2*a2)
-   Y2<-((-b2)-(sqrt((b2)^2-(4*a2*c2))))/(2*a2)
-}
-
-#make decision
-if(onesidedlo){
-if ((b2)^2-(4*a2*c2)>=0){
-  if ((a2>0 && b2>0 && c2>0) || (a2<0 && b2<0 && c2<0)){
-       PY<-c(1000000000000)
-        }
-  else {
-   if((a2>0 && b2>0 && c2<0) || (a2<0 && b2>0 && c2>0) || (a2>0 && b2<0 && c2<0)||
-      (a2<0 && b2<0 && c2>0)){
-       if ((Y1<= 0)) Y1<-c(1000000000000)
-       if ((Y2<= 0)) Y2<-c(1000000000000)
-       DF<-data.frame(Y=c(Y1,Y2))
-       PY<-min(DF)
-        }
-   else {
-       DF<-data.frame(Y=c(Y1,Y2))
-       PY<-min(DF)
-        }
-     }
-   }
-else {
-      PY<-c(1000000000000)
-     }
-     if ((PY==1000000000000)) noPY = TRUE
-}
-#######
-if(onesidedup){
-if ((b1)^2-(4*a1*c1)>=0){
-  if ((a1>0 && b1>0 && c1>0) || (a1<0 && b1<0 && c1<0)){
-       PX<-c(1000000000000)
-        }
-  else {
-   if((a1>0 && b1>0 && c1<0) || (a1<0 && b1>0 && c1>0) || (a1>0 && b1<0 && c1<0)||
-      (a1<0 && b1<0 && c1>0)){
-       if ((X1<= 0)) X1<-c(1000000000000)
-       if ((X2<= 0)) X2<-c(1000000000000)
-       DF<-data.frame(X=c(X1,X2))
-       PX<-min(DF)
-        }
-   else {
-      DF<-data.frame(X=c(X1,X2))
-      PX<-min(DF)
-        }
-     }
-   }
-else {
-      PX<-c(1000000000000)
-     }
-     if ((PX==1000000000000)) noPX = TRUE
-}
-#######
-if(twosided){
-if ((((b1)^2-(4*a1*c1))>=0) && (((b2)^2-(4*a2*c2))>=0)){
-  if ((a1>0 && b1>0 && c1>0) || (a1<0 && b1<0 && c1<0)){
-      PX<-c(1000000000000)
-
-      }
-  else{
-  if ((a1>0 && b1>0 && c1<0) || (a1<0 && b1>0 && c1>0) || (a1>0 && b1<0 && c1<0)||
-      (a1<0 && b1<0 && c1>0)){
-      if ((X1<= 0)) X1<-c(1000000000000)
-      if ((X2<= 0)) X2<-c(1000000000000)
-      DF<-data.frame(X=c(X1,X2))
-      PX<-min(DF)
-
-      }
-  else{
-    if ((a1>0 && b1<0 && c1>0) ||(a1<0 && b1>0 && c1<0)){
-      DF<-data.frame(X=c(X1,X2))
-      PX<-min(DF)
-      
-       }
-      }
-    }
-  if ((a2>0 && b2>0 && c2>0) || (a2<0 && b2<0 && c2<0)){
-       PY<-c(1000000000000)
-
-        }
-  else{
-   if((a2>0 && b2>0 && c2<0) || (a2<0 && b2>0 && c2>0) || (a2>0 && b2<0 && c2<0)||
-      (a2<0 && b2<0 && c2>0)){
-       if ((Y1<= 0)) Y1<-c(1000000000000)
-       if ((Y2<= 0)) Y2<-c(1000000000000)
-       DF<-data.frame(Y=c(Y1,Y2))
-       PY<-min(DF)
-        
-        }
-   else {
-      if ((a2>0 && b2<0 && c2>0) ||(a2<0 && b2>0 && c2<0)){
-      DF<-data.frame(Y=c(Y1,Y2))
-      PY<-min(DF)
-       
-       }
-      }
-    }
-   }
-
-else {
-if ((((b1)^2-(4*a1*c1))>=0) && (((b2)^2-(4*a2*c2))<0)){
-  if ((a1>0 && b1>0 && c1>0) || (a1<0 && b1<0 && c1<0)){
-      PY<-c(1000000000000)
-      PX<-c(1000000000000)
-      
-      }
-  else{
-  if ((a1>0 && b1>0 && c1<0) || (a1<0 && b1>0 && c1>0) || (a1>0 && b1<0 && c1<0)||
-      (a1<0 && b1<0 && c1>0)){
-      if ((X1<= 0)) X1<-c(1000000000000)
-      if ((X2<= 0)) X2<-c(1000000000000)
-      DF<-data.frame(X=c(X1,X2))
-      PX<-min(DF)
-      PY<-c(1000000000000)
-      
-      }
-  else{
-    if ((a1>0 && b1<0 && c1>0) ||(a1<0 && b1>0 && c1<0)){
-      DF<-data.frame(X=c(X1,X2))
-      PX<-min(DF)
-      PY<-c(1000000000000)
-      
-       }
-      }
-    }
-   }
-
-else {
-if ((((b1)^2-(4*a1*c1))< 0) && (((b2)^2-(4*a2*c2))>=0)){
-  if ((a2>0 && b2>0 && c2>0) || (a2<0 && b2<0 && c2<0)){
-      PY<-c(1000000000000)
-      PX<-c(1000000000000)
-
-        }
-   else{
-   if((a2>0 && b2>0 && c2<0) || (a2<0 && b2>0 && c2>0) || (a2>0 && b2<0 && c2<0)||
-      (a2<0 && b2<0 && c2>0)){
-       if ((Y1<= 0)) Y1<-c(1000000000000)
-       if ((Y2<= 0)) Y2<-c(1000000000000)
-       DF<-data.frame(Y=c(Y1,Y2))
-       PY<-min(DF)
-       PX<-c(1000000000000)
-
-        }
-   else {
-      if ((a2>0 && b2<0 && c2>0) ||(a2<0 && b2>0 && c2<0)){
-      DF<-data.frame(Y=c(Y1,Y2))
-      PY<-min(DF)
-      PX<-c(1000000000000)
-       
-       }
-      }
-     }
-    }
-else {
-if ((((b1)^2-(4*a1*c1))< 0) && (((b2)^2-(4*a2*c2))<0)){
-     PY<-c(1000000000000)
-     PX<-c(1000000000000)
-
-    }
-   }
-  }
- }
- if ((PY==1000000000000)) noPY = TRUE
- if ((PX==1000000000000)) noPX = TRUE
-}
+### delete many lines here; basically it's solving a quadratic equation. for finding intersect.
 #########
 ### windows(record = TRUE)
 #Output
@@ -384,9 +195,25 @@ cat("\nY =",coef(lm(Singledata$assay~Singledata$time))[1],"+(",coef(lm(Singledat
 cat("\n")
 output<-data.frame(Singledata$time,Singledata$assay,cal,Res)
 colnames(output)<-list("Time","Observed assay(%)","Calculated assay(%)","Residuals")
-show(output)
-cat("\n")
+show(output);cat("\n\n")
+###
+### show 95 %CI
+### try to label star mark to right-hand side here -YJ
+###
+newx<-data.frame(xx=seq(0,84))
+if (onesidedlo){
+     total<-data.frame(time=newx$xx, fit=pred[,1], Lower=pred[,2], starred="",stringsAsFactors=F)
+     for(i in 1:(length(newx$xx)-1)){if (i>PY) total[i+1,]$starred="***"}}
+if (onesidedup){
+     total<-data.frame(time=newx$xx, fit=pred[,1], Upper=pred[,3], starred="",stringsAsFactors=F)
+     for(i in 1:(length(newx$ss)-1)){if (i>PY) total[i+1,]$starred="***"}}
+if (twosided){
+     total<-data.frame(time=newx$xx, Lower=pred[,2],fit=pred[,1], Upper=pred[,3], starred="",stringsAsFactors=F)
+     for(i in 1:(length(newx$xx)-1)){if (i>PY) total[i+1,]$starred="***"}}
+cat("-- List of 95% CI for 84-month Time Interval:-\n\n")
+show(total)
 cat("\n\n")
+###
 cat("*********************************************************************\n")
 cat("                      << Summary and plots >>                        \n")
 cat("---------------------------------------------------------------------\n")
@@ -401,41 +228,47 @@ cat("*********************************************************************\n")
    noSolution = TRUE
 }
 else {
-     #go to plot of single batch
-     #i<-formatC(PY,format="f",digits=2) 
-     #i<-round(PY,3)
      windows(record = TRUE)  # prepare to plot now...
-     cat(" The estimated shelf life =",PY,"(months/weeks)\n\n")
-     shelflife<-as.integer(PY)
-     main<-paste(c("Shelf life=",shelflife, "months/weeks"),collapse=" ")
+     shelflife<-as.integer(PPY)
+     main<-paste(c("estimated shelf-life=",shelflife, "months"),collapse=" ")
      x<-Singledata$time
      y<-Singledata$assay
-     plot(x,y,xlim=c(0,(PY+12)),ylim=c((Lper-10),(Lper+30)), main=main,
-     xlab = "Time (months/weeks)", ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
-     lab=c(20,10,30),lty=2,lwd=2,col="black", xaxt="n")   
+     plot(x,y,xlim=c(0,84),ylim=c((Lper-10),(Lper+30)), main=main,
+     xlab = "Time (months)", ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
+     lab=c(20,10,30),lty=2,lwd=2,col="black", xaxt="n", frame.plot=FALSE)
        axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
        axis(1,at=0:100,tcl=-.2, labels=FALSE)
        
      mylm<-lm(y~x)
      abline(mylm,lwd=2, col="blue")
      axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
-     #plot CI
-     newx<-seq(0,1.5*max(Singledata$time))
-     prd<-predict(mylm,newdata=data.frame(x=newx),interval = c("confidence"),
-     level = 0.90,type="response")
-     lines(newx,prd[,2],col="red",lty=2)
-     #show 95 %CI
-     total<-data.frame(time=newx, fit=prd[,1], Lower=prd[,2])
-       cat("\n")
-       show(total)
-       cat("\n")
-     #add criteria limit
-     abline(h=Lper, col = "gray60")
-     abline(v=PY, col = "gray60")
-     cat("----------------------------------------------------------------\n\n")
+#plot CI
+     newx<-seq(0,84)
+     prd<-predict(mylm,newdata=data.frame(x=newx),interval = c("confidence"),level = 0.90,type="response")
+     lines(newx,prd[,2],col="blue",lty=4,lwd=2)
+###
+### no legend for single batch run
+###
+#add criteria limit
+     abline(h=Lper, col = "red")
+     abline(v=PY, col = "black")
+     if(pdf_activate){
+        dev.copy()                      ## copy to pdf file 2nd plots to end
+        dev.set(which=x11c)             ## back to graphic device now to continue...
+                     }
+     else{
+        x11c<-dev.cur()                 ## the current graphics device
+        pdf(plots_to_pdf,               ## activate pdf log file from now on... starting with ref. product
+             paper="a4")
+        pdf_activate=TRUE               ## set pdf_activate=TRUE from now on
+        dev.set(which=x11c)             ## back to graphics device...
+        dev.copy()                      ## copy the first plot from here
+        dev.set(which=x11c)             ## back to graphics device
+     }     
+     cat("----------------------------------------------------------------   \n\n")
      cat(" Drug product with lower acceptance limit of ",Lper,"% of label claim\n")
-     cat(" Shelf life =",shelflife,"(months/weeks)                        \n\n")
-     cat("******************************************************************\n")
+     cat(" Shelf-life =",shelflife,"(months)                                 \n\n")
+     cat("******************************************************************   \n")
      cat("\n")
      }
 }
@@ -443,24 +276,20 @@ else {
 ##### if one-sided uppper, start here.
 if (onesidedup){
 cat("                   One-sided upper LC analysis                     \n\n")
-if (noPX){
+if (noPY){
 cat("  No solution can be found with this model. Please try others.       \n")
 cat("*********************************************************************\n")
    noSolution = TRUE
 }
 else {
-     #go to plot of single batch
-     #i<-formatC(PX,format="f",digits=2) 
-     #i<-round(PX,3)
      windows(record = TRUE)  # prepare to plot now...
-     cat(" The estimated shelf life =", PX,"(months/weeks)\n\n")
-     shelflife<-as.integer(PX)
-     main<-paste(c("Shelf life=",shelflife, "months/weeks"),collapse=" ")
+     shelflife<-as.integer(PY)
+     main<-paste(c("estimated shelf-life=",shelflife, "months"),collapse=" ")
      x<-Singledata$time
      y<-Singledata$assay
-     plot(x,y,xlim=c(0,(PY+12)),ylim=c((Uper-30),(Uper+10)), main=main,
-     xlab = "Time (months/weeks)", ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
-     lab=c(20,10,30),lty=2,lwd=2,col="black", xaxt="n")   
+     plot(x,y,xlim=c(0,84),ylim=c((Uper-30),(Uper+10)), main=main,
+     xlab = "Time (months)", ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
+     lab=c(20,10,30),lty=2,lwd=2,col="black", xaxt="n", frame.plot=FALSE)
        axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
        axis(1,at=0:100,tcl=-.2, labels=FALSE)
        
@@ -468,21 +297,28 @@ else {
      abline(mylm,lwd=2, col="blue")
      axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
      #plot CI
-     newx<-seq(0,1.5*max(Singledata$time))
-     prd<-predict(mylm,newdata=data.frame(x=newx),interval = c("confidence"),
-     level = 0.90,type="response")
-     lines(newx,prd[,2],col="red",lty=2)
-     #show 95 %CI
-     total<-data.frame(time=newx, fit=prd[,1], Upper=prd[,3])
-       cat("\n")
-       show(total)
-       cat("\n")
+     newx<-seq(0,84)
+     prd<-predict(mylm,newdata=data.frame(x=newx),interval = c("confidence"),level = 0.90,type="response")
+     lines(newx,prd[,3],col="blue",lty=4,lwd=2)
      #add criteria limit
-     abline(h=Uper, col = "gray60")
-     abline(v=PX, col = "gray60")
+     abline(h=Uper, col = "red")
+     abline(v=PY, col = "black")
+     if(pdf_activate){
+        dev.copy()                      ## copy to pdf file 2nd plots to end
+        dev.set(which=x11c)             ## back to graphic device now to continue...
+                     }
+     else{
+        x11c<-dev.cur()                 ## the current graphics device
+        pdf(plots_to_pdf,               ## activate pdf log file from now on... starting with ref. product
+             paper="a4")
+        pdf_activate=TRUE               ## set pdf_activate=TRUE from now on
+        dev.set(which=x11c)             ## back to graphics device...
+        dev.copy()                      ## copy the first plot from here
+        dev.set(which=x11c)             ## back to graphics device
+     }     
      cat("----------------------------------------------------------------\n\n")
      cat(" Drug product with upper acceptance limit of ",Uper,"% of label claim\n")
-     cat(" Shelf life =",shelflife,"(months/weeks)                        \n\n")
+     cat(" Shelf life =",shelflife,"(months)                        \n\n")
      cat("******************************************************************\n")
      cat("\n")
      }
@@ -491,24 +327,19 @@ else {
 ##### if two-sided, start here
 if (twosided){
 cat("                       Two-sided LC analysis                       \n\n")
-if (noPX && noPY){
+if (noPY){
 cat("  No solution can be found with this model. Please try others.       \n")
 cat("*********************************************************************\n")
     noSolution = TRUE
 }
 else {
-if  (PX>=PY)  {
-     #go to plot of single batch
-     #i<-formatC(PY,format="f",digits=2) 
-     #i<-round(PY,3)
      windows(record = TRUE)  # prepare to plot now...
-     cat(" The estimated shelf life =",PY,"(months/weeks)\n\n")
      shelflife<-as.integer(PY)
-     main<-paste(c("Shelf life=",shelflife, "months/weeks"),collapse=" ")
+     main<-paste(c("estimated shelf-life=",shelflife, "months"),collapse=" ")
      x<-Singledata$time
      y<-Singledata$assay
-     plot(x,y,xlim=c(0,(PY+12)),ylim=c((Lper-10),(Lper+30)), main=main,
-     xlab = "Time (months/weeks)", ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
+     plot(x,y,xlim=c(0,84),ylim=c((Lper-10),(Lper+30)), main=main,
+     xlab = "Time (months)", ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2,col="black", xaxt="n")   
        axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
        axis(1,at=0:100,tcl=-.2, labels=FALSE)
@@ -517,80 +348,61 @@ if  (PX>=PY)  {
      abline(mylm,lwd=2, col="blue")
      axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
      #plot CI
-     newx<-seq(0,1.5*max(Singledata$time))
-     prd<-predict(mylm,newdata=data.frame(x=newx),interval = c("confidence"),
-     level = 0.95,type="response")
-     lines(newx,prd[,2],col="red",lty=2)
-     lines(newx,prd[,3],col="red",lty=2)
-     #show 95 %CI
-     total<-data.frame(time=newx, fit=prd[,1], Lower=prd[,2], Upper=prd[,3])
-       cat("\n")
-       show(total)
-       cat("\n")
+     newx<-seq(0,84)
+     prd<-predict(mylm,newdata=data.frame(x=newx),interval = c("confidence"),level = 0.95,type="response")
+     lines(newx,prd[,2],col="blue",lty=4,lwd=2)
+     lines(newx,prd[,3],col="blue",lty=4,lwd=2)
      #add criteria limit
-     abline(h=Lper, col = "gray60")
-     abline(h=Uper, col = "gray60")
-     abline(v=PY, col = "gray60")
-     cat("----------------------------------------------------------------\n\n")
-     cat(" Drug product with lower acceptance limit of ",Lper,"% of label claim\n")
-     cat(" Shelf life =",shelflife,"(months/weeks)                        \n\n")
+     abline(h=Lper, col = "red")
+     abline(h=Uper, col = "red")
+     abline(v=PY, col = "black")
+     if(pdf_activate){
+        dev.copy()                      ## copy to pdf file 2nd plots to end
+        dev.set(which=x11c)             ## back to graphic device now to continue...
+                     }
+     else{
+        x11c<-dev.cur()                 ## the current graphics device
+        pdf(plots_to_pdf,               ## activate pdf log file from now on... starting with ref. product
+             paper="a4")
+        pdf_activate=TRUE               ## set pdf_activate=TRUE from now on
+        dev.set(which=x11c)             ## back to graphics device...
+        dev.copy()                      ## copy the first plot from here
+        dev.set(which=x11c)             ## back to graphics device
+     }     
+     cat("------------------------------------------------------------------\n\n")
+     cat(" Drug product with upper acceptance limiy of",Uper,"% of label claim\n")
+     cat(" shelf-life =",shelflife,"(months)                           \n\n")
      cat("******************************************************************\n")
      cat("\n")
      }
-     
-else {
-    #go to plot of single batch
-     #i<-formatC(PX,format="f",digits=2) 
-     #i<-round(PX,3)
-     windows(record = TRUE)  # prepare to plot now...
-     cat(" The estimated shelf life =",PX,"(months/weeks)\n\n")
-     shelflife<-as.integer(PX)
-     main<-paste(c("Shelf life=",shelflife, "months/weeks"),collapse=" ")
-     x<-Singledata$time
-     y<-Singledata$assay
-     plot(x,y,xlim=c(0,(PY+12)),ylim=c((Uper-30),(Uper+10)), main=main,
-     xlab = "Time (months/weeks)", ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
-     lab=c(20,10,30),lty=2,lwd=2,col="black", xaxt="n")   
-       axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
-       axis(1,at=0:100,tcl=-.2, labels=FALSE)
-       
-     mylm<-lm(y~x)
-     abline(mylm,lwd=2, col="blue")
-     axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
-     #plot CI
-     newx<-seq(0,1.5*max(Singledata$time))
-     prd<-predict(mylm,newdata=data.frame(x=newx),interval = c("confidence"),
-     level = 0.95,type="response")
-     lines(newx,prd[,2],col="red",lty=2)
-     lines(newx,prd[,3],col="red",lty=2)
-     #show 95 %CI
-     total<-data.frame(time=newx, fit=prd[,1], Lower=prd[,2], Upper=prd[,3])
-       cat("\n")
-       show(total)
-       cat("\n")
-     #add criteria limit
-     abline(h=Uper, col = "gray60")
-     abline(h=Lper, col = "gray60")
-     abline(v=PX, col = "gray60")
-     cat("----------------------------------------------------------------\n\n")
-     cat(" Drug product with upper acceptance limit of ",Uper,"% of label claim\n")
-     cat(" Shelf life =",shelflife,"(months/weeks)                        \n\n")
-     cat("******************************************************************\n")
-     cat("\n")
-    }     
   }
-}
+
 ### end of two-sided.
-### do Q-Q plot only if there is at leat one solution (shelf life)
+### do Q-Q plot only if there is at leat one solution (shelf-life)
 if (!noSolution) {
-    qqnorm(output$Res, las=1, main = "Normal Q-Q Plot of Residuals (PgUp to switch plots)")
+    qqnorm(output$Res, las=1, main = "Normal Q-Q Plot of Residuals",lwd=3,col="blue",frame.plot=FALSE) 
     }
+   if(pdf_activate){
+      dev.copy()                      ## copy to pdf file 2nd plots to end
+      dev.set(which=x11c)             ## back to graphic device now to continue...
+                   }
+   else{
+      x11c<-dev.cur()                 ## the current graphics device
+      pdf(plots_to_pdf,               ## activate pdf log file from now on... starting with ref. product
+           paper="a4")
+      pdf_activate=TRUE               ## set pdf_activate=TRUE from now on
+      dev.set(which=x11c)             ## back to graphics device...
+      dev.copy()                      ## copy the first plot from here
+      dev.set(which=x11c)             ## back to graphics device
+   }    
     sink()
-       cat("*****************************************************************************\n\n")
-       cat("## Please note: The output file (",outputfile,") has been created \n")
-       cat("   and placed at",filepath,"\n\n")
-       cat("*****************************************************************************\n\n")     
-    bye()
+    close(zz)
+    dev.off()
+    cat("*****************************************************************************\n\n")
+    cat("## Please note: The output files (",output_to_txt,") and (",plots_to_pdf,")     \n")
+    cat("   have been created and placed at ",filepath,                               "\n\n")
+    cat("*****************************************************************************\n\n")     
+    go()
 }
 
 ### end of SingleAnalyze
