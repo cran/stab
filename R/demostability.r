@@ -439,7 +439,8 @@ else {
      cat("-------------------------\n")
      cat("*: estimated shelf life\n\n")
      cat("\n\n")
-     windows(record = TRUE )  ### now start preparing to plot...
+     ### windows(record = TRUE )  ### NOT working in linux/unix any more; change to dev.new()
+     dev.new()
      #i<-formatC(PX,format="f",digits=2) 
      #i<-round(PX,3) #same as the above 
      shelflife<-as.integer(PY)
@@ -493,7 +494,8 @@ else {
      cat("-------------------------\n")
      cat("*: estimated shelf life\n\n")
      cat("\n\n")
-     windows(record = TRUE )  ### now start preparing to plot...
+     ### windows(record = TRUE )  ### NOT working in linux/unix any more; change to dev.new()
+     dev.new()
      #i<-formatC(PX,format="f",digits=2) 
      #i<-round(PX,3) #same as the above 
      shelflife<-as.integer(PX)
@@ -523,7 +525,7 @@ else {
      abline(h=Uper, col = "gray60")
      abline(v=PX, col = "gray60")
      cat("------------------------------------------------------------------\n\n")
-     cat(" Drug product with upper acceptance limiy of",Uper,"% of label claim\n")
+     cat(" Drug product with upper acceptance limit of",Uper,"% of label claim\n")
      cat(" Shelf life =",shelflife,"(months/weeks)                           \n\n")
      cat("******************************************************************\n")
      cat("\n")
@@ -546,7 +548,8 @@ if  (PX>=PY)  {
      cat("-------------------------\n")
      cat("*: estimated shelf life\n\n")
      cat("\n\n")
-     windows(record = TRUE )  ### now start preparing to plot...
+     ### windows(record = TRUE )  ### NOT working in linux/unix any more; change to dev.new()
+     dev.new()
      #go to plot of single batch
      #i<-formatC(PY,format="f",digits=2)    # HY used this statement. YJ
      #i<-round(PY,3)
@@ -592,9 +595,10 @@ else {
       cat("-------------------------\n")
       cat("*: estimated shelf life\n\n")
       cat("\n\n")
-      windows(record = TRUE )  ### now start preparing to plot...
-     #i<-formatC(PX,format="f",digits=2) 
-     #i<-round(PX,3) #same as the above 
+      ### windows(record = TRUE )  ### NOT working in linux/unix any more; change to dev.new()
+      dev.new()
+      #i<-formatC(PX,format="f",digits=2) 
+      #i<-round(PX,3) #same as the above 
      shelflife<-as.integer(PX)
      main<-paste(c("Shelf life =",shelflife, "months/weeks (PgDn to switch plots)"),collapse=" ")
      x<-ANCOVAdata$time
@@ -633,7 +637,7 @@ else {
    }
 }
 ### end of two-sided.
-### do Q-Q plot only if there is at leat one solution (shelf life)
+### do Q-Q plot only if there is at least one solution (shelf life)
 if (!noSolution) {
     qqnorm(output$Res, las=1, main = "Normal Q-Q Plot of Residuals (PgUp to switch plots)", 
            col=c(ANCOVAdata$batch))
@@ -1083,11 +1087,12 @@ else {
      cat("-------------------------\n")
      cat("*: estimated shelf life\n\n")
      cat("\n\n")
-     windows(record = TRUE )  ### now start preparing to plot...
+     ### windows(record = TRUE )  ### NOT working in linux/unix any more; change to dev.new()
+     dev.new()
      #go to plot of single batch
      #i<-formatC(PPY,format="f",digits=2) 
      #i<-round(PPY,3)
-     #### oultine plot box 
+     #### outline plot box 
      shelflife<-as.integer(PPY)
      
      main<-paste(c("Shelf life =",shelflife, "months/weeks (PgDn to switch plots)"),collapse=" ")    
@@ -1144,7 +1149,8 @@ else {
      cat("-------------------------\n")
      cat("*: estimated shelf life\n\n")
      cat("\n\n")
-     windows(record = TRUE )  ### now start preparing to plot...
+     ### windows(record = TRUE )  ### NOT working in linux/unix any more; change to dev.new()
+     dev.new()
      #i<-formatC(PPX,format="f",digits=2) 
      #i<-round(PX,3) same output as the above... 
      shelflife<-as.integer(PPX)
@@ -1202,11 +1208,12 @@ if  (PPX>=PPY)  {
      cat("-------------------------\n")
      cat("*: estimated shelf life\n\n")
      cat("\n\n")
-     windows(record = TRUE )  ### now start preparing to plot...
+     ### windows(record = TRUE )  ### NOT working in linux/unix any more; change to dev.new()
+     dev.new()
      #go to plot of single batch
      #i<-formatC(PPY,format="f",digits=2) 
      #i<-round(PPY,3)
-     #### oultine plot box 
+     #### outline plot box 
      shelflife<-as.integer(PPY)
      main<-paste(c("Shelf life =",shelflife, "months/weeks (PgDn to switch plots)"),collapse=" ")    
      plot(time~assay,data=ANCOVAdata, xlim=c(0,2.0*max(ANCOVAdata$time)),ylim=c((Lper-10),(Uper+10)), main=main,
@@ -1255,7 +1262,8 @@ else {
       cat("-------------------------\n")
       cat("*: estimated shelf life\n\n")
       cat("\n\n")
-      windows(record = TRUE )  ### now start preparing to plot...
+      ### windows(record = TRUE )  ### NOT working in linux/unix any more; change to dev.new()
+     dev.new()
      #i<-formatC(PPX,format="f",digits=2) 
      #i<-round(PX,3) same output as the above... 
      shelflife<-as.integer(PPX)
@@ -1301,7 +1309,7 @@ else {
   }
  }
 ### end of two-sided.
-### do Q-Q plot only if there is at leat one solution (shelf life)
+### do Q-Q plot only if there is at least one solution (shelf life)
 if (!noSolution) {
     qqnorm(QQ$value, las=1, main = "Normal Q-Q Plot of Residuals (PgUp to switch plots)", col=c(QQ$L1))  
       
@@ -1735,11 +1743,12 @@ else {
      cat("-------------------------\n")
      cat("*: estimated shelf life\n\n")
      cat("\n\n")
-     windows(record = TRUE )  ### now start preparing to plot...
+     ### windows(record = TRUE )  ### NOT working in linux/unix any more; change to dev.new()
+     dev.new()
           #go to plot of single batch
      #i<-formatC(PPY,format="f",digits=2) 
      #i<-round(PPY,3)
-     #### oultine plot box 
+     #### outline plot box 
      shelflife<-as.integer(PPY)
      main<-paste(c("Shelf life =",shelflife,"months/weeks (PgDn to switch plots)"),collapse=" ")    
      plot(time~assay,data=ANCOVAdata, xlim=c(0,2.0*max(ANCOVAdata$time)),ylim=c((Lper-10),(Lper+30)), main=main,
@@ -1795,7 +1804,8 @@ else {
      cat("-------------------------\n")
      cat("*: estimated shelf life\n\n")
      cat("\n\n")
-     windows(record = TRUE )  ### now start preparing to plot...
+     ### windows(record = TRUE )  ### NOT working in linux/unix any more; change to dev.new()
+     dev.new()
      #i<-formatC(PPX,format="f",digits=2) 
      #i<-round(PX,3) ### same output as the above... 
      shelflife<-as.integer(PPX)
@@ -1853,11 +1863,12 @@ if  (PPX>=PPY)  {
      cat("-------------------------\n")
      cat("*: estimated shelf life\n\n")
      cat("\n\n")
-     windows(record = TRUE )  ### now start preparing to plot...
+     ### windows(record = TRUE )  ### NOT working in linux/unix any more; change to dev.new()
+     dev.new()
      #go to plot of single batch
      #i<-formatC(PPY,format="f",digits=2) 
      #i<-round(PPY,3)
-     #### oultine plot box 
+     #### outline plot box 
      shelflife<-as.integer(PPY)
      main<-paste(c("Shelf life =",shelflife,"months/weeks (PgDn to switch plots)"),collapse=" ")    
      plot(time~assay,data=ANCOVAdata, xlim=c(0,2.0*max(ANCOVAdata$time)),ylim=c((Lper-10),(Uper+10)), main=main,
@@ -1905,7 +1916,8 @@ else {
       cat("-------------------------\n")
       cat("*: estimated shelf life\n\n")
       cat("\n\n")
-      windows(record = TRUE )  ### now start preparing to plot...
+      ### windows(record = TRUE )  ### NOT working in linux/unix any more; change to dev.new()
+     dev.new()
      #i<-formatC(PPX,format="f",digits=2) 
      #i<-round(PX,3) ### same as the above...
      shelflife<-as.integer(PPX)
@@ -1951,7 +1963,7 @@ else {
    }
  }
 ### end of two-sided.
-### do Q-Q plot only if there is at leat one solution (shelf life)
+### do Q-Q plot only if there is at least one solution (shelf life)
 if (!noSolution) {
     qqnorm(QQ$value, las=1, main = "Normal Q-Q Plot of Residuals (PgUp to switch plots)", col=c(QQ$L1))  
       

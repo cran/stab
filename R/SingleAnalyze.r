@@ -228,7 +228,8 @@ cat("*********************************************************************\n")
    noSolution = TRUE
 }
 else {
-     windows(record = TRUE)  # prepare to plot now...
+     ### windows(record = TRUE )  ### NOT working in linux/unix any more; change to dev.new()
+     dev.new()
      shelflife<-as.integer(PPY)
      main<-paste(c("estimated shelf-life=",shelflife, "months"),collapse=" ")
      x<-Singledata$time
@@ -273,7 +274,7 @@ else {
      }
 }
 ##### end of one-sided lower
-##### if one-sided uppper, start here.
+##### if one-sided upper, start here.
 if (onesidedup){
 cat("                   One-sided upper LC analysis                     \n\n")
 if (noPY){
@@ -282,7 +283,8 @@ cat("*********************************************************************\n")
    noSolution = TRUE
 }
 else {
-     windows(record = TRUE)  # prepare to plot now...
+     ### windows(record = TRUE )  ### NOT working in linux/unix any more; change to dev.new()
+     dev.new()
      shelflife<-as.integer(PY)
      main<-paste(c("estimated shelf-life=",shelflife, "months"),collapse=" ")
      x<-Singledata$time
@@ -333,7 +335,8 @@ cat("*********************************************************************\n")
     noSolution = TRUE
 }
 else {
-     windows(record = TRUE)  # prepare to plot now...
+     ### windows(record = TRUE )  ### NOT working in linux/unix any more; change to dev.new()
+     dev.new()
      shelflife<-as.integer(PY)
      main<-paste(c("estimated shelf-life=",shelflife, "months"),collapse=" ")
      x<-Singledata$time
@@ -370,7 +373,7 @@ else {
         dev.set(which=x11c)             ## back to graphics device
      }     
      cat("------------------------------------------------------------------\n\n")
-     cat(" Drug product with upper acceptance limiy of",Uper,"% of label claim\n")
+     cat(" Drug product with upper acceptance limit of",Uper,"% of label claim\n")
      cat(" shelf-life =",shelflife,"(months)                           \n\n")
      cat("******************************************************************\n")
      cat("\n")
@@ -378,7 +381,7 @@ else {
   }
 
 ### end of two-sided.
-### do Q-Q plot only if there is at leat one solution (shelf-life)
+### do Q-Q plot only if there is at least one solution (shelf-life)
 if (!noSolution) {
     qqnorm(output$Res, las=1, main = "Normal Q-Q Plot of Residuals",lwd=3,col="blue",frame.plot=FALSE) 
     }
@@ -397,6 +400,7 @@ if (!noSolution) {
    }    
     sink()
     close(zz)
+    readline(" Done. Press any key to continue...")
     dev.off()
     cat("*****************************************************************************\n\n")
     cat("## Please note: The output files (",output_to_txt,") and (",plots_to_pdf,")     \n")

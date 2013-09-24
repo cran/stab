@@ -1,1 +1,1 @@
-demostability()
+stab_test()

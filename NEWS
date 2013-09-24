@@ -1,34 +1,41 @@
+stab for R: 
+data analysis of drug stability for shelf life estimation
+
 Update log
 ---
-stab for R: data analysis of drug stability for shelf life estimation
 
-
-04/11/2013 (v0.1.5)
+~ 09/24/2013 (v0.1.6)
 ---
- - switched from solving a quadratic eq. for shelf-life
-   to graphic method (95% CI);
+   - added 'tests' subdir and test_run() for test;
+   - corrected some typo with spelling check;
+   - switch 'windows(record=TRUE)' to 'dev.new()' for linux/unix-like OS;
 
- - thus we fixed inconsitent results between calculated
-   shlef-life and the list of 95% CI for multiple batches;
-
- - outputs have been directed to a .txt and .pdf files;
-   .txt is for statistical results, and .pdf is for
-   graphic output.
-   
- - the demo still keeps as it was; i.e., using the method
-   of solving quadratic eq. for historical reasons.
+~ 04/11/2013 (v0.1.5)
+---
+  - switched from solving a quadratic eq. for shelf-life
+    to graphic method (95% CI);
   
- - add the examples from the textbook, as well as to 
-   validate stab for R.
+  - thus we fixed inconsistent results between calculated
+    shelf-life and the list of 95% CI for multiple batches;
+  
+  - outputs have been directed to a .txt and .pdf files;
+    .txt is for statistical results, and .pdf is for
+    graphic output.
+    
+  - the demo still keeps as it was; i.e., using the method
+    of solving quadratic eq. for historical reasons.
    
- - since stab v0.1.4 was just released on March 7, 2013,
-   we have to wait for two more months before next release.
-   hoever, this 'pre-release' has been finished and is ready
-   to release. Once it has been submitted to CRAN and
-   has been accepted by CRAN core team, this pre-release
-   will be removed from here.
-   
- - thanks for using stab for R.
+  - add the examples from the textbook, as well as to 
+    validate stab for R.
+    
+  - since stab v0.1.4 was just released on March 7, 2013,
+    we have to wait for two more months before next release.
+    however, this 'pre-release' has been finished and is ready
+    to release. Once it has been submitted to CRAN and
+    has been accepted by CRAN core team, this pre-release
+    will be removed from here.
+    
+  - thanks for using stab for R.
 ---
 
    

@@ -5,7 +5,7 @@
 #predict req. stats4 package
 #confidence interval req. MASS package
 
-MultipleAnalyze<-function(Multipledata, Uper, Lper, separateWindows=TRUE)
+stab_test<-function()
 {
 onesidedlo = FALSE
 onesidedup = FALSE
@@ -17,63 +17,18 @@ PPY<-0
 PY1<-0
 PY2<-0
 ltmp<-0
+Lper<-0
+Uper<-0
 switch_UL= FALSE
 assay<-NULL
 pdf_activate=FALSE  ### set pdf device activate as FALSE at beginning
 
-file.menu <- c(" the one-sided lower LC analysis  ",
-               " the one-sided upper LC analysis  ",
-               " the two-sided LC analysis        ")
+onesidedlo = TRUE
+cat("\n ** The one-sided lower LC analysis is selected.** \n")
+cat("the lower limit i set to = 90 % of label claimed. ")
+Lper<-90
 cat("\n")
-pick <- menu(file.menu, title = "<< Types of Analysis:- Multiple batches >>", graphics=TRUE)
-if (pick == 1){
-    cat("\n")
-    onesidedlo = TRUE
-    cat("\n ** The one-sided lower LC analysis is selected.** \n")
-              }
-else {
-      if (pick == 2){
-          cat("\n")
-          onesidedup = TRUE
-          cat("\n ** The one-sided upper LC analysis is selected.** \n")
-                    }
-      else {
-            if (pick == 3){
-                cat("\n")
-                twosided = TRUE
-                cat("\n ** The two-sided LC analysis is selected.** \n")
-              }
-            }
-      }
-
-cat("\n")
-if(onesidedlo){
-   cat("\n")
-   lowerstr<- readline("Enter the lower limit = ____ % of label claim: ")
-   Lper<-as.numeric(lowerstr)
-   cat("\n")
-              }
- else {
-    if(onesidedup){
-      upperstr<- readline("Enter the upper limit = ____ % of label claim: ")
-      Uper <- as.numeric(upperstr)
-      cat("\n")
-                 }
-     else{
-      lowerstr<- readline("Enter the lower limit = ____ % of label claim: ")
-      Lper<-as.numeric(lowerstr)
-      cat("\n")
-      upperstr<- readline("Enter the upper limit = ____ % of label claim: ")
-      Uper <- as.numeric(upperstr)
-      cat("\n")
-      if(Lper>Uper){ltmp<-Lper;Lper<-Uper;Uper<-ltmp;switch_UL=TRUE}
-      if(identical(Lper,Uper)) stop("\n\n Error: The lower limit cannot be the same as the upper limit.\n\n")
-           }
-       }
-
-filepath<-getwd()
-cat("\n")
-outputfile <- readline("Enter the output file name (no extension!): ")
+outputfile <- "stab_test_output"
 output_to_txt <- paste(outputfile,".txt",sep="")
 plots_to_pdf <- paste(outputfile,".pdf",sep="")
 cat("\n\n")
@@ -83,26 +38,17 @@ cat("*****************************************************************\n\n")
 zz <- file(output_to_txt, open="wt")
 sink(zz,split=TRUE)              ### add 'split=TRUE" here to see it on screen too. - YJ
 stab.version()
+cat("\n\n")
+filelocxx <- system.file("extdata", "p609.RData", package="stab")
+Multipledata<-readRDS(filelocxx)              
+Multipledata<- na.omit(Multipledata)
+colnames(Multipledata)<-list("batch","time","assay")
 cat("<< --- List of input data --- >>\n\n")
 show(Multipledata)
 cat("\n\n")
 cat(" Analysis settings for multiple batches:\n")
 cat(" ---------------------------------------------\n")
-if (onesidedlo){
 cat(" The lower acceptance limit is set to",Lper,"%.\n\n")
-}
-else {
-  if (onesidedup) {
-     cat(" The upper acceptance limit is set to",Uper,"%.\n\n")
-     }
-  else {
-     cat(" The lower acceptance limit is set to",Lper,"%.\n")
-     cat(" The upper acceptance limit is set to",Uper,"%.\n\n")
-    if(switch_UL) {
-    cat("*** You input conflict data with the Upper and Lower limits.\n")
-    cat("    They have been switched automatically.\n\n")}  ### to avoid accidentally input err. -YJ
-    }
-}
 
 #fitting data with ANCOVA model to test poolability
 cat("<<Output: ANCOVA model: batch vs. time vs. assay (%)>>\n\n")
@@ -498,13 +444,7 @@ if (!noSolution) {
       }
     sink()
     close(zz)
-    readline(" Done. Press any key to continue...")
     dev.off()
-       cat("*****************************************************************************\n\n")
-       cat("## Please note: The output files (",output_to_txt,") and (",plots_to_pdf,")     \n")
-       cat("   have been created and placed at ",filepath,                               "\n\n")
-       cat("*****************************************************************************\n\n")     
-    go()  ### back to Top menu now. -YJ
 }
 
 ##################################  END OF MODEL #1 #############################
@@ -664,7 +604,6 @@ K.split<-split(Multipledata, list(Multipledata$batch))
 ###            because it is within a batch, not between the batch.!  Haha~  
 
            ### cat(" show LX, L[j]--> ",LX,L[j],"\n\n")
-           ### readline(" Pause here..")      
            ### pd<-(sqrt(1/(LX) + (((newx$xx-LY)^2)/Sxx[j])*SS[j]))*T[j]}    ### calc 'pd' value here (only for model#2); here we use T[j] finally. Haha... --YJ
            pd<-(sqrt(1/(L[j]) + (((newx$xx-LY)^2)/Sxx[j])*SS[j]))*T[j]   ### this eq. is correct; it is within the batch. --YJ
            
@@ -1093,13 +1032,6 @@ if (!noSolution) {
      }
    sink()
    close(zz)
-   readline(" Done. Press any key to continue...")
-   dev.off()
-       cat("*****************************************************************************\n\n")
-       cat("## Please note: The output files (",output_to_txt,") and (",plots_to_pdf,")     \n")
-       cat("   have been created and placed at ",filepath,                               "\n\n")
-       cat("*****************************************************************************\n\n")
-   go()
 }
 ############################# END OF MODEL #2 ##################################
 #
@@ -1551,13 +1483,7 @@ if (!noSolution) {
      }
    sink()
    close(zz)
-   readline(" Done. Press any key to continue...")
    dev.off()
-       cat("*****************************************************************************\n\n")
-       cat("## Please note: The output files (",output_to_txt,") and (",plots_to_pdf,")     \n")
-       cat("   have been created and placed at ",filepath,                               "\n\n")
-       cat("*****************************************************************************\n\n")
-   go()
      }
    }
  }
