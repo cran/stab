@@ -3,6 +3,14 @@ data analysis of drug stability for shelf life estimation
 
 Update log
 ---
+~ 11/29/2013 (0.1.7)
+---
+   - set CI as option (default is 95%);
+   - used data editor to set up parameters now as bear;
+   - fixed pdf output incompletedly closed after running a project;
+   - fixed abnormal crashed when no solution can be found;
+   - fixed the repeated batch # for model #3.
+   - fixed some typo...
 
 ~ 09/24/2013 (v0.1.6)
 ---

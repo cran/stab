@@ -9,7 +9,7 @@ packageStartupMessage("
 
                           
    stab for R
-   v0.1.6
+   v0.1.7
                                                                    
    Please type 'go()' to run; or
    'about.stab()' to read more.                

@@ -27,6 +27,10 @@ cat(" Note: The output file (",outputfile,") will be created \n")
 cat(" and placed at",filepath,"\n")
 cat("*******************************************************************\n\n")
 
+Lper<-0.
+Uper<-0.
+CI_percent<-0.
+
 file.menu <- c("the one-sided lower LC analysis",
                "the one-sided upper LC analysis",
                "the two-sided analysis")
@@ -51,31 +55,39 @@ else {
               }
             }
       }
-         
+
+             
 cat("\n")
 if(onesidedlo){
    cat("\n")
-   lowerstr<- readline("Enter the lower limit = ____ % of label claim: ")
-   Lper<-as.numeric(lowerstr)
-   cat("\n")
+   set.stab<-data.frame(Parameter=c("Lower Limit (%)","Percent CI (%)"),value=c(90,95))
+   set.stab<-edit(set.stab)
+   Lper<-set.stab[1,2]
+   if(Lper<=0 ||Lper>120.) Lper<-90       ### set as default if going wrong.
+   CI_percent<- set.stab[2,2]/100
+   if(CI_percent<=0 ||CI_percent>1.) CI_percent<-0.95          ### set as default if going wrong.
               }
  else {
     if(onesidedup){
-      upperstr<- readline("Enter the upper limit = ____ % of label claim: ")
-      Uper <- as.numeric(upperstr)
-      cat("\n")
+      set.stab<-data.frame(Parameter=c("Upper Limit (%)","Percent CI (%)"),value=c(110,95))
+      set.stab<-edit(set.stab)
+      Uper<-set.stab[1,2]
+      if(Uper<=0 ||Uper>150.) Uper<-110       ### set as default if going wrong.
+      CI_percent<- set.stab[2,2]/100
+      if(CI_percent<=0 ||CI_percent>1.) CI_percent<-0.95       ### set as default if going wrong.
                  }
      else{
-      upperstr<- readline("Enter the upper limit = ____ % of label claim: ")
-      Uper <- as.numeric(upperstr)
-      cat("\n")
-      lowerstr<- readline("Enter the lower limit = ____ % of label claim: ")
-      Lper<-as.numeric(lowerstr)
-      if(Lper>Uper){ltmp<-Lper;Lper<-Uper;Uper<-ltmp;switch_UL=TRUE}
-      if(identical(Lper,Uper)) stop("\n\n Error: The lower limit cannot be the same as the upper limit.\n\n")
-      cat("\n")
+          set.stab<-data.frame(Parameter=c("Lower Limit (%)","Upper Limit (%)","Percent CI (%)"),value=c(90,110,95))
+          set.stab<-edit(set.stab)
+          Lper<-set.stab[1,2]
+          if(Lper<=0 ||Lper>100.) Lper<-90     ### set as default if going wrong.
+          Uper<-set.stab[2,2]
+          if(Uper<=0 ||Uper>150.) Uper<-110    ### set as default if going wrong.
+          CI_percent<- set.stab[3,2]/100
+          if(CI_percent<=0 ||CI_percent>1.) CI_percent<-0.95     ### set as default if going wrong.
            }
        }
+    
 zz <- file(output_to_txt, open="wt")
 sink(zz,split=TRUE)
 stab.version()
@@ -202,16 +214,18 @@ show(output);cat("\n\n")
 ###
 newx<-data.frame(xx=seq(0,84))
 if (onesidedlo){
-     total<-data.frame(time=newx$xx, fit=pred[,1], Lower=pred[,2], starred="",stringsAsFactors=F)
-     for(i in 1:(length(newx$xx)-1)){if (i>PY) total[i+1,]$starred="***"}}
+     total<-data.frame(time=newx$xx, fit=pred[,1], Lower=pred[,2], star="",stringsAsFactors=F)
+     for(i in 1:(length(newx$xx)-1)){if (i>PY) total[i+1,]$star="***"}}
 if (onesidedup){
-     total<-data.frame(time=newx$xx, fit=pred[,1], Upper=pred[,3], starred="",stringsAsFactors=F)
-     for(i in 1:(length(newx$ss)-1)){if (i>PY) total[i+1,]$starred="***"}}
+     total<-data.frame(time=newx$xx, fit=pred[,1], Upper=pred[,3], star="",stringsAsFactors=F)
+     for(i in 1:(length(newx$ss)-1)){if (i>PY) total[i+1,]$star="***"}}
 if (twosided){
-     total<-data.frame(time=newx$xx, Lower=pred[,2],fit=pred[,1], Upper=pred[,3], starred="",stringsAsFactors=F)
-     for(i in 1:(length(newx$xx)-1)){if (i>PY) total[i+1,]$starred="***"}}
-cat("-- List of 95% CI for 84-month Time Interval:-\n\n")
+     total<-data.frame(time=newx$xx, Lower=pred[,2],fit=pred[,1], Upper=pred[,3], star="",stringsAsFactors=F)
+     for(i in 1:(length(newx$xx)-1)){if (i>PY) total[i+1,]$star="***"}}
+cat("\n\n")
+cat("-- List of",CI_percent*100,"% CI for 84-month Time Interval:-\n\n")
 show(total)
+cat("\n\n ***: means the listing of expiration as defined.")
 cat("\n\n")
 ###
 cat("*********************************************************************\n")
@@ -401,11 +415,12 @@ if (!noSolution) {
     sink()
     close(zz)
     readline(" Done. Press any key to continue...")
-    dev.off()
+    if(noPY){}                       ## since no PY can be found only dev.off().
+      else{dev.off();dev.off()}      ## req. to clode X-windows and pdf output file.
     cat("*****************************************************************************\n\n")
     cat("## Please note: The output files (",output_to_txt,") and (",plots_to_pdf,")     \n")
     cat("   have been created and placed at ",filepath,                               "\n\n")
-    cat("*****************************************************************************\n\n")     
+    cat("*****************************************************************************\n\n")  
     go()
 }
 

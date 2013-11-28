@@ -46,31 +46,40 @@ else {
             }
       }
 
+Lper<-0.
+Uper<-0.
+CI_percent<-0.
+
 cat("\n")
 if(onesidedlo){
    cat("\n")
-   lowerstr<- readline("Enter the lower limit = ____ % of label claim: ")
-   Lper<-as.numeric(lowerstr)
-   cat("\n")
-              }
+   set.stab<-data.frame(Parameter=c("Lower Limit (%)","Percent CI (%)"),value=c(90,95))
+   set.stab<-edit(set.stab)
+   Lper<-set.stab[1,2]
+   if(Lper<=0 ||Lper>120.) Lper<-90       ### set as default if going wrong.
+   CI_percent<- set.stab[2,2]/100
+   if(CI_percent<=0 ||CI_percent>1.) CI_percent<-0.95          ### set as default if going wrong.
+        }
  else {
-    if(onesidedup){
-      upperstr<- readline("Enter the upper limit = ____ % of label claim: ")
-      Uper <- as.numeric(upperstr)
-      cat("\n")
-                 }
-     else{
-      lowerstr<- readline("Enter the lower limit = ____ % of label claim: ")
-      Lper<-as.numeric(lowerstr)
-      cat("\n")
-      upperstr<- readline("Enter the upper limit = ____ % of label claim: ")
-      Uper <- as.numeric(upperstr)
-      cat("\n")
-      if(Lper>Uper){ltmp<-Lper;Lper<-Uper;Uper<-ltmp;switch_UL=TRUE}
-      if(identical(Lper,Uper)) stop("\n\n Error: The lower limit cannot be the same as the upper limit.\n\n")
+      if(onesidedup){
+      set.stab<-data.frame(Parameter=c("Upper Limit (%)","Percent CI (%)"),value=c(110,95))
+      set.stab<-edit(set.stab)
+      Uper<-set.stab[1,2]
+      if(Uper<=0 ||Uper>150.) Uper<-110       ### set as default if going wrong.
+      CI_percent<- set.stab[2,2]/100
+      if(CI_percent<=0 ||CI_percent>1.) CI_percent<-0.95       ### set as default if going wrong.
            }
-       }
-
+     else{
+          set.stab<-data.frame(Parameter=c("Lower Limit (%)","Upper Limit (%)","Percent CI (%)"),value=c(90,110,95))
+          set.stab<-edit(set.stab)
+          Lper<-set.stab[1,2]
+          if(Lper<=0 ||Lper>100.) Lper<-90     ### set as default if going wrong.
+          Uper<-set.stab[2,2]
+          if(Uper<=0 ||Uper>150.) Uper<-110    ### set as default if going wrong.
+          CI_percent<- set.stab[3,2]/100
+          if(CI_percent<=0 ||CI_percent>1.) CI_percent<-0.95     ### set as default if going wrong.
+      }
+  }
 filepath<-getwd()
 cat("\n")
 outputfile <- readline("Enter the output file name (no extension!): ")
@@ -185,7 +194,8 @@ Slope<-coef(lm(assay ~ time, data=ANCOVAdata))[2]       ### 2nd get common 'slop
 cat(" --- Batch#:", ba,"---\n")   ### starting output here
 
 if(onesidedlo || onesidedup){
-       T<-qt(0.95,L-2)  ### for one-sided criteria; not used with this line.
+       ### T<-qt(0.95,L-2)  ### for one-sided criteria; not used with this line.
+       T<-qt(CI_percent,L-2)
        x<-ANCOVAdata$time            ### here pool all data together because they all share same intercept & slope (for model#1)
        y<-ANCOVAdata$assay           ### here pool all data together because they all share same intercept & slope (for model#1)
        mylm<-lm(y~x)
@@ -210,8 +220,9 @@ if(onesidedlo || onesidedup){
           }
        } 
 else {
-       T<-qt(0.975,L-2)              ### for two-sided criteria; this line is not used. consider to delete it.
-       x<-ANCOVAdata$time            ### here pool all data together because they all share same intercept & slope (for model#1)
+       ### T<-qt(0.975,L-2)              ### for two-sided criteria; this line is not used. consider to delete it.
+       T<-qt(1-((1-CI_percent)/2),L-2)
+       x<-ANCOVAdata$time                ### here pool all data together because they all share same intercept & slope (for model#1)
        y<-ANCOVAdata$assay
 ###       
 ### prepare to construct 95%CI here -YJ 
@@ -252,17 +263,18 @@ cat("\n\n")
 ###
 newx<-data.frame(xx=seq(0,84))
 if (onesidedlo){
-     total<-data.frame(time=newx$xx, fit=pred[,1], Lower=pred[,2], starred="",stringsAsFactors=F)
-     for(i in 1:(length(newx$xx)-1)){if (i>PY) total[i+1,]$starred="***"}}
+     total<-data.frame(time=newx$xx, fit=pred[,1], Lower=pred[,2], star="",stringsAsFactors=F)
+     for(i in 1:(length(newx$xx)-1)){if (i>PY) total[i+1,]$star="***"}}
 if (onesidedup){
-     total<-data.frame(time=newx$xx, fit=pred[,1], Upper=pred[,3], starred="",stringsAsFactors=F)
-     for(i in 1:(length(newx$ss)-1)){if (i>PY) total[i+1,]$starred="***"}}
+     total<-data.frame(time=newx$xx, fit=pred[,1], Upper=pred[,3], star="",stringsAsFactors=F)
+     for(i in 1:(length(newx$ss)-1)){if (i>PY) total[i+1,]$star="***"}}
 if (twosided){
-     total<-data.frame(time=newx$xx, Lower=pred[,2],fit=pred[,1], Upper=pred[,3], starred="",stringsAsFactors=F)
-     for(i in 1:(length(newx$xx)-1)){if (i>PY) total[i+1,]$starred="***"}}
+     total<-data.frame(time=newx$xx, Lower=pred[,2],fit=pred[,1], Upper=pred[,3], star="",stringsAsFactors=F)
+     for(i in 1:(length(newx$xx)-1)){if (i>PY) total[i+1,]$star="***"}}
      cat("\n\n")
-     cat("-- List of 95% CI for 84-month Time Interval:-\n\n")
+     cat("-- List of",CI_percent*100,"% CI for 84-month Time Interval:-\n\n")
      show(total)
+     cat("\n\n ***: means the listing of expiration as defined.")
      cat("\n\n")
 
 ##### if one-sided low, start from here
@@ -499,7 +511,8 @@ if (!noSolution) {
     sink()
     close(zz)
     readline(" Done. Press any key to continue...")
-    dev.off()
+    if(noPY){}                       ## since no PY can be found only dev.off().
+      else{dev.off();dev.off()}                  ## req. to clode X-windows and pdf output file.
        cat("*****************************************************************************\n\n")
        cat("## Please note: The output files (",output_to_txt,") and (",plots_to_pdf,")     \n")
        cat("   have been created and placed at ",filepath,                               "\n\n")
@@ -634,9 +647,9 @@ K.split<-split(Multipledata, list(Multipledata$batch))
             SS[j]<-(Syy[j]-(Slope*Sxy[j]))/(L[j]-2)        ### will be used to calc 'pd' later --YJ
         
 ### 95%CI,n-2 T value  ### starting form here -YJ, with batch j= 1,2,3... 
-        cat(" --- Batch#:", ba[j],"---\n")       ### starting output here
+        cat(" --- Batch#:", ba[j],"---")       ### starting output here
         if(onesidedlo || onesidedup){
-           T[j]<-qt(0.95,L[j]-2)                 ### will be used to calc 'pd' later --YJ
+           T[j]<-qt(CI_percent,L[j]-2)        ### will be used to calc 'pd' later --YJ
               newx<-data.frame(xx=seq(0,84))
               yy<-Intercept+newx$xx*Slope        ### intercept should be by batch; Slope is the same. --YJ
               mod1<-lm(yy~newx$xx)
@@ -688,7 +701,8 @@ K.split<-split(Multipledata, list(Multipledata$batch))
                  }
            }
         else {
-           T[j]<-qt(0.975,L[j]-2)  ## two sided from here
+           #### T[j]<-qt(0.975,L[j]-2)
+           T[j]<-qt(1-((1-CI_percent)/2),L[j]-2)  ## two sided from here
            newx<-data.frame(xx=seq(0,84))
            yy<-Intercept+newx$xx*Slope
            mod1<-lm(yy~newx$xx)
@@ -741,16 +755,18 @@ cat("\n\n")
 ### mod1<-lm(yy~newx$xx)
 ### pred<-predict(mod1, newdata=newx,interval = c("confidence"),level = 0.90,type="response")
 if (onesidedlo){
-total<-data.frame(time=newx$xx, fit=pred[,1], Lower=Lower, starred="",stringsAsFactors=F)  ### here we have to use 'Lower=Lower' adjusted with 'pd' -YJ
-for(i in 1:(length(newx$xx)-1)){if(i>PY[j]) total[i+1,]$starred="***"}}
+total<-data.frame(time=newx$xx, fit=pred[,1], Lower=Lower, star="",stringsAsFactors=F)  ### here we have to use 'Lower=Lower' adjusted with 'pd' -YJ
+for(i in 1:(length(newx$xx)-1)){if(i>PY[j]) total[i+1,]$star="***"}}
 if (onesidedup){
-total<-data.frame(time=newx$xx, fit=pred[,1], Upper=Upper, starred="",stringsAsFactors=F)  ### here we have to use 'Upper=Upper' adjusted with 'pd' -YJ
-for(i in 1:(length(newx$xx)-1)){if(i>PY[j]) total[i+1,]$starred="***"}}
+total<-data.frame(time=newx$xx, fit=pred[,1], Upper=Upper, star="",stringsAsFactors=F)  ### here we have to use 'Upper=Upper' adjusted with 'pd' -YJ
+for(i in 1:(length(newx$xx)-1)){if(i>PY[j]) total[i+1,]$star="***"}}
 if (twosided){
-total<-data.frame(time=newx$xx, Lower=Lower, fit=pred[,1], Upper=Upper, starred="",stringsAsFactors=F)  ### as above stated. -YJ
-for(i in 1:(length(newx$xx)-1)){if(i>PY[j]) total[i+1,]$starred="***"}}
-cat("-- List of 95% CI for 84-month Time Interval:-\n\n")
+total<-data.frame(time=newx$xx, Lower=Lower, fit=pred[,1], Upper=Upper, star="",stringsAsFactors=F)  ### as above stated. -YJ
+for(i in 1:(length(newx$xx)-1)){if(i>PY[j]) total[i+1,]$star="***"}}
+cat("\n\n")
+cat("-- List of",CI_percent*100,"% CI for 84-month Time Interval:-\n\n")
 show(total)
+cat("\n\n ***: means the listing of expiration as defined.")
 cat("\n\n")
 TIME[[j]]<-c(W.split[[j]][["time"]])
 CAL[[j]]<-c(cal)
@@ -1094,7 +1110,8 @@ if (!noSolution) {
    sink()
    close(zz)
    readline(" Done. Press any key to continue...")
-   dev.off()
+   if(noPY){}                          ## since no PY can be found only dev.off().
+      else{dev.off();dev.off()}        ## req. to clode X-windows and pdf output file.
        cat("*****************************************************************************\n\n")
        cat("## Please note: The output files (",output_to_txt,") and (",plots_to_pdf,")     \n")
        cat("   have been created and placed at ",filepath,                               "\n\n")
@@ -1215,9 +1232,9 @@ cat("\n")
 ###       
 ### prepare to construct 95%CI here -YJ 
 ###
-        cat(" --- Batch#:", ba[j],"---\n")    ### starting output here
+        cat(" --- Batch#:", ba[j],"---")    ### starting output here
         if(onesidedlo || onesidedup){
-          T[j]<-qt(0.95,L[j]-2)                        ### this line should be allowed to delete.  -YJ
+          T[j]<-qt(CI_percent,L[j]-2)                        ### this line should be allowed to delete.  -YJ
               newx<-data.frame(xx=seq(0,84))
               xx<-W.split[[j]][["time"]]               ### here we have to get intercept & slope again from indiv. batch.
               yy<-W.split[[j]][["assay"]]              ### not the same as Model # & #2; different!!! --YJ
@@ -1241,7 +1258,7 @@ cat("\n")
                          }
                }
         else {
-           T[j]<-qt(0.975,L[j]-2)                   ### this line should be allowed to delete.  -YJ
+           T[j]<-qt(1-((1-CI_percent)/2),L[j]-2) ### this line should be allowed to delete.  -YJ
            newx<-data.frame(xx=seq(0,84))
            xx<-W.split[[j]][["time"]]               ### here we have to get intercept & slope again from indiv. batch.
            yy<-W.split[[j]][["assay"]]              ### not the same as Model # & #2; different!!! --YJ
@@ -1265,7 +1282,7 @@ cat("\n")
 #step4: make decision                    ### not required any more now... -YJ
 #########
 #step5: Output
-cat(" --- Batch#:", ba[j],"---\n")
+### cat(" --- Batch#:", ba[j],"---\n")   ### moved to the front
 cat("\nY =",Intercept,"+(",Slope,") X\n\n")
 cat("\n")
 output<-data.frame(W.split[[j]][["time"]],W.split[[j]][["assay"]],cal,Res)
@@ -1273,16 +1290,18 @@ colnames(output)<-list(" Time"," Observed assay(%)"," Calculated assay(%)"," Res
 show(output)
 ###
 if (onesidedlo){
-total<-data.frame(time=newx$xx, fit=pred[,1], Lower=pred[,2], starred="",stringsAsFactors=F)  ### here we have to use 'Lower=pred[,2]' -YJ
-for(i in 1:(length(newx$xx)-1)){if(i>PY[j]) total[i+1,]$starred="***"}}
+total<-data.frame(time=newx$xx, fit=pred[,1], Lower=pred[,2], star="",stringsAsFactors=F)  ### here we have to use 'Lower=pred[,2]' -YJ
+for(i in 1:(length(newx$xx)-1)){if(i>PY[j]) total[i+1,]$star="***"}}
 if (onesidedup){
-total<-data.frame(time=newx$xx, fit=pred[,1], Upper=pred[,3], starred="",stringsAsFactors=F)  ### here we have to use 'Upper=pred[,3]' -YJ
-for(i in 1:(length(newx$xx)-1)){if(i>PY[j]) total[i+1,]$starred="***"}}
+total<-data.frame(time=newx$xx, fit=pred[,1], Upper=pred[,3], star="",stringsAsFactors=F)  ### here we have to use 'Upper=pred[,3]' -YJ
+for(i in 1:(length(newx$xx)-1)){if(i>PY[j]) total[i+1,]$star="***"}}
 if (twosided){
-total<-data.frame(time=newx$xx, Lower=pred[,2], fit=pred[,1], Upper=pred[,3], starred="",stringsAsFactors=F)  ### as above stated. -YJ
-for(i in 1:(length(newx$xx)-1)){if(i>PY[j]) total[i+1,]$starred="***"}}
-cat("-- List of 95% CI for 84-month Time Interval:-\n\n")
+total<-data.frame(time=newx$xx, Lower=pred[,2], fit=pred[,1], Upper=pred[,3], star="",stringsAsFactors=F)  ### as above stated. -YJ
+for(i in 1:(length(newx$xx)-1)){if(i>PY[j]) total[i+1,]$star="***"}}
+cat("\n\n")
+cat("-- List of",CI_percent*100,"% CI for 84-month Time Interval:-\n\n")
 show(total)
+cat("\n\n ***: means the listing of expiration as defined.")
 cat("\n\n")
 ###
 TIME[[j]]<-c(W.split[[j]][["time"]])
@@ -1552,10 +1571,11 @@ if (!noSolution) {
    sink()
    close(zz)
    readline(" Done. Press any key to continue...")
-   dev.off()
+   if(noPY){}                        ## since no PY can be found only dev.off().
+      else{dev.off();dev.off()}                  ## req. to clode X-windows and pdf output file.
        cat("*****************************************************************************\n\n")
-       cat("## Please note: The output files (",output_to_txt,") and (",plots_to_pdf,")     \n")
-       cat("   have been created and placed at ",filepath,                               "\n\n")
+       cat("## Please note: The output files (",output_to_txt,") and (",plots_to_pdf,")    \n")
+       cat("   have been created and placed at ",filepath,                              "\n\n")
        cat("*****************************************************************************\n\n")
    go()
      }
