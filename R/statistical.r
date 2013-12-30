@@ -1,6 +1,7 @@
 #Menu for Data Analysis for a Single Batch or Data Analysis for multiple Batches
 statistical<-function()
 {
+
 cat("\n")
   file.menu <- c("Step 2-1: Data Analysis for a Single Batch",
                  "Step 2-2: Data Analysis for Multiple Batches",

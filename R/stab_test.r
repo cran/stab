@@ -30,7 +30,7 @@ Lper<-90
 cat("\n")
 outputfile <- "stab_test_output"
 output_to_txt <- paste(outputfile,".txt",sep="")
-plots_to_pdf <- paste(outputfile,".pdf",sep="")
+### plots_to_pdf <- paste(outputfile,".pdf",sep="")
 cat("\n\n")
 cat("*****************************************************************\n")
 cat("*                 Analyzing the data now...                     *\n")
@@ -38,8 +38,7 @@ cat("*****************************************************************\n\n")
 zz <- file(output_to_txt, open="wt")
 sink(zz,split=TRUE)              ### add 'split=TRUE" here to see it on screen too. - YJ
 stab.version()
-cat("\n\n")
-filelocxx <- system.file("extdata", "p609.RData", package="stab")
+filelocxx <- system.file("extdata", "p613.RData", package="stab")
 Multipledata<-readRDS(filelocxx)              
 Multipledata<- na.omit(Multipledata)
 colnames(Multipledata)<-list("batch","time","assay")
@@ -128,7 +127,6 @@ Slope<-coef(lm(assay ~ time, data=ANCOVAdata))[2]       ### 2nd get common 'slop
 ###       
 ### prepare to construct 95%CI & find intersect here! -YJ 
 ###      
-cat(" --- Batch#:", ba,"---\n")   ### starting output here
 
 if(onesidedlo || onesidedup){
        T<-qt(0.95,L-2)  ### for one-sided criteria; not used with this line.
@@ -186,31 +184,30 @@ if ((PPY==84)) noPY = TRUE
 
 #########
 ### Output
-cat("\n Y =",coef(lm(ANCOVAdata$assay~ANCOVAdata$time))[1],"+(",coef(lm(ANCOVAdata$assay~ANCOVAdata$time))[2],") X\n\n")
+cat(paste(c("   Y (assay, %) =",formatC(coef(lm(ANCOVAdata$assay~ANCOVAdata$time))[1],digits=5,format="f"),"+ (",
+    formatC(coef(lm(ANCOVAdata$assay~ANCOVAdata$time))[2],digits=5,format="f"),")*Time\n\n",sep="")))
 cat("\n")
 output<-data.frame(ANCOVAdata$batch,ANCOVAdata$time,ANCOVAdata$assay,cal,Res)     ### previous calc. only 'cal' & 'Res' should be kept. -YJ
-colnames(output)<-list(" Batch#"," Time"," Obs. assay(%)"," Cal. assay(%)"," Residuals")
-show(output)
-cat("\n\n")
+colnames(output)<-list(" Batch#"," Time"," Obs. assay(%)"," Calc. assay(%)"," Residuals")
+show(output);cat("\n\n")
 ###
 ### show 95 %CI
 ### try to label star mark to right-hand side here -YJ
 ###
 newx<-data.frame(xx=seq(0,84))
 if (onesidedlo){
-     total<-data.frame(time=newx$xx, fit=pred[,1], Lower=pred[,2], starred="",stringsAsFactors=F)
-     for(i in 1:(length(newx$xx)-1)){if (i>PY) total[i+1,]$starred="***"}}
+     total<-data.frame(time=newx$xx, fit=pred[,1], Lower=pred[,2], star="",stringsAsFactors=F)
+     for(i in 1:(length(newx$xx)-1)){if (i>PY) total[i+1,]$star="***"}}
 if (onesidedup){
-     total<-data.frame(time=newx$xx, fit=pred[,1], Upper=pred[,3], starred="",stringsAsFactors=F)
-     for(i in 1:(length(newx$ss)-1)){if (i>PY) total[i+1,]$starred="***"}}
+     total<-data.frame(time=newx$xx, fit=pred[,1], Upper=pred[,3], star="",stringsAsFactors=F)
+     for(i in 1:(length(newx$ss)-1)){if (i>PY) total[i+1,]$star="***"}}
 if (twosided){
-     total<-data.frame(time=newx$xx, Lower=pred[,2],fit=pred[,1], Upper=pred[,3], starred="",stringsAsFactors=F)
-     for(i in 1:(length(newx$xx)-1)){if (i>PY) total[i+1,]$starred="***"}}
-     cat("\n\n")
-     cat("-- List of 95% CI for 84-month Time Interval:-\n\n")
-     show(total)
-     cat("\n\n")
-
+     total<-data.frame(time=newx$xx, Lower=pred[,2],fit=pred[,1], Upper=pred[,3], star="",stringsAsFactors=F)
+     for(i in 1:(length(newx$xx)-1)){if (i>PY) total[i+1,]$star="***"}}
+cat("\n\n")
+cat("-- List of 95% CI for 84-month Time Interval:-\n\n")
+show(total)
+cat("\n ***: means the listing of expiration as defined.\n")
 ##### if one-sided low, start from here
 if (onesidedlo) {
 cat("                       One-sided lower LC analysis                      \n\n")
@@ -259,19 +256,19 @@ else {
      #add criteria limit
      abline(h=Lper, col = "red")
      abline(v=shelflife, col = "black")
-     if(pdf_activate){
-        dev.copy()                      ## copy to pdf file 2nd plots to end
-        dev.set(which=x11c)             ## back to graphic device now to continue...
-                     }
-     else{
-        x11c<-dev.cur()                 ## the current graphics device
-        pdf(plots_to_pdf,               ## activate pdf log file from now on... starting with ref. product
-             paper="a4")
-        pdf_activate=TRUE               ## set pdf_activate=TRUE from now on
-        dev.set(which=x11c)             ## back to graphics device...
-        dev.copy()                      ## copy the first plot from here
-        dev.set(which=x11c)             ## back to graphics device
-     }
+###      if(pdf_activate){
+###         dev.copy()                      ## copy to pdf file 2nd plots to end
+###         dev.set(which=x11c)             ## back to graphic device now to continue...
+###                      }
+###      else{
+###         x11c<-dev.cur()                 ## the current graphics device
+###         pdf(plots_to_pdf,               ## activate pdf log file from now on... starting with ref. product
+###              paper="a4")
+###         pdf_activate=TRUE               ## set pdf_activate=TRUE from now on
+###         dev.set(which=x11c)             ## back to graphics device...
+###         dev.copy()                      ## copy the first plot from here
+###         dev.set(which=x11c)             ## back to graphics device
+###      }
      cat("------------------------------------------------------------------\n\n")
      cat(" Drug product with lower acceptance limit of",Lper,"% of label claim\n")
      cat(" shelf-life =",shelflife,"(months)                          \n\n")
@@ -326,19 +323,6 @@ else {
      #add criteria limit
      abline(h=Uper, col = "red")
      abline(v=shelflife, col = "black")
-     if(pdf_activate){
-        dev.copy()                      ## copy to pdf file 2nd plots to end
-        dev.set(which=x11c)             ## back to graphic device now to continue...
-                     }
-     else{
-        x11c<-dev.cur()                 ## the current graphics device
-        pdf(plots_to_pdf,               ## activate pdf log file from now on... starting with ref. product
-             paper="a4")
-        pdf_activate=TRUE               ## set pdf_activate=TRUE from now on
-        dev.set(which=x11c)             ## back to graphics device...
-        dev.copy()                      ## copy the first plot from here
-        dev.set(which=x11c)             ## back to graphics device
-     }
      cat("------------------------------------------------------------------\n\n")
      cat(" Drug product with upper acceptance limit of",Uper,"% of label claim\n")
      cat(" shelf-life =",shelflife,"(months)                           \n\n")
@@ -395,19 +379,6 @@ else {
      abline(h=Uper, col = "red")
      abline(h=Lper, col = "red")
      abline(v=shelflife, col = "black")
-     if(pdf_activate){
-        dev.copy()                      ## copy to pdf file 2nd plots to end
-        dev.set(which=x11c)             ## back to graphic device now to continue...
-                     }
-     else{
-        x11c<-dev.cur()                 ## the current graphics device
-        pdf(plots_to_pdf,               ## activate pdf log file from now on... starting with ref. product
-             paper="a4")
-        pdf_activate=TRUE               ## set pdf_activate=TRUE from now on
-        dev.set(which=x11c)             ## back to graphics device...
-        dev.copy()                      ## copy the first plot from here
-        dev.set(which=x11c)             ## back to graphics device
-     }     
      cat("                                                                      \n")
      cat(" Drug product with lower acceptance limit of",Lper,"% of label claim  \n")
      cat("          and with upper acceptance limit of",Uper,"% of label claim  \n")
@@ -419,6 +390,7 @@ else {
 ### end of two-sided.
 ### do Q-Q plot only if there is at least one solution (shelf-life)
 if (!noSolution) {
+    dev.new()
     output<-data.frame(ANCOVAdata$batch,ANCOVAdata$time,ANCOVAdata$assay,cal,Res)
     colors<-data.frame(colx=seq(1,100))         ### for when the batch# is not coded as 1, 2, 3, ... - YJ
     qqnorm(output$Res, las=1, main = "Normal Q-Q Plot of Residuals", 
@@ -428,23 +400,9 @@ if (!noSolution) {
          temp <- legend("top", legend = LLegend, box.col="white",
                ### text.width = strwidth("10000000"),
                lty=1, col=c(colors$colx), xjust = 1, yjust = 1)
-     if(pdf_activate){
-        dev.copy()                      ## copy to pdf file 2nd plots to end
-        dev.set(which=x11c)             ## back to graphic device now to continue...
-                     }
-     else{
-        x11c<-dev.cur()                 ## the current graphics device
-        pdf(plots_to_pdf,               ## activate pdf log file from now on... starting with ref. product
-             paper="a4")
-        pdf_activate=TRUE               ## set pdf_activate=TRUE from now on
-        dev.set(which=x11c)             ## back to graphics device...
-        dev.copy()                      ## copy the first plot from here
-        dev.set(which=x11c)             ## back to graphics device
-     }               
       }
     sink()
     close(zz)
-    dev.off()
 }
 
 ##################################  END OF MODEL #1 #############################
@@ -619,7 +577,6 @@ K.split<-split(Multipledata, list(Multipledata$batch))
            if(onesidedup){
               Upper<-pred[,1]+pd                                       ### calc 'Upper' =(fit+pd) with pd here
               total<-data.frame(time=newx$xx, Upper=Upper)
-              cat("\n\n")
               PY[j]<-0
               for(i in 1:length(newx$xx)){
                  if(total$Upper[i]>Uper){PY[j]<-(i-2);break()}}
@@ -669,28 +626,28 @@ K.split<-split(Multipledata, list(Multipledata$batch))
 #########
 #step5: Output
 ### cat(" --- Batch#:", ba[j],"---\n")   ### has been moved to front... -YJ
-cat("\nY =",Intercept,"+(",Slope,") X\n\n")
-cat("\n")
+cat(paste(c("   Y (assay, %) =",formatC(Intercept,digits=5,format="f"),"+ (",
+    formatC(Slope,digits=5,format="f"),")*Time\n\n",sep="")))
 output<-data.frame(W.split[[j]][["time"]],W.split[[j]][["assay"]],cal,Res)
-colnames(output)<-list(" Time"," Observed assay(%)"," Calculated assay(%)"," Residuals")  
-show(output)
-cat("\n\n")
+colnames(output)<-list(" Time"," Obs. assay(%)"," Calc. assay(%)"," Residuals")  
+show(output);cat("\n\n")
 ### newx<-data.frame(xx=seq(0,84))   ### have been calc. previously.
 ### yy<-Intercept+newx$xx*Slope      ### original was 'Slope[d]' here; it works. - YJ
 ### mod1<-lm(yy~newx$xx)
 ### pred<-predict(mod1, newdata=newx,interval = c("confidence"),level = 0.90,type="response")
 if (onesidedlo){
-total<-data.frame(time=newx$xx, fit=pred[,1], Lower=Lower, starred="",stringsAsFactors=F)  ### here we have to use 'Lower=Lower' adjusted with 'pd' -YJ
-for(i in 1:(length(newx$xx)-1)){if(i>PY[j]) total[i+1,]$starred="***"}}
+total<-data.frame(time=newx$xx, fit=pred[,1], Lower=Lower, star="",stringsAsFactors=F)  ### here we have to use 'Lower=Lower' adjusted with 'pd' -YJ
+for(i in 1:(length(newx$xx)-1)){if(i>PY[j]) total[i+1,]$star="***"}}
 if (onesidedup){
-total<-data.frame(time=newx$xx, fit=pred[,1], Upper=Upper, starred="",stringsAsFactors=F)  ### here we have to use 'Upper=Upper' adjusted with 'pd' -YJ
-for(i in 1:(length(newx$xx)-1)){if(i>PY[j]) total[i+1,]$starred="***"}}
+total<-data.frame(time=newx$xx, fit=pred[,1], Upper=Upper, star="",stringsAsFactors=F)  ### here we have to use 'Upper=Upper' adjusted with 'pd' -YJ
+for(i in 1:(length(newx$xx)-1)){if(i>PY[j]) total[i+1,]$star="***"}}
 if (twosided){
-total<-data.frame(time=newx$xx, Lower=Lower, fit=pred[,1], Upper=Upper, starred="",stringsAsFactors=F)  ### as above stated. -YJ
-for(i in 1:(length(newx$xx)-1)){if(i>PY[j]) total[i+1,]$starred="***"}}
+total<-data.frame(time=newx$xx, Lower=Lower, fit=pred[,1], Upper=Upper, star="",stringsAsFactors=F)  ### as above stated. -YJ
+for(i in 1:(length(newx$xx)-1)){if(i>PY[j]) total[i+1,]$star="***"}}
 cat("-- List of 95% CI for 84-month Time Interval:-\n\n")
 show(total)
-cat("\n\n")
+cat("\n ***: means the listing of expiration as defined.\n")
+
 TIME[[j]]<-c(W.split[[j]][["time"]])
 CAL[[j]]<-c(cal)
 RRES[[j]]<-c(Res)
@@ -794,19 +751,6 @@ else {
       #add criteria limit
       abline(h=Lper, col = "red")
       abline(v=shelflife, col = "black")
-      if(pdf_activate){
-         dev.copy()                      ## copy to pdf file 2nd plots to end
-         dev.set(which=x11c)             ## back to graphic device now to continue...
-                      }
-      else{
-         x11c<-dev.cur()                 ## the current graphics device
-         pdf(plots_to_pdf,               ## activate pdf log file from now on... starting with ref. product
-              paper="a4")
-         pdf_activate=TRUE               ## set pdf_activate=TRUE from now on
-         dev.set(which=x11c)             ## back to graphics device...
-         dev.copy()                      ## copy the first plot from here
-         dev.set(which=x11c)             ## back to graphics device
-      }      
       cat(" -----------------------------------------------------------------\n\n")
       cat(" Drug product with lower acceptance limit of",Lper,"% of label claimed\n")
       cat(" shelf-life =",shelflife,"(months)                          \n\n")
@@ -891,19 +835,6 @@ else {
      ### add criteria limit line
      abline(h=Uper, col = "red")
      abline(v=shelflife, col = "black")
-     if(pdf_activate){
-        dev.copy()                      ## copy to pdf file 2nd plots to end
-        dev.set(which=x11c)             ## back to graphic device now to continue...
-                     }
-     else{
-        x11c<-dev.cur()                 ## the current graphics device
-        pdf(plots_to_pdf,               ## activate pdf log file from now on... starting with ref. product
-             paper="a4")
-        pdf_activate=TRUE               ## set pdf_activate=TRUE from now on
-        dev.set(which=x11c)             ## back to graphics device...
-        dev.copy()                      ## copy the first plot from here
-        dev.set(which=x11c)             ## back to graphics device
-     }     
      cat(" -----------------------------------------------------------------\n\n")
      cat(" Drug product with upper acceptance limit of",Uper,"% of label claim\n")
      cat(" shelf-life =",shelflife,"(months)                        \n\n")
@@ -986,19 +917,6 @@ else {
        abline(h=Uper, col = "red")
        abline(h=Lper, col = "red")
        abline(v=PPY,  col = "black")
-       if(pdf_activate){
-          dev.copy()                      ## copy to pdf file 2nd plots to end
-          dev.set(which=x11c)             ## back to graphic device now to continue...
-                       }
-       else{
-          x11c<-dev.cur()                 ## the current graphics device
-          pdf(plots_to_pdf,               ## activate pdf log file from now on... starting with ref. product
-               paper="a4")
-          pdf_activate=TRUE               ## set pdf_activate=TRUE from now on
-          dev.set(which=x11c)             ## back to graphics device...
-          dev.copy()                      ## copy the first plot from here
-          dev.set(which=x11c)             ## back to graphics device
-       }       
        cat("                                                                      \n")
        cat(" Drug product with lower acceptance limit of",Lper,"% of label claim  \n")
        cat("          and with upper acceptance limit of",Uper,"% of label claim  \n")
@@ -1009,6 +927,7 @@ else {
 ### end of two-sided.
 ### do Q-Q plot only if there is at least one solution (shelf life)
 if (!noSolution) {
+    dev.new()
     colors<-data.frame(colx=seq(1,100))         ### for when the batch# is not coded as 1, 2, 3, ... - YJ
     qqnorm(QQ$value, las=1, main = "Normal Q-Q Plot of Residuals", lwd=3, col=c(colors$colx), frame.plot=FALSE)  
       
@@ -1016,19 +935,6 @@ if (!noSolution) {
     temp <- legend("top", legend = LLegend, box.col="white",
             ### text.width = strwidth("10000000"),
             lty=1, col=c(colors$colx), xjust = 1, yjust = 1)
-     if(pdf_activate){
-        dev.copy()                      ## copy to pdf file 2nd plots to end
-        dev.set(which=x11c)             ## back to graphic device now to continue...
-                     }
-     else{
-        x11c<-dev.cur()                 ## the current graphics device
-        pdf(plots_to_pdf,               ## activate pdf log file from now on... starting with ref. product
-             paper="a4")
-        pdf_activate=TRUE               ## set pdf_activate=TRUE from now on
-        dev.set(which=x11c)             ## back to graphics device...
-        dev.copy()                      ## copy the first plot from here
-        dev.set(which=x11c)             ## back to graphics device
-     }            
      }
    sink()
    close(zz)
@@ -1097,13 +1003,10 @@ K.split<-split(Multipledata, list(Multipledata$batch))
      for (i in 1:(length(K.split))){
      ba[i]<-K.split[[i]][["batch"]][1]
      }
-     
   
-cat("\n")     
    #collect all intercepts in a dataframe
    Intable<-data.frame(batch=ba, Intercept=c(prepreIntercept[1],preIntercept), Slope=c(preSlope[1],Slope_1))  
     
-cat("\n")
 #step2: calculate description statistics
      #divide data in to different group based on batches
      CAL<-NULL 
@@ -1157,7 +1060,6 @@ cat("\n")
               pred<-predict(mod1, newdata=newx,interval = c("confidence"),level = 0.90,type="response")   ### here still using 'newdata=newx'; get err if 'newdata=newx$$xx' -YJ
           if(onesidedlo){
               total<-data.frame(time=newx$xx, fit=pred[,1], Lower=pred[,2])   ### here 'newdata=newx$xx'; get err if 'newdata=newx' -YJ
-              cat("\n\n")
               PY[j]<-0
               for(i in 1:length(newx$xx)){
                  if(total$Lower[i]<Lper){PY[j]<-(i-2);break()}}
@@ -1165,7 +1067,6 @@ cat("\n")
                         }
            if(onesidedup){
               total<-data.frame(time=newx$xx, fit=pred[,1], Upper=pred[,3])
-              cat("\n\n")
               PY[j]<-0
               for(i in 1:length(newx)){
                  if(total$Upper[i]>Uper){PY[j]<-(i-2);break()}}
@@ -1197,25 +1098,24 @@ cat("\n")
 #step4: make decision                    ### not required any more now... -YJ
 #########
 #step5: Output
-cat(" --- Batch#:", ba[j],"---\n")
-cat("\nY =",Intercept,"+(",Slope,") X\n\n")
-cat("\n")
+cat(paste(c("   Y (assay, %) =",formatC(Intercept,digits=5,format="f"),"+ (",
+    formatC(Slope,digits=5,format="f"),")*Time\n\n",sep="")))
 output<-data.frame(W.split[[j]][["time"]],W.split[[j]][["assay"]],cal,Res)
-colnames(output)<-list(" Time"," Observed assay(%)"," Calculated assay(%)"," Residuals")  
-show(output)
+colnames(output)<-list(" Time"," Obs. assay(%)"," Calc. assay(%)"," Residuals")  
+show(output);cat("\n\n")
 ###
 if (onesidedlo){
-total<-data.frame(time=newx$xx, fit=pred[,1], Lower=pred[,2], starred="",stringsAsFactors=F)  ### here we have to use 'Lower=pred[,2]' -YJ
-for(i in 1:(length(newx$xx)-1)){if(i>PY[j]) total[i+1,]$starred="***"}}
+total<-data.frame(time=newx$xx, fit=pred[,1], Lower=pred[,2], star="",stringsAsFactors=F)  ### here we have to use 'Lower=pred[,2]' -YJ
+for(i in 1:(length(newx$xx)-1)){if(i>PY[j]) total[i+1,]$star="***"}}
 if (onesidedup){
-total<-data.frame(time=newx$xx, fit=pred[,1], Upper=pred[,3], starred="",stringsAsFactors=F)  ### here we have to use 'Upper=pred[,3]' -YJ
-for(i in 1:(length(newx$xx)-1)){if(i>PY[j]) total[i+1,]$starred="***"}}
+total<-data.frame(time=newx$xx, fit=pred[,1], Upper=pred[,3], star="",stringsAsFactors=F)  ### here we have to use 'Upper=pred[,3]' -YJ
+for(i in 1:(length(newx$xx)-1)){if(i>PY[j]) total[i+1,]$star="***"}}
 if (twosided){
-total<-data.frame(time=newx$xx, Lower=pred[,2], fit=pred[,1], Upper=pred[,3], starred="",stringsAsFactors=F)  ### as above stated. -YJ
-for(i in 1:(length(newx$xx)-1)){if(i>PY[j]) total[i+1,]$starred="***"}}
+total<-data.frame(time=newx$xx, Lower=pred[,2], fit=pred[,1], Upper=pred[,3], star="",stringsAsFactors=F)  ### as above stated. -YJ
+for(i in 1:(length(newx$xx)-1)){if(i>PY[j]) total[i+1,]$star="***"}}
 cat("-- List of 95% CI for 84-month Time Interval:-\n\n")
 show(total)
-cat("\n\n")
+cat("\n ***: means the listing of expiration as defined.\n")
 ###
 TIME[[j]]<-c(W.split[[j]][["time"]])
 CAL[[j]]<-c(cal)
@@ -1290,19 +1190,6 @@ else {
      #add criteria limit
      abline(h=Lper, col = "red")
      abline(v=shelflife, col = "black")
-     if(pdf_activate){
-        dev.copy()                      ## copy to pdf file 2nd plots to end
-        dev.set(which=x11c)             ## back to graphic device now to continue...
-                     }
-     else{
-        x11c<-dev.cur()                 ## the current graphics device
-        pdf(plots_to_pdf,               ## activate pdf log file from now on... starting with ref. product
-             paper="a4")
-        pdf_activate=TRUE               ## set pdf_activate=TRUE from now on
-        dev.set(which=x11c)             ## back to graphics device...
-        dev.copy()                      ## copy the first plot from here
-        dev.set(which=x11c)             ## back to graphics device
-     }     
      cat("------------------------------------------------------------------    \n")
      cat("                                                                      \n")
      cat(" Drug product with lower acceptance limit of",Lper,"% of label claim  \n")
@@ -1362,19 +1249,6 @@ else {
       #add criteria limit
       abline(h=Uper, col = "red")
       abline(v=shelflife, col = "black")
-      if(pdf_activate){
-         dev.copy()                      ## copy to pdf file 2nd plots to end
-         dev.set(which=x11c)             ## back to graphic device now to continue...
-                      }
-      else{
-         x11c<-dev.cur()                 ## the current graphics device
-         pdf(plots_to_pdf,               ## activate pdf log file from now on... starting with ref. product
-              paper="a4")
-         pdf_activate=TRUE               ## set pdf_activate=TRUE from now on
-         dev.set(which=x11c)             ## back to graphics device...
-         dev.copy()                      ## copy the first plot from here
-         dev.set(which=x11c)             ## back to graphics device
-      }     
      cat("------------------------------------------------------------------\n\n")
      cat(" Drug product with upper acceptance limit of",Uper,"% of label claim\n")
      cat(" shelf-life =",shelflife,"(months)                                \n\n")
@@ -1436,19 +1310,6 @@ else {
      abline(h=Uper, col = "red")
      abline(h=Lper, col = "red")
      abline(v=shelflife, col = "black")
-     if(pdf_activate){
-        dev.copy()                      ## copy to pdf file 2nd plots to end
-        dev.set(which=x11c)             ## back to graphic device now to continue...
-                     }
-     else{
-        x11c<-dev.cur()                 ## the current graphics device
-        pdf(plots_to_pdf,               ## activate pdf log file from now on... starting with ref. product
-             paper="a4")
-        pdf_activate=TRUE               ## set pdf_activate=TRUE from now on
-        dev.set(which=x11c)             ## back to graphics device...
-        dev.copy()                      ## copy the first plot from here
-        dev.set(which=x11c)             ## back to graphics device
-     }     
      cat("                                                                      \n")
      cat(" Drug product with lower acceptance limit of",Lper,"% of label claim  \n")
      cat("          and with upper acceptance limit of",Uper,"% of label claim  \n")
@@ -1460,6 +1321,7 @@ else {
 ### end of two-sided.
 ### do Q-Q plot only if there is at least one solution (shelf life)
 if (!noSolution) {
+    dev.new()
     colors<-data.frame(colx=seq(1,100))         ### for when the batch# is not coded as 1, 2, 3, ... - YJ
     qqnorm(QQ$value, las=1, main = "Normal Q-Q Plot of Residuals", lwd=3, col=c(QQ$L1),frame.plot=FALSE)
       
@@ -1467,26 +1329,12 @@ if (!noSolution) {
     temp <- legend("top", legend = LLegend, box.col="white",
             ### text.width = strwidth("10000000"),
             lty=1,col=c(colors$colx), xjust = 1, yjust = 1)
-     if(pdf_activate){
-        dev.copy()                      ## copy to pdf file 2nd plots to end
-        dev.set(which=x11c)             ## back to graphic device now to continue...
-                     }
-     else{
-        x11c<-dev.cur()                 ## the current graphics device
-        pdf(plots_to_pdf,               ## activate pdf log file from now on... starting with ref. product
-             paper="a4")
-        pdf_activate=TRUE               ## set pdf_activate=TRUE from now on
-        dev.set(which=x11c)             ## back to graphics device...
-        dev.copy()                      ## copy the first plot from here
-        dev.set(which=x11c)             ## back to graphics device
      }            
      }
    sink()
    close(zz)
-   dev.off()
      }
    }
  }
-}
 
 ### end of MutilpleAnalyze

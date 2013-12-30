@@ -1,6 +1,14 @@
 #choose separator and decimal type
 MultipleBatchcsv<-function()
 {
+stab_output_filename<-stab_output_filename
+onesidedlo <- onesidedlo
+onesidedup <- onesidedup
+twosided   <- twosided
+Lper<-Lper
+Uper<-Uper
+CI_percent<-CI_percent
+
 cat("\n")
 file.menu <- c("sep = comma (,) &  dec= point (.)",
                "sep = semicolon (;) &  dec= comma (,)",
@@ -20,9 +28,14 @@ if (pick == 1){
         ### Multiple.file <-readline()
         ### Multiple.file<-paste(Multiple.file,".csv",sep="")
         cnames<-c("batch","time","assay")
-        Multipledata<-read.csv(file.choose(),header=TRUE,row.names=NULL,col.names=cnames, sep=",",dec=".")
+        stab_output_filename_tmp<-""
+        stab_output_filename_tmp<-file.choose()
+        Multipledata<-read.csv(stab_output_filename_tmp,header=TRUE,row.names=NULL,col.names=cnames, sep=",",dec=".")
         Multipledata<-edit(Multipledata)
         Multipledata<-na.omit(Multipledata)
+        stab_output_filename_tmp<-basename(stab_output_filename_tmp)
+        stab_output_filename_tmp<-gsub(".csv","",stab_output_filename_tmp,fixed=TRUE)
+        stab_output_filename<<-stab_output_filename_tmp
         cat("\n\n")
         show(Multipledata)
         cat("\n\n")
@@ -39,9 +52,14 @@ if (pick == 1){
         ### Multiple.file <-readline()
         ### Multiple.file<-paste(Multiple.file,".csv",sep="")
         cnames<-c("batch","time","assay")
-        Multipledata<-read.csv(file.choose(),header=TRUE,row.names=NULL,col.names=cnames, sep=";",dec=",")
+        stab_output_filename_tmp<-""
+        stab_output_filename_tmp<-file.choose()
+        Multipledata<-read.csv(stab_output_filename_tmp,header=TRUE,row.names=NULL,col.names=cnames, sep=";",dec=",")
         Multipledata<-edit(Multipledata)
         Multipledata<- na.omit(Multipledata)
+        stab_output_filename_tmp<-basename(stab_output_filename_tmp)
+        stab_output_filename_tmp<-gsub(".csv","",stab_output_filename_tmp,fixed=TRUE)
+        stab_output_filename<<-stab_output_filename_tmp
         cat("\n\n")
         show(Multipledata)
         cat("\n\n")
@@ -57,9 +75,14 @@ if (pick == 1){
         ### Multiple.file <-readline()
         ### Multiple.file<-paste(Multiple.file,".csv",sep="")
         cnames<-c("batch","time","assay")
-        Multipledata<-read.csv(file.choose(),header=TRUE,row.names=NULL,col.names=cnames, sep=";",dec=".")
+        stab_output_filename_tmp<-""
+        stab_output_filename_tmp<-file.choose()
+        Multipledata<-read.csv(stab_output_filename_tmp,header=TRUE,row.names=NULL,col.names=cnames, sep=";",dec=".")
         Multipledata<-edit(Multipledata)
         Multipledata<- na.omit(Multipledata)
+        stab_output_filename_tmp<-basename(stab_output_filename_tmp)
+        stab_output_filename_tmp<-gsub(".csv","",stab_output_filename_tmp,fixed=TRUE)
+        stab_output_filename<<-stab_output_filename_tmp
         cat("\n\n")
         show(Multipledata)
         cat("\n\n")
@@ -75,9 +98,14 @@ else {
         ### Multiple.file <-readline()
         ### Multiple.file<-paste(Multiple.file,".csv",sep="")
         cnames<-c("batch","time","assay")
-        Multipledata<-read.csv(file.choose(),header=TRUE,row.names=NULL,col.names=cnames, sep=" ",dec=",")
+        stab_output_filename_tmp<-""
+        stab_output_filename_tmp<-file.choose()
+        Multipledata<-read.csv(stab_output_filename_tmp,header=TRUE,row.names=NULL,col.names=cnames, sep=" ",dec=",")
         Multipledata<-edit(Multipledata)
         Multipledata<- na.omit(Multipledata)
+        stab_output_filename_tmp<-basename(stab_output_filename_tmp)
+        stab_output_filename_tmp<-gsub(".csv","",stab_output_filename_tmp,fixed=TRUE)
+        stab_output_filename<<-stab_output_filename_tmp
         cat("\n\n")
         show(Multipledata)
         cat("\n\n")
@@ -93,9 +121,14 @@ else {
         ### Multiple.file <-readline()
         ### Multiple.file<-paste(Multiple.file,".csv",sep="")
         cnames<-c("batch","time","assay")
-        Multipledata<-read.csv(file.choose(),header=TRUE,row.names=NULL,col.names=cnames, sep=" ",dec=".")
+        stab_output_filename_tmp<-""
+        stab_output_filename_tmp<-file.choose()
+        Multipledata<-read.csv(stab_output_filename_tmp,header=TRUE,row.names=NULL,col.names=cnames, sep=" ",dec=".")
         Multipledata<-edit(Multipledata)
         Multipledata<- na.omit(Multipledata)
+        stab_output_filename_tmp<-basename(stab_output_filename_tmp)
+        stab_output_filename_tmp<-gsub(".csv","",stab_output_filename_tmp,fixed=TRUE)
+        stab_output_filename<<-stab_output_filename_tmp
         cat("\n\n")
         show(Multipledata)
         cat("\n\n")
@@ -112,9 +145,14 @@ else {
         ### Multiple.file <-readline()
         ### Multiple.file<-paste(Multiple.file,".csv",sep="")
         cnames<-c("batch","time","assay")
-        Multipledata<-read.csv(file.choose(),header=TRUE,row.names=NULL,col.names=cnames, sep="\t",dec=",")
+        stab_output_filename_tmp<-""
+        stab_output_filename_tmp<-file.choose()
+        Multipledata<-read.csv(stab_output_filename_tmp,header=TRUE,row.names=NULL,col.names=cnames, sep="\t",dec=",")
         Multipledata<-edit(Multipledata)
         Multipledata<- na.omit(Multipledata)
+        stab_output_filename_tmp<-basename(stab_output_filename_tmp)
+        stab_output_filename_tmp<-gsub(".csv","",stab_output_filename_tmp,fixed=TRUE)
+        stab_output_filename<<-stab_output_filename_tmp
         cat("\n\n")
         show(Multipledata)
         cat("\n\n")
@@ -130,9 +168,14 @@ else {
         ### Multiple.file <-readline()
         ### Multiple.file<-paste(Multiple.file,".csv",sep="")
         cnames<-c("batch","time","assay")
-        Multipledata<-read.csv(file.choose(),header=TRUE,row.names=NULL,col.names=cnames, sep="\t",dec=".")
+        stab_output_filename_tmp<-""
+        stab_output_filename_tmp<-file.choose()
+        Multipledata<-read.csv(stab_output_filename_tmp,header=TRUE,row.names=NULL,col.names=cnames, sep="\t",dec=".")
         Multipledata<-edit(Multipledata)
         Multipledata<- na.omit(Multipledata)
+        stab_output_filename_tmp<-basename(stab_output_filename_tmp)
+        stab_output_filename_tmp<-gsub(".csv","",stab_output_filename_tmp,fixed=TRUE)
+        stab_output_filename<<-stab_output_filename_tmp
         cat("\n\n")
         show(Multipledata)
         cat("\n\n")
@@ -148,9 +191,14 @@ else {
         ### Multiple.file <-readline()
         ### Multiple.file<-paste(Multiple.file,".csv",sep="")
         cnames<-c("batch","time","assay")
-        Multipledata<-read.csv(file.choose(),header=TRUE,row.names=NULL,col.names=cnames, sep=":",dec=",")
+        stab_output_filename_tmp<-""
+        stab_output_filename_tmp<-file.choose()
+        Multipledata<-read.csv(stab_output_filename_tmp,header=TRUE,row.names=NULL,col.names=cnames, sep=":",dec=",")
         Multipledata<-edit(Multipledata)
         Multipledata<- na.omit(Multipledata)
+        stab_output_filename_tmp<-basename(stab_output_filename_tmp)
+        stab_output_filename_tmp<-gsub(".csv","",stab_output_filename_tmp,fixed=TRUE)
+        stab_output_filename<<-stab_output_filename_tmp
         cat("\n\n")
         show(Multipledata)
         cat("\n\n")
@@ -166,9 +214,14 @@ else {
         ### Multiple.file <-readline()
         ### Multiple.file<-paste(Multiple.file,".csv",sep="")
         cnames<-c("batch","time","assay")
-        Multipledata<-read.csv(file.choose(),header=TRUE,row.names=NULL,col.names=cnames, sep=":",dec=".")
+        stab_output_filename_tmp<-""
+        stab_output_filename_tmp<-file.choose()
+        Multipledata<-read.csv(stab_output_filename_tmp,header=TRUE,row.names=NULL,col.names=cnames, sep=":",dec=".")
         Multipledata<-edit(Multipledata)
         Multipledata<- na.omit(Multipledata)
+        stab_output_filename_tmp<-basename(stab_output_filename_tmp)
+        stab_output_filename_tmp<-gsub(".csv","",stab_output_filename_tmp,fixed=TRUE)
+        stab_output_filename<<-stab_output_filename_tmp
         cat("\n\n")
         show(Multipledata)
         cat("\n\n")

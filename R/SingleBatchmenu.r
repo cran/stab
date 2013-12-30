@@ -1,6 +1,14 @@
 #Input assay data Menu for Data Analysis for a Single Batch 
 SingleBatchmenu<-function(Singledata)
 {
+stab_output_filename<-stab_output_filename
+onesidedlo <- onesidedlo
+onesidedup <- onesidedup
+twosided   <- twosided
+Lper<-Lper
+Uper<-Uper
+CI_percent<-CI_percent
+
 cat("\n")
 cat("****************************************************************************\n")
 cat("*            Step2-1: Data Analysis for a Single Batch                     *\n")
@@ -34,9 +42,11 @@ if (pick == 1){
         return(statistical())
         }
      else {
-        cat("Enter name you want to call this data\n")
-        Singlename <-readline() 
-        Singlename<-paste(Singlename,".RData",sep="")      
+        cat("Enter filename you want to save this data\n")
+        SinglenameTMP <-readline()
+        stab_output_filename<<-SinglenameTMP
+        Singlename<-paste(SinglenameTMP,".RData",sep="")
+        SinglenameCSV<-paste(SinglenameTMP,".csv",sep="")
            if(file.exists(Singlename)){
            cat("\n")
            cat("******************************************\n")
@@ -51,28 +61,34 @@ if (pick == 1){
                 }
                 else{
                 cat("\nEnter name you want to call this data\n")
-                Singlename <-readline() 
-                Singlename<-paste(Singlename,".RData",sep="") 
+                SinglenameTMP <-readline() 
+                stab_output_filename<<-SinglenameTMP
+                Singlename<-paste(SinglenameTMP,".RData",sep="")
+                SinglenameCSV<-paste(SinglenameTMP,".csv",sep="")
                 repeat{
                     if(file.exists(Singlename))
                       {
                       cat("\n")
                       cat("***********************************\n")
                       cat("* The file name have been existed *\n")
-                      cat("* Enter name again, OK.           *\n")
+                      cat("* Enter name again.               *\n")
                       cat("***********************************\n")
                       Singlename<-readline()
-                      Singlename<-paste(Singlename,".RData",sep="") 
+                      stab_output_filename<<-SinglenameTMP
+                      Singlename<-paste(SinglenameTMP,".RData",sep="")
+                      SinglenameCSV<-paste(SinglenameTMP,".csv",sep="")
                       }
                        else{
                        break                       
                            }
                     }        
              }   
-              save(Singledata,file=Singlename)   
+              saveRDS(Singledata,file=Singlename)
+              write.csv(Singledata,SinglenameCSV,row.names=FALSE)
            }
         else{
-           save(Singledata,file=Singlename)
+           saveRDS(Singledata,file=Singlename)
+           write.csv(Singledata,SinglenameCSV,row.names=FALSE)
           }                            
 cat("\n\n")
 cat("****************************************************************************\n")
@@ -104,9 +120,14 @@ else {
      ### Singlename <-readline()
      ### Singlename<-paste(Singlename,".RData",sep="")
      ### load(Singlename)
-     Singledata<-readRDS(file.choose())
+     stab_output_filename_tmp<-""
+     stab_output_filename_tmp<-file.choose()
+     Singledata<-readRDS(stab_output_filename_tmp) 
      Singledata<-edit(Singledata)
      Singledata<- na.omit(Singledata)
+     stab_output_filename_tmp<-basename(stab_output_filename_tmp)
+     stab_output_filename_tmp<-gsub(".RData","",stab_output_filename_tmp,fixed=TRUE)
+     stab_output_filename<<-stab_output_filename_tmp
      colnames(Singledata)<-list("time","assay")
      cat("\n\n")
      show(Singledata)

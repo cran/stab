@@ -5,11 +5,16 @@
 #predict req. stats4 package
 #confidence interval req. MASS package
 
-MultipleAnalyze<-function(Multipledata, Uper, Lper, separateWindows=TRUE)
+### MultipleAnalyze<-function(Multipledata, Uper, Lper, separateWindows=TRUE)
+MultipleAnalyze<-function(Multipledata, separateWindows=TRUE)
 {
-onesidedlo = FALSE
-onesidedup = FALSE
-twosided   = FALSE
+stab_output_filename<-stab_output_filename
+onesidedlo <- onesidedlo
+onesidedup <- onesidedup
+twosided   <- twosided
+Lper<-Lper
+Uper<-Uper
+CI_percent<-CI_percent
 noPX = FALSE
 noPY = FALSE
 noSolution = FALSE
@@ -17,74 +22,57 @@ PPY<-0
 PY1<-0
 PY2<-0
 ltmp<-0
+analysis_type<-""
 switch_UL= FALSE
 assay<-NULL
 pdf_activate=FALSE  ### set pdf device activate as FALSE at beginning
 
-file.menu <- c(" the one-sided lower LC analysis  ",
-               " the one-sided upper LC analysis  ",
-               " the two-sided LC analysis        ")
-cat("\n")
-pick <- menu(file.menu, title = "<< Types of Analysis:- Multiple batches >>", graphics=TRUE)
-if (pick == 1){
+### file.menu <- c(" the one-sided lower LC analysis  ",
+###                " the one-sided upper LC analysis  ",
+###                " the two-sided LC analysis        ")
+### cat("\n")
+### pick <- menu(file.menu, title = "<< Types of Analysis:- Multiple batches >>", graphics=TRUE)
+if (onesidedlo){
     cat("\n")
+    analysis_type<-"the one-sided lower LC analysis"
     onesidedlo = TRUE
     cat("\n ** The one-sided lower LC analysis is selected.** \n")
               }
 else {
-      if (pick == 2){
+      if (onesidedup){
           cat("\n")
+          analysis_type<-"the one-sided upper LC analysis"
           onesidedup = TRUE
           cat("\n ** The one-sided upper LC analysis is selected.** \n")
                     }
       else {
-            if (pick == 3){
+            if (twosided){
                 cat("\n")
+                analysis_type<-"the two-sided LC analysis"
                 twosided = TRUE
                 cat("\n ** The two-sided LC analysis is selected.** \n")
               }
             }
       }
 
-Lper<-0.
-Uper<-0.
-CI_percent<-0.
+level_one<-0
+level_two<-0
+level_one<-(1-(1-CI_percent)*2)      ### %CI level for predict(..., level = level_one) with one-sided study
+level_two<-CI_percent                ### %CI level for predict(..., level = level_two) with two-sided study
 
-cat("\n")
-if(onesidedlo){
-   cat("\n")
-   set.stab<-data.frame(Parameter=c("Lower Limit (%)","Percent CI (%)"),value=c(90,95))
-   set.stab<-edit(set.stab)
-   Lper<-set.stab[1,2]
-   if(Lper<=0 ||Lper>120.) Lper<-90       ### set as default if going wrong.
-   CI_percent<- set.stab[2,2]/100
-   if(CI_percent<=0 ||CI_percent>1.) CI_percent<-0.95          ### set as default if going wrong.
-        }
- else {
-      if(onesidedup){
-      set.stab<-data.frame(Parameter=c("Upper Limit (%)","Percent CI (%)"),value=c(110,95))
-      set.stab<-edit(set.stab)
-      Uper<-set.stab[1,2]
-      if(Uper<=0 ||Uper>150.) Uper<-110       ### set as default if going wrong.
-      CI_percent<- set.stab[2,2]/100
-      if(CI_percent<=0 ||CI_percent>1.) CI_percent<-0.95       ### set as default if going wrong.
-           }
-     else{
-          set.stab<-data.frame(Parameter=c("Lower Limit (%)","Upper Limit (%)","Percent CI (%)"),value=c(90,110,95))
-          set.stab<-edit(set.stab)
-          Lper<-set.stab[1,2]
-          if(Lper<=0 ||Lper>100.) Lper<-90     ### set as default if going wrong.
-          Uper<-set.stab[2,2]
-          if(Uper<=0 ||Uper>150.) Uper<-110    ### set as default if going wrong.
-          CI_percent<- set.stab[3,2]/100
-          if(CI_percent<=0 ||CI_percent>1.) CI_percent<-0.95     ### set as default if going wrong.
-      }
-  }
 filepath<-getwd()
 cat("\n")
-outputfile <- readline("Enter the output file name (no extension!): ")
+outputfile <- stab_output_filename
 output_to_txt <- paste(outputfile,".txt",sep="")
 plots_to_pdf <- paste(outputfile,".pdf",sep="")
+while(file.exists(output_to_txt)){
+      output_to_txt<-gsub(".txt","",output_to_txt,fixed=TRUE)
+      output_to_txt<-paste(output_to_txt,"_01.txt",sep="")
+}
+while(file.exists(plots_to_pdf)){
+      plots_to_pdf<-gsub(".pdf","",plots_to_pdf,fixed=TRUE)
+      plots_to_pdf<-paste(plots_to_pdf,"_01.pdf",sep="")
+}      
 cat("\n\n")
 cat("*****************************************************************\n")
 cat("*                 Analyzing the data now...                     *\n")
@@ -115,7 +103,6 @@ else {
 
 #fitting data with ANCOVA model to test poolability
 cat("<<Output: ANCOVA model: batch vs. time vs. assay (%)>>\n\n")
-cat("\n")
 #need to make batch into a factor
 ANCOVAdata <- data.frame (batch=factor(Multipledata$batch), 
                         time=Multipledata$time, 
@@ -157,7 +144,6 @@ cat("                  <<Model #1: two-sided LC analysis>>                     \
 cat("             common intercept and common slope among batches.             \n")
 cat("------------------------------------------------------------------------\n\n")
 cat("              <<linear regression model: Assay (%) vs. time>>             \n")
-cat("\n")
 show(lm(assay ~ time, data=ANCOVAdata))
 show(anova(lm(assay ~ time, data=ANCOVAdata)))
 cat("\n")
@@ -191,7 +177,7 @@ Slope<-coef(lm(assay ~ time, data=ANCOVAdata))[2]       ### 2nd get common 'slop
 ###       
 ### prepare to construct 95%CI & find intersect here! -YJ 
 ###      
-cat(" --- Batch#:", ba,"---\n")   ### starting output here
+cat(" --- Batch#:", ba,"---")   ### starting output here
 
 if(onesidedlo || onesidedup){
        ### T<-qt(0.95,L-2)  ### for one-sided criteria; not used with this line.
@@ -200,7 +186,7 @@ if(onesidedlo || onesidedup){
        y<-ANCOVAdata$assay           ### here pool all data together because they all share same intercept & slope (for model#1)
        mylm<-lm(y~x)
        newx<-data.frame(xx=seq(0,84))  ### here 7 years max. (= 84 months)  -YJ
-       pred<-predict(mylm,newdata=data.frame(x=newx$xx),interval = c("confidence"),level = 0.90,type="response")
+       pred<-predict(mylm,newdata=data.frame(x=newx$xx),interval = c("confidence"),level = level_one,type="response")
        if (onesidedlo) {
           total<-data.frame(time=newx$xx, Lower=pred[,2], fit=pred[,1])
           PY<-0
@@ -225,21 +211,24 @@ else {
        x<-ANCOVAdata$time                ### here pool all data together because they all share same intercept & slope (for model#1)
        y<-ANCOVAdata$assay
 ###       
-### prepare to construct 95%CI here -YJ 
+### prepare to construct %CI here -YJ 
 ###      
        mylm<-lm(y~x)
-       newx<-data.frame(xx=seq(0,84))
-       pred<-predict(mylm,newdata=data.frame(x=newx$xx),interval = c("confidence"),level = 0.95,type="response")
-       total<-data.frame(time=newx$xx, Lower=pred[,2], fit=pred[,1], Upper=pred[,3])
+       newx<-seq(0,84)
+       ### pred<-predict(mylm,newdata=data.frame(x=newx$xx),interval = c("confidence"),level = 0.95,type="response")
+       ### pred<-predict(mylm,newdata=data.frame(x=newx$xx),interval = c("confidence"),level = level_two, type="response")
+       pred<-predict(mylm,newdata=data.frame(x=newx),interval = c("confidence"),level = level_two, type="response")
+       ### show(pred);readline("...pause here...")   ### for debugging
+       total<-data.frame(time=newx, Lower=pred[,2], fit=pred[,1], Upper=pred[,3])
        PY<-0
        PY1<-0
        PY2<-0
-       for (i in 1:length(newx$xx)){
+       for (i in 1:length(newx)){
              if (total$Lower[i]<Lper){
                  PY1<-(i-2);break()}}        ### this is one intersect for lower line; use break() to stop finding... --YJ (great!)
        if (PY1==0||PY1<0) {PY1<-84}          ### means cannot find a solution for lower
 
-       for (i in 1:length(newx$xx)){
+       for (i in 1:length(newx)){
               if (total$Upper[i]>Uper){
                  PY2<-(i-2);break() }}      ### this is one intersect for upper line; use break() to stop finding... --YJ (great!)
        if (PY2==0||PY2<0) {PY2<-84}         ### means cannot find a solution for upper
@@ -251,10 +240,11 @@ if ((PPY==84)) noPY = TRUE
 
 #########
 ### Output
-cat("\n Y =",coef(lm(ANCOVAdata$assay~ANCOVAdata$time))[1],"+(",coef(lm(ANCOVAdata$assay~ANCOVAdata$time))[2],") X\n\n")
-cat("\n")
+cat("\n\n")
+cat(paste(c("   Y (assay, %) =",formatC(coef(lm(ANCOVAdata$assay~ANCOVAdata$time))[1],digits=5,format="f"),"+ (",
+    formatC(coef(lm(ANCOVAdata$assay~ANCOVAdata$time))[2],digits=5,format="f"),")*Time\n\n",sep="")))
 output<-data.frame(ANCOVAdata$batch,ANCOVAdata$time,ANCOVAdata$assay,cal,Res)     ### previous calc. only 'cal' & 'Res' should be kept. -YJ
-colnames(output)<-list(" Batch#"," Time"," Obs. assay(%)"," Cal. assay(%)"," Residuals")
+colnames(output)<-list(" Batch#"," Time"," Obs. assay(%)"," Calc. assay(%)"," Residuals")
 show(output)
 cat("\n\n")
 ###
@@ -271,15 +261,13 @@ if (onesidedup){
 if (twosided){
      total<-data.frame(time=newx$xx, Lower=pred[,2],fit=pred[,1], Upper=pred[,3], star="",stringsAsFactors=F)
      for(i in 1:(length(newx$xx)-1)){if (i>PY) total[i+1,]$star="***"}}
-     cat("\n\n")
-     cat("-- List of",CI_percent*100,"% CI for 84-month Time Interval:-\n\n")
-     show(total)
-     cat("\n\n ***: means the listing of expiration as defined.")
-     cat("\n\n")
+cat("-- List of",CI_percent*100,"% CI for 84-month Time Interval:-\n\n")
+show(total)
+cat("\n ***: means the listing of expiration as defined.\n\n")
 
 ##### if one-sided low, start from here
 if (onesidedlo) {
-cat("                       One-sided lower LC analysis                      \n\n")
+cat("  One-sided lower LC analysis                      \n\n")
 if (noPY){
 cat("       No solution can be found with this model. Please try others.       \n")
 cat("**************************************************************************\n")
@@ -300,7 +288,8 @@ else {
      #i<-formatC(PX,format="f",digits=2) 
      #i<-round(PX,3) #same as the above 
      shelflife<-as.integer(PPY)
-     main<-paste(c("estimated shelf-life =",shelflife, "months"),collapse=" ")
+     main<-paste(c("estimated shelf-life = ",shelflife, " months with ",CI_percent*100,
+                   "% CI\n  (",analysis_type,")"),collapse="")
      x<-ANCOVAdata$time
      y<-ANCOVAdata$assay
      plot(x,y,xlim=c(0,84),ylim=c((Lper-10),(Lper+20)),main=main,
@@ -319,7 +308,7 @@ else {
 
      #plot CI
      newx<-seq(0,84)
-     pred<-predict(mylm,newdata=data.frame(x=newx),interval = c("confidence"),level = 0.90,type="response")
+     pred<-predict(mylm,newdata=data.frame(x=newx),interval = c("confidence"),level = level_one,type="response")
      lines(newx,pred[,2],col="red",lty=4,lwd=2)    ### pred[,2] = Lower bound -YJ
 
      #add criteria limit
@@ -349,7 +338,7 @@ else {
 ##### if one-sided upper, start from here
 if (onesidedup ){
 cat("\n")
-cat("                     One-sided upper LC analysis                        \n\n")
+cat("  One-sided upper LC analysis                        \n\n")
 if (noPY){
 cat("       No solution can be found with this model. Please try others.       \n")
 cat("**************************************************************************\n")
@@ -368,7 +357,8 @@ else {
      ### windows(record = TRUE )  ### NOT working in linux/unix any more; change to dev.new()
      dev.new()
      shelflife<-as.integer(PPY)
-     main<-paste(c("estimated shelf-life =",shelflife, "months"),collapse=" ")
+     main<-paste(c("estimated shelf-life = ",shelflife, " months with ",CI_percent*100,
+                   "% CI\n  (",analysis_type,")"),collapse="")
      x<-ANCOVAdata$time
      y<-ANCOVAdata$assay
      plot(x,y,xlim=c(0,84),ylim=c((Uper-30),(Uper+30)),main=main,
@@ -381,7 +371,7 @@ else {
      axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
      #plot CI
      newx<-seq(0,84)
-     pred<-predict(mylm,newdata=data.frame(x=newx),interval = c("confidence"),level = 0.90,type="response")
+     pred<-predict(mylm,newdata=data.frame(x=newx),interval = c("confidence"),level = level_one,type="response")
      lines(newx,pred[,3],col="red",lty=4,lwd=2)
 ###
 ### no legend here; data have been combined all together.
@@ -415,7 +405,7 @@ else {
 ##### end of one-sided upper
 ##### if two-sided, start from here
 if (twosided){
-cat("                        Two-sided LC analysis                           \n\n")
+cat("  Two-sided LC analysis                           \n\n")
 if (noPY){
 cat("       No solution can be found with this model. Please try others.       \n")
 cat("**************************************************************************\n")
@@ -434,7 +424,8 @@ else {
      ### windows(record = TRUE )  ### NOT working in linux/unix any more; change to dev.new()
      dev.new()
      shelflife<-as.integer(PPY)
-     main<-paste(c("estimated shelf-life =",shelflife, "months"),collapse=" ")
+     main<-paste(c("estimated shelf-life = ",shelflife, " months with ",CI_percent*100,
+                   "% CI\n  (",analysis_type,")"),collapse="")
      x<-ANCOVAdata$time
      y<-ANCOVAdata$assay
      plot(x,y,xlim=c(0,84),ylim=c((Lper-20),(Uper+20)), main=main,
@@ -453,7 +444,7 @@ else {
 
 #plot CI
      newx<-seq(0,84)
-     pred<-predict(mylm,newdata=data.frame(x=newx),interval = c("confidence"),level = 0.95,type="response")
+     pred<-predict(mylm,newdata=data.frame(x=newx),interval = c("confidence"),level = level_two,type="response")
      lines(newx,pred[,2],col="blue",lty=4,lwd=2)
      lines(newx,pred[,3],col="blue",lty=4,lwd=2)
 
@@ -517,7 +508,7 @@ if (!noSolution) {
        cat("## Please note: The output files (",output_to_txt,") and (",plots_to_pdf,")     \n")
        cat("   have been created and placed at ",filepath,                               "\n\n")
        cat("*****************************************************************************\n\n")     
-    go()  ### back to Top menu now. -YJ
+    MultipleBatchmenu()  ### back to Top menu now. -YJ
 }
 
 ##################################  END OF MODEL #1 #############################
@@ -550,7 +541,6 @@ cat("                  <<Model #2: two-sided LC analysis>>                     \
 cat("         separate intercepts with a common slope among batches.           \n")
 cat("------------------------------------------------------------------------\n\n")
 cat("              <<linear regression model: Assay (%) vs. time>>             \n")
-cat("\n")
 show(lm(assay ~ batch+time, data=ANCOVAdata) )
 show(anova(lm(assay ~ batch+time, data=ANCOVAdata) ))
 cat("\n")
@@ -559,12 +549,12 @@ cat("                               << Output >>                               \
 cat("--------------------------------------------------------------------------\n")
 cat("                    <<Summary: linear regression model>>                \n\n")
 
-W.split<-split(ANCOVAdata, list(ANCOVAdata$batch))
-K.split<-split(Multipledata, list(Multipledata$batch)) 
+W.split<-split(ANCOVAdata, list(ANCOVAdata$batch))                           #### W.split = batch dataset from anocova
+K.split<-split(Multipledata, list(Multipledata$batch))                       #### K.split = original batch dataset
 #step1: calc. different intercepts and a slope from lm 
    prepreIntercept<-0
      for (i in 1:(length(W.split))){
-     prepreIntercept[i]<-coef(lm(assay ~ batch+time , data=ANCOVAdata) )[i]
+     prepreIntercept[i]<-coef(lm(assay ~ batch+time , data=ANCOVAdata))[i]    ### get intercept for each batch
      }
      preIntercept<-0
      for(i in 1:((length(W.split))-1)){
@@ -577,7 +567,7 @@ K.split<-split(Multipledata, list(Multipledata$batch))
      }
     Slope<-0
     d<-length(W.split)
-    Slope<-coef(lm(assay ~ batch+time, data=ANCOVAdata))[d+1]  ### the common slope is here!  - YJ
+    Slope<-coef(lm(assay ~ batch+time, data=ANCOVAdata))[d+1]                ### the common slope is here!  - YJ
 
    #collect all intercepts in a dataframe
    ba1<- na.omit(ba)
@@ -602,12 +592,12 @@ K.split<-split(Multipledata, list(Multipledata$batch))
 		     T<-0 
 		     delta1<-0
 		     delta2<-0
-		     
+         
 		     PX<-0
 		     PY<-0 
 		     TT<-0
 		     
-  for (j in 1:length(W.split)){     # precess batch by batch now... not the same with Model# 1. --YJ
+  for (j in 1:length(W.split)){         ### precess batch by batch now... not the same with Model# 1. --YJ
           Intercept<-0
           for(x in 1: length(unique(Intable$batch))){
                 if (W.split[[j]][["batch"]][1]==Intable$batch[[x]]){
@@ -615,7 +605,7 @@ K.split<-split(Multipledata, list(Multipledata$batch))
           } 
           cal<-0
           Res<-0
-          Sxxyy<-0
+          Sxxyy<-0                      ### will be used to calc. Sxy[j]<-sum(Sxxyy)
           KK<-0 
           Xii<-0
           XYii<-0
@@ -632,7 +622,7 @@ K.split<-split(Multipledata, list(Multipledata$batch))
           #Xi: sum of (Xi)^2  
             Xii[a]<-(W.split[[j]][["time"]][a])^2
           #XYi: sum of (Xi*Yi)
-            XYii[i]<-(W.split[[j]][["time"]][a])*(W.split[[j]][["assay"]][a])
+            XYii[a]<-(W.split[[j]][["time"]][a])*(W.split[[j]][["assay"]][a])
           }
           
           #number of data points by batch
@@ -647,19 +637,20 @@ K.split<-split(Multipledata, list(Multipledata$batch))
             SS[j]<-(Syy[j]-(Slope*Sxy[j]))/(L[j]-2)        ### will be used to calc 'pd' later --YJ
         
 ### 95%CI,n-2 T value  ### starting form here -YJ, with batch j= 1,2,3... 
-        cat(" --- Batch#:", ba[j],"---")       ### starting output here
+        cat(" --- Batch#:", ba[j],"---")      ### starting output here
         if(onesidedlo || onesidedup){
            T[j]<-qt(CI_percent,L[j]-2)        ### will be used to calc 'pd' later --YJ
-              newx<-data.frame(xx=seq(0,84))
-              yy<-Intercept+newx$xx*Slope        ### intercept should be by batch; Slope is the same. --YJ
-              mod1<-lm(yy~newx$xx)
-              pred<-predict(mod1, newdata=newx,interval = c("confidence"),level = 0.90,type="response")
-              ### LX<-0      ### not used here.
-              LY<-0
-              ### for(i in seq_along(W.split)){       ### not used here for LX. -YJ
-                 ### LX<-length(W.split[[i]]$time)}   ### is that "LX = L[j]" here?  No!  Use L[j]; as equal to 'n' in the textbook...  -YJ
-                 
-                 LY<-mean(ANCOVAdata$time )
+           newx<-data.frame(xx=seq(0,84))
+           yy<-Intercept+newx$xx*Slope        ### intercept should be by batch; Slope is the same. --YJ
+           mod1<-lm(yy~newx$xx)
+           pred<-predict(mod1, newdata=newx,interval = c("confidence"),level = level_one,type="response")   ### the fit. lwr & upr all the same.
+           ### show(pred);readline("\n...pause here...")
+           ### LX<-0      ### not used here.
+           LY<-0
+           ### for(i in seq_along(W.split)){       ### not used here for LX. -YJ
+              ### LX<-length(W.split[[i]]$time)}   ### is that "LX = L[j]" here?  No!  Use L[j]; as equal to 'n' in the textbook...  -YJ
+              
+           LY<-mean(ANCOVAdata$time)
 ###
 ### Statistical Design and Analysis in Pharmaceutical Science. 
 ### CHow SC, Liu LP. p.362 & 371 --> SE(x) (eq. 11.2.6) & L(x) (parts, not all!);
@@ -678,12 +669,11 @@ K.split<-split(Multipledata, list(Multipledata$batch))
 
            ### cat(" show LX, L[j]--> ",LX,L[j],"\n\n")
            ### readline(" Pause here..")      
-           ### pd<-(sqrt(1/(LX) + (((newx$xx-LY)^2)/Sxx[j])*SS[j]))*T[j]}    ### calc 'pd' value here (only for model#2); here we use T[j] finally. Haha... --YJ
-           pd<-(sqrt(1/(L[j]) + (((newx$xx-LY)^2)/Sxx[j])*SS[j]))*T[j]   ### this eq. is correct; it is within the batch. --YJ
-           
+           ### pd<-(sqrt(1/(LX) + (((newx$xx-LY)^2)/Sxx[j])*SS[j]))*T[j]     ### calc 'pd' value here (only for model#2); here we use T[j] finally. Haha... --YJ
+           pd<-(sqrt(1/(L[j]) + (((newx$xx-LY)^2)/Sxx[j])*SS[j]))*T[j]       ### this eq. is correct; it is within the batch. --YJ
            
            if(onesidedlo){
-              Lower<-pred[,1]-pd                                             ### calc 'Lower' =(fit-pd) with pd here
+              Lower<-pred[,1]-pd                                        ### calc 'Lower' =(fit-pd) with pd here
               total<-data.frame(time=newx$xx, Lower=Lower)
               PY[j]<-0
               for(i in 1:length(newx$xx)){
@@ -693,7 +683,6 @@ K.split<-split(Multipledata, list(Multipledata$batch))
            if(onesidedup){
               Upper<-pred[,1]+pd                                       ### calc 'Upper' =(fit+pd) with pd here
               total<-data.frame(time=newx$xx, Upper=Upper)
-              cat("\n\n")
               PY[j]<-0
               for(i in 1:length(newx$xx)){
                  if(total$Upper[i]>Uper){PY[j]<-(i-2);break()}}
@@ -702,11 +691,11 @@ K.split<-split(Multipledata, list(Multipledata$batch))
            }
         else {
            #### T[j]<-qt(0.975,L[j]-2)
-           T[j]<-qt(1-((1-CI_percent)/2),L[j]-2)  ## two sided from here
+           T[j]<-qt(1-((1-CI_percent)/2),L[j]-2)                       ### two sided from here
            newx<-data.frame(xx=seq(0,84))
            yy<-Intercept+newx$xx*Slope
            mod1<-lm(yy~newx$xx)
-           pred<-predict(mod1,newdata=newx,interval = c("confidence"),level = 0.95,type="response")
+           pred<-predict(mod1,newdata=newx,interval = c("confidence"),level = level_two, type="response")
            LX<-0
            LY<-0
            for(i in seq_along(W.split)){
@@ -716,10 +705,9 @@ K.split<-split(Multipledata, list(Multipledata$batch))
               
            pd<-(sqrt(1/(L[j]) + (((newx$xx-LY)^2)/Sxx[j])*SS[j]))*T[j]   ### calc 'pd' value here (only for model#2!); here we use T[j] finally. Haha... --YJ
            
-           Lower<-pred[,1]-pd                                          ### calc 'Lower' =(fit-pd) with pd here
-           Upper<-pred[,1]+pd                                          ### calc 'Upper' =(fit+pd) with pd here
+           Lower<-pred[,1]-pd                                            ### calc 'Lower' =(fit-pd) with pd here
+           Upper<-pred[,1]+pd                                            ### calc 'Upper' =(fit+pd) with pd here
            total<-data.frame(time=newx$xx, Lower=Lower,fit=pred[,1], Upper=Upper) 
-           cat("\n\n")
            PY[j]<-0
            PY1[j]<-0
            PY2[j]<-0
@@ -744,10 +732,11 @@ K.split<-split(Multipledata, list(Multipledata$batch))
 #########
 #step5: Output
 ### cat(" --- Batch#:", ba[j],"---\n")   ### has been moved to front... -YJ
-cat("\nY =",Intercept,"+(",Slope,") X\n\n")
-cat("\n")
+cat("\n\n")
+cat(paste(c("   Y (assay, %) =",formatC(Intercept,digits=5,format="f"),"+ (",
+    formatC(Slope,digits=5,format="f"),")*Time\n\n",sep="")))
 output<-data.frame(W.split[[j]][["time"]],W.split[[j]][["assay"]],cal,Res)
-colnames(output)<-list(" Time"," Observed assay(%)"," Calculated assay(%)"," Residuals")  
+colnames(output)<-list(" Time"," Obs. assay(%)"," Calc. assay(%)"," Residuals")  
 show(output)
 cat("\n\n")
 ### newx<-data.frame(xx=seq(0,84))   ### have been calc. previously.
@@ -763,16 +752,14 @@ for(i in 1:(length(newx$xx)-1)){if(i>PY[j]) total[i+1,]$star="***"}}
 if (twosided){
 total<-data.frame(time=newx$xx, Lower=Lower, fit=pred[,1], Upper=Upper, star="",stringsAsFactors=F)  ### as above stated. -YJ
 for(i in 1:(length(newx$xx)-1)){if(i>PY[j]) total[i+1,]$star="***"}}
-cat("\n\n")
 cat("-- List of",CI_percent*100,"% CI for 84-month Time Interval:-\n\n")
 show(total)
-cat("\n\n ***: means the listing of expiration as defined.")
-cat("\n\n")
+cat("\n ***: means the listing of expiration as defined.\n\n")
 TIME[[j]]<-c(W.split[[j]][["time"]])
 CAL[[j]]<-c(cal)
 RRES[[j]]<-c(Res)
 OBS[[j]]<-c(W.split[[j]][["assay"]])
-}                                     ############# end of batch [j] processing here.  --YJ #################
+}            ############# end of batch [j] processing here.  --YJ #################
 
 AA<-melt(CAL)
 ZZ<-melt(TIME)
@@ -781,7 +768,7 @@ OO<-melt(OBS)
 c(AA$L1)
 #purpose: to plot one slope and three intercepts 
 NewPred<-data.frame(batch=c(AA$L1),time=ZZ$value, PredCal=AA$value, RES=QQ$value)   
-M.split<-split(NewPred, list(NewPred$batch) ) 
+M.split<-split(NewPred, list(NewPred$batch)) 
 
 ### choose min PX or PY  ### need to be fixed now. -YJ
 ### we already got real shelf-life which is PY[j] before these
@@ -797,7 +784,7 @@ cat("--------------------------------------------------------------------------\
 cat("\n\n")
 ##### if one-sided low, start from here
 if (onesidedlo) {
-cat("                     One-sided lower LC analysis                        \n\n")
+cat("  One-sided lower LC analysis                        \n\n")
 if (noPY){
 cat("       No solution can be found with this model. Please try others.       \n")
 cat("**************************************************************************\n")
@@ -816,8 +803,9 @@ else {
      ### windows(record = TRUE )  ### NOT working in linux/unix any more; change to dev.new()
      dev.new()
      shelflife<-as.integer(PPY)
-     main<-paste(c("estimated shelf-life =",shelflife, "months"),collapse=" ")    
-     plot(time~assay,data=ANCOVAdata, xlim=c(0,84),ylim=c((Lper-10),(max(assay))), main=main,
+     main<-paste(c("estimated shelf-life = ",shelflife, " months with ",CI_percent*100,
+                   "% CI\n  (",analysis_type,")"),collapse="")
+     plot(time~assay,data=ANCOVAdata, xlim=c(0,84),ylim=c((Lper-10),(max(assay))), main=main,  #### ylim=c((Lper-10),(max(assay))
      xlab = "Time (months)", ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2, xaxt="n", frame.plot=FALSE)
      axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
@@ -828,45 +816,57 @@ else {
      temp <- legend("topright", legend = LLegend, box.col="white",
                text.width = strwidth("10000000"),
                lty=1, col=c(colors$colx), xjust = 1, yjust = 1)
-               
-     for(i in seq_along(M.split)){         ### pooled dataset (M.split)
+
+### plot one straight line for one batch
+
+     for(i in seq_along(M.split)){              ### pooled dataset (M.split); 
          x<-M.split[[i]][["time"]] 
          y<-M.split[[i]][["PredCal"]]
          mod<-lm(y~x) 
-         abline(mod,lwd=2, col=i)
-      } 
-      
-### plot individual data points & 95% CI - YJ
+         abline(mod,lwd=2, col=i)}
 
-      ### newx<-data.frame(xx=seq(0,84))
-      for(i in seq_along(W.split)){          ### original codes use 'W.split' -YJ
+      
+### plot individual data points & 95% CI for one batch - YJ
+
+      for(i in seq_along(W.split)){          ### plot all data points; original codes use 'W.split' -YJ
       xx<-W.split[[i]][["time"]] 
       yy<-W.split[[i]][["assay"]]
-      points(xx,yy,pch=16, col=i)
-      } 
-      
-      LX<-0
-      LY<-0
+      points(xx,yy,pch=16, col=i)} 
+###
+###  since v0.1.8
+###
 
-   for(i in seq_along(W.split)){
-     LX<-length(W.split[[i]]$time)
-     LY<-mean(ANCOVAdata$time )
+    for (j in 1:length(W.split)){         ### precess batch by batch now... not the same with Model# 1. --YJ
+         Intercept<-0
+         for(x in 1: length(unique(Intable$batch))){
+                if (W.split[[j]][["batch"]][1]==Intable$batch[[x]]){
+                  Intercept<- Intable$Intercept[[x]]}                 ### different intercepts is here! use "Intercept" following
+         }
 
-     Intercept1<-0
-     for(k in 1: length(unique(Intable$batch))){
-            if (W.split[[i]][["batch"]][1]==Intable$batch[[k]]){
-                  Intercept1<- Intable$Intercept[[k]]
-                 }
-      }
-      newx<-data.frame(xx=seq(0,84))
-      yy<-Intercept1+newx$xx*Slope
-      mod1<-lm(yy~newx$xx)
-      pred<-predict(mod1,newdata=newx,interval = c("confidence"),level = 0.90,type="response")
-      pd<-(sqrt(1/(LX) + (((newx$xx-LY)^2)/Sxx[i])*SS[i]))*T[i]       ### use LX here, not L[i] because between batch. -YJ
-      Lower<-pred[,1]-pd
-      total<-data.frame(time=newx$xx, fit=pred[,1], Lower=Lower)
-      lines(total$time, total$Lower,col=i,lty=4,lwd=2)
-   }
+          Sxxyy<-0                                                    ### will be used to calc. Sxy[j]<-sum(Sxxyy)
+
+          for (a in 1:length(W.split[[j]][["time"]])){    
+            Sxxyy[a]<-((W.split[[j]][["assay"]][a]-mean(W.split[[j]][["assay"]]))*
+                      (W.split[[j]][["time"]][a]-mean(W.split[[j]][["time"]])))}
+         
+         L[j]<-length(W.split[[j]][["time"]])
+         Sxx[j]<-var(W.split[[j]][["time"]])*(L[j]-1)                 ### will be used to calc 'pd' later --YJ
+         Syy[j]<-var(W.split[[j]][["assay"]])*(L[j]-1)                
+         Sxy[j]<-sum(Sxxyy)                                           
+         SS[j]<-(Syy[j]-(Slope*Sxy[j]))/(L[j]-2)                      ### will be used to calc 'pd' later --YJ
+         T[j]<-qt(CI_percent,L[j]-2)                                  ### will be used to calc 'pd' later --YJ
+         newx<-data.frame(xx=seq(0,84))                               
+         yy<-Intercept+newx$xx*Slope                                  ### intercept should be by batch; Slope is the same. --YJ
+         mod1<-lm(yy~newx$xx)
+         pred<-predict(mod1, newdata=newx,interval = c("confidence"),level = level_one,type="response")   ### the fit. lwr & upr all the same.
+         LY<-0
+         LY<-mean(ANCOVAdata$time)
+         pd<-(sqrt(1/(L[j]) + (((newx$xx-LY)^2)/Sxx[j])*SS[j]))*T[j]
+         Lower<-pred[,1]-pd
+         total<-data.frame(time=newx$xx, Lower=Lower)
+         lines(newx$xx,total$Lower,col=j,lty=4,lwd=2)                 ### set "col=j" not "col=i" here -YJ
+     }    
+
       axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
       #add criteria limit
       abline(h=Lper, col = "red")
@@ -889,13 +889,13 @@ else {
       cat(" shelf-life =",shelflife,"(months)                          \n\n")
       cat("******************************************************************\n")
       cat("\n")
-   }
+  }
 }
 ##### end of one-sided low
 ##### if one-sided upper, start from here
 if (onesidedup ){
 cat("\n")
-cat("                     One-sided upper LC analysis                        \n\n")
+cat("  One-sided upper LC analysis                        \n\n")
 if (noPY){
 cat("       No solution can be found with this model. Please try others.       \n")
 cat("**************************************************************************\n")
@@ -914,12 +914,13 @@ else {
      ### windows(record = TRUE )  ### NOT working in linux/unix any more; change to dev.new()
      dev.new()
      shelflife<-as.integer(PPY)
-     main<-paste(c("estimated shelf-life =",shelflife, "months"),collapse=" ")    
+     main<-paste(c("estimated shelf-life = ",shelflife, " months with ",CI_percent*100,
+                   "% CI\n  (",analysis_type,")"),collapse="")
      plot(time~assay,data=ANCOVAdata,xlim=c(0,84),ylim=c((Uper-20),(Uper+20)), main=main,   ### why? because it is upper!!  -YJ
      xlab = "Time (months)", ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2, xaxt="n",frame.plot=FALSE) 
      axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
-     axis(1,at=0:100,tcl=-.2, labels=FALSE)   
+     axis(1,at=0:100,tcl=-.2, labels=FALSE)
       
      colors<-data.frame(colx=seq(1,100))         ### for when the batch# is not coded as 1, 2, 3, ...; it works great. - YJ
      LLegend<-paste("batch# ",c(Intable$batch))   
@@ -927,43 +928,55 @@ else {
                text.width = strwidth("10000000"),
                lty=1, col=c(colors$colx), xjust = 1, yjust = 1)
 
+### plot regression line for all batches
+
      for(i in seq_along(M.split)){         ### pooled dataset
          x<-M.split[[i]][["time"]] 
          y<-M.split[[i]][["PredCal"]]
          mod<-lm(y~x) 
-         abline(mod,lwd=2, col=i)   
-      }
+         abline(mod, lwd=2, col=i)}
 
 ### plot individual data points & 95% CI - YJ
 
-      ### newx<-data.frame(xx=seq(0,84))
-      for(i in seq_along(W.split)){
-      xx<-W.split[[i]][["time"]]    #### for plots of indiv. data points only. --YJ
+      for(i in seq_along(W.split)){       ### for plots of indiv. data points only. --YJ
+      xx<-W.split[[i]][["time"]]
       yy<-W.split[[i]][["assay"]]
-      points(xx,yy,pch=16, col=i)
-      }
-      LX<-0
-      LY<-0
+      points(xx,yy,pch=16, col=i)}
+###
+###  since v0.1.8
+###
 
-   for(i in seq_along(W.split)){
-     LX<-length(W.split[[i]]$time)
-     LY<-mean(ANCOVAdata$time )
+    for (j in 1:length(W.split)){         ### precess batch by batch now... not the same with Model# 1. --YJ
+         Intercept<-0
+         for(x in 1: length(unique(Intable$batch))){
+                if (W.split[[j]][["batch"]][1]==Intable$batch[[x]]){
+                  Intercept<- Intable$Intercept[[x]]}                 ### different intercepts is here! use "Intercept" following
+         }
 
-     Intercept1<-0
-     for(k in 1: length(unique(Intable$batch))){
-            if (W.split[[i]][["batch"]][1]==Intable$batch[[k]]){
-                  Intercept1<- Intable$Intercept[[k]]
-                 }
-      }
-      newx<-data.frame(xx=seq(0,84))
-      yy<-Intercept1+newx$xx*Slope
-      mod1<-lm(yy~newx$xx)
-      pred<-predict(mod1,newdata=newx,interval = c("confidence"),level = 0.90,type="response")
-      pd<-(sqrt(1/(LX) + (((newx$xx-LY)^2)/Sxx[i])*SS[i]))*T[i]     ### 'pd' in only for model #2!  -YJ
-      Upper<-pred[,1]+pd
-      total<-data.frame(time=newx$xx, fit=pred[,1], Upper=Upper)
-      lines(total$time,total$Upper,col=i,lty=4,lwd=2)
-   }
+          Sxxyy<-0                                                    ### will be used to calc. Sxy[j]<-sum(Sxxyy)
+
+          for (a in 1:length(W.split[[j]][["time"]])){    
+            Sxxyy[a]<-((W.split[[j]][["assay"]][a]-mean(W.split[[j]][["assay"]]))*
+                      (W.split[[j]][["time"]][a]-mean(W.split[[j]][["time"]])))}
+         
+         L[j]<-length(W.split[[j]][["time"]])
+         Sxx[j]<-var(W.split[[j]][["time"]])*(L[j]-1)                 ### will be used to calc 'pd' later --YJ
+         Syy[j]<-var(W.split[[j]][["assay"]])*(L[j]-1)                
+         Sxy[j]<-sum(Sxxyy)                                           
+         SS[j]<-(Syy[j]-(Slope*Sxy[j]))/(L[j]-2)                      ### will be used to calc 'pd' later --YJ
+         T[j]<-qt(CI_percent,L[j]-2)                                  ### will be used to calc 'pd' later --YJ
+         newx<-data.frame(xx=seq(0,84))                               
+         yy<-Intercept+newx$xx*Slope                                  ### intercept should be by batch; Slope is the same. --YJ
+         mod1<-lm(yy~newx$xx)
+         pred<-predict(mod1, newdata=newx,interval = c("confidence"),level = level_one,type="response")   ### the fit. lwr & upr all the same.
+         LY<-0
+         LY<-mean(ANCOVAdata$time)
+         pd<-(sqrt(1/(L[j]) + (((newx$xx-LY)^2)/Sxx[j])*SS[j]))*T[j]
+         Upper<-pred[,1]+pd
+         total<-data.frame(time=newx$xx, Upper=Upper)
+         lines(newx$xx,total$Upper,col=j,lty=4,lwd=2)                 ### set "col=j" not "col=i" here -YJ
+     }    
+
      axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
      ### add criteria limit line
      abline(h=Uper, col = "red")
@@ -986,12 +999,12 @@ else {
      cat(" shelf-life =",shelflife,"(months)                        \n\n")
      cat("******************************************************************\n")
      cat("\n")
-   }
+  }
 }
 ##### end of one-sided upper
 ##### if two-sided, start from here
 if (twosided){
-cat("                        Two-sided LC analysis                           \n\n")
+cat("  Two-sided LC analysis                           \n\n")
 if (noPY){
 cat("       No solution can be found with this model. Please try others.       \n")
 cat("**************************************************************************\n")
@@ -1008,11 +1021,11 @@ else {
      cat(" Ps. When shelf-life = 84, it means that stab\n")
      cat(" cannot find a reasonable shelf-life for the\n")
      cat(" batch with presented dataset within 84 months.\n\n")
-     }
 
 ### go to plot of single batch
      shelflife<-as.integer(PPY)
-     main<-paste(c("estimated shelf-life=",shelflife, " months"),collapse=" ")    
+     main<-paste(c("estimated shelf-life = ",shelflife, " months with ",CI_percent*100,
+                   "% CI\n  (",analysis_type,")"),collapse="")
      plot(time~assay,data=ANCOVAdata, xlim=c(0,84),ylim=c((Lper-20),(Uper+20)), main=main,
      xlab = "Time (months)" , ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2, xaxt="n", frame.plot=FALSE)
@@ -1024,40 +1037,62 @@ else {
      temp <- legend("topright", legend = LLegend, box.col="white",
                text.width = strwidth("10000000"),
                lty=1, col=c(colors$colx), xjust = 1, yjust = 1)
+
+### plot regression line for all batches
    
     for(i in seq_along(M.split)){
      x<-M.split[[i]][["time"]] 
      y<-M.split[[i]][["PredCal"]]
      points(x,y,pch=16, col=i)
      mod<-lm(y~x) 
-     abline(mod,lwd=2, col=i)   
-      }
+     abline(mod,lwd=2, col=i)}   
+     
+### plot individual data points & 95% CI - YJ
+
+      for(i in seq_along(W.split)){       ### for plots of indiv. data points only. --YJ
+      xx<-W.split[[i]][["time"]]
+      yy<-W.split[[i]][["assay"]]
+      points(xx,yy,pch=16, col=i)}
 
 #plot CI
-   LX<-0
-   LY<-0
 
-   for(i in seq_along(W.split)){
-     LX<-length(W.split[[i]]$time)
-     LY<-mean(ANCOVAdata$time )
+###
+###  since v0.1.8
+###
 
-     Intercept1<-0
-     for(k in 1: length(unique(Intable$batch))){
-            if (W.split[[i]][["batch"]][1]==Intable$batch[[k]]){
-                  Intercept1<- Intable$Intercept[[k]]
-                 }
-     }
-       newx<-data.frame(xx=seq(0,84))
-       yy<-Intercept1+newx$xx*Slope
-       mod1<-lm(yy~newx$xx)
-       pred<-predict(mod1,newdata=newx,interval = c("confidence"),level = 0.90,type="response")
-       pd<-(sqrt(1/(LX) + (((newx$xx-LY)^2)/Sxx[i])*SS[i]))*T[i]
-       Lower<-pred[,1]-pd
-       Upper<-pred[,1]+pd
-       total<-data.frame(time=newx$xx, fit=pred[,1], Upper=Upper, Lower=Lower)
-       lines(total$time,total$Lower,,col=i,lty=4,lwd=2)
-       lines(total$time,total$Upper,,col=i,lty=4,lwd=2)
-   }
+    for (j in 1:length(W.split)){         ### precess batch by batch now... not the same with Model# 1. --YJ
+         Intercept<-0
+         for(x in 1: length(unique(Intable$batch))){
+                if (W.split[[j]][["batch"]][1]==Intable$batch[[x]]){
+                  Intercept<- Intable$Intercept[[x]]}                 ### different intercepts is here! use "Intercept" following
+         }
+
+          Sxxyy<-0                                                    ### will be used to calc. Sxy[j]<-sum(Sxxyy)
+
+          for (a in 1:length(W.split[[j]][["time"]])){    
+            Sxxyy[a]<-((W.split[[j]][["assay"]][a]-mean(W.split[[j]][["assay"]]))*
+                      (W.split[[j]][["time"]][a]-mean(W.split[[j]][["time"]])))}
+         
+         L[j]<-length(W.split[[j]][["time"]])
+         Sxx[j]<-var(W.split[[j]][["time"]])*(L[j]-1)                 ### will be used to calc 'pd' later --YJ
+         Syy[j]<-var(W.split[[j]][["assay"]])*(L[j]-1)                
+         Sxy[j]<-sum(Sxxyy)                                           
+         SS[j]<-(Syy[j]-(Slope*Sxy[j]))/(L[j]-2)                      ### will be used to calc 'pd' later --YJ
+         T[j]<-qt(1-((1-CI_percent)/2),L[j]-2)                        ### two sided from here
+         newx<-data.frame(xx=seq(0,84))                               
+         yy<-Intercept+newx$xx*Slope                                  ### intercept should be by batch; Slope is the same. --YJ
+         mod1<-lm(yy~newx$xx)
+         pred<-predict(mod1, newdata=newx,interval = c("confidence"),level = level_two,type="response")   ### the fit. lwr & upr all the same.
+         LY<-0
+         LY<-mean(ANCOVAdata$time)
+         pd<-(sqrt(1/(L[j]) + (((newx$xx-LY)^2)/Sxx[j])*SS[j]))*T[j]
+         Lower<-pred[,1]-pd
+         Upper<-pred[,1]+pd
+         total<-data.frame(time=newx$xx,Upper=Upper,Lower=Lower)
+         lines(newx$xx,total$Upper,col=j,lty=4,lwd=2)                 ### set "col=j" not "col=i" here -YJ
+         lines(newx$xx,total$Lower,col=j,lty=4,lwd=2)
+     }    
+
        axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
        ### add criteria limit line
        abline(h=Uper, col = "red")
@@ -1082,7 +1117,8 @@ else {
        cat(" estimated shelf-life =",PPY,"months                                \n\n")
        cat("**********************************************************************\n")
        cat("\n")
- }
+    }
+}
 ### end of two-sided.
 ### do Q-Q plot only if there is at least one solution (shelf life)
 if (!noSolution) {
@@ -1116,7 +1152,7 @@ if (!noSolution) {
        cat("## Please note: The output files (",output_to_txt,") and (",plots_to_pdf,")     \n")
        cat("   have been created and placed at ",filepath,                               "\n\n")
        cat("*****************************************************************************\n\n")
-   go()
+   MultipleBatchmenu()
 }
 ############################# END OF MODEL #2 ##################################
 #
@@ -1145,7 +1181,6 @@ cat("                  <<Model #3: two-sided LC analysis>>                     \
 cat("        separate intercepts and separate slopes between batches.          \n")
 cat("------------------------------------------------------------------------\n\n")     
 cat("              <<linear regression model: Assay (%) vs. time>>             \n")
-cat("\n")
 show(lm(assay ~ batch*time  , data=ANCOVAdata) )
 show(anova(lm(assay ~ batch*time, data=ANCOVAdata)))
 cat("\n")
@@ -1183,12 +1218,9 @@ K.split<-split(Multipledata, list(Multipledata$batch))
      ba[i]<-K.split[[i]][["batch"]][1]
      }
      
-  
-cat("\n")     
-   #collect all intercepts in a dataframe
+#collect all intercepts in a dataframe
    Intable<-data.frame(batch=ba, Intercept=c(prepreIntercept[1],preIntercept), Slope=c(preSlope[1],Slope_1))  
     
-cat("\n")
 #step2: calculate description statistics
      #divide data in to different group based on batches
      CAL<-NULL 
@@ -1205,7 +1237,7 @@ cat("\n")
      PX<-0
      PY<-0
      
-     for (j in 1:length(W.split)){
+for (j in 1:length(W.split)){
           Intercept<-0
           Slope<-0
           for(x in 1: length(unique(Intable$batch))){
@@ -1239,10 +1271,9 @@ cat("\n")
               xx<-W.split[[j]][["time"]]               ### here we have to get intercept & slope again from indiv. batch.
               yy<-W.split[[j]][["assay"]]              ### not the same as Model # & #2; different!!! --YJ
               mod1<-lm(yy~xx)                          ### not with 'newx$xx'!
-              pred<-predict(mod1, newdata=newx,interval = c("confidence"),level = 0.90,type="response")   ### here still using 'newdata=newx'; get err if 'newdata=newx$$xx' -YJ
+              pred<-predict(mod1, newdata=newx,interval = c("confidence"),level = level_one,type="response")   ### here still using 'newdata=newx'; get err if 'newdata=newx$$xx' -YJ
           if(onesidedlo){
               total<-data.frame(time=newx$xx, fit=pred[,1], Lower=pred[,2])   ### here 'newdata=newx$xx'; get err if 'newdata=newx' -YJ
-              cat("\n\n")
               PY[j]<-0
               for(i in 1:length(newx$xx)){
                  if(total$Lower[i]<Lper){PY[j]<-(i-2);break()}}
@@ -1250,7 +1281,6 @@ cat("\n")
                         }
            if(onesidedup){
               total<-data.frame(time=newx$xx, fit=pred[,1], Upper=pred[,3])
-              cat("\n\n")
               PY[j]<-0
               for(i in 1:length(newx)){
                  if(total$Upper[i]>Uper){PY[j]<-(i-2);break()}}
@@ -1263,9 +1293,8 @@ cat("\n")
            xx<-W.split[[j]][["time"]]               ### here we have to get intercept & slope again from indiv. batch.
            yy<-W.split[[j]][["assay"]]              ### not the same as Model # & #2; different!!! --YJ
            mod1<-lm(yy~xx)                          ### not with 'newx$xx'!
-           pred<-predict(mod1,newdata=newx,interval = c("confidence"),level = 0.95,type="response")   ### here still using 'newdata=newx'; get err if 'newdata=newx$$xx' -YJ
+           pred<-predict(mod1,newdata=newx,interval = c("confidence"),level = level_two, type="response")   ### here still using 'newdata=newx'; get err if 'newdata=newx$$xx' -YJ
            total<-data.frame(time=newx$xx, Lower=pred[,2],fit=pred[,1], Upper=pred[,3]) 
-           cat("\n\n")
            PY[j]<-0
            PY1[j]<-0
            PY2[j]<-0
@@ -1283,11 +1312,13 @@ cat("\n")
 #########
 #step5: Output
 ### cat(" --- Batch#:", ba[j],"---\n")   ### moved to the front
-cat("\nY =",Intercept,"+(",Slope,") X\n\n")
-cat("\n")
+cat("\n\n")
+cat(paste(c("   Y (assay, %) =",formatC(Intercept,digits=5,format="f"),"+ (",
+    formatC(Slope,digits=5,format="f"),")*Time\n\n",sep="")))
 output<-data.frame(W.split[[j]][["time"]],W.split[[j]][["assay"]],cal,Res)
-colnames(output)<-list(" Time"," Observed assay(%)"," Calculated assay(%)"," Residuals")  
+colnames(output)<-list(" Time"," Obs. assay(%)"," Calc. assay(%)"," Residuals")  
 show(output)
+cat("\n\n")
 ###
 if (onesidedlo){
 total<-data.frame(time=newx$xx, fit=pred[,1], Lower=pred[,2], star="",stringsAsFactors=F)  ### here we have to use 'Lower=pred[,2]' -YJ
@@ -1298,17 +1329,14 @@ for(i in 1:(length(newx$xx)-1)){if(i>PY[j]) total[i+1,]$star="***"}}
 if (twosided){
 total<-data.frame(time=newx$xx, Lower=pred[,2], fit=pred[,1], Upper=pred[,3], star="",stringsAsFactors=F)  ### as above stated. -YJ
 for(i in 1:(length(newx$xx)-1)){if(i>PY[j]) total[i+1,]$star="***"}}
-cat("\n\n")
 cat("-- List of",CI_percent*100,"% CI for 84-month Time Interval:-\n\n")
 show(total)
-cat("\n\n ***: means the listing of expiration as defined.")
-cat("\n\n")
+cat("\n ***: means the listing of expiration as defined.\n\n")
 ###
 TIME[[j]]<-c(W.split[[j]][["time"]])
 CAL[[j]]<-c(cal)
 RRES[[j]]<-c(Res)
 OBS[[j]]<-c(W.split[[j]][["assay"]])
-cat("\n\n")  
 }   ################################ end of batch processing (batch=j) here...  -YJ
 
 AA<-melt(CAL)
@@ -1329,7 +1357,7 @@ cat("--------------------------------------------------------------------------\
 cat("\n\n")
 ##### if one-sided low, start from here
 if (onesidedlo) {
-cat("                     One-sided lower LC analysis                        \n\n")
+cat("  One-sided lower LC analysis                        \n\n")
 if (noPY){
 cat("       No solution can be found with this model. Please try others.       \n")
 cat("**************************************************************************\n")
@@ -1349,12 +1377,13 @@ else {
      dev.new()
 ### go to plot of single batch
      shelflife<-as.integer(PPY)
-     main<-paste(c("estimated shelf-life =",shelflife,"months"),collapse=" ")    
+     main<-paste(c("estimated shelf-life = ",shelflife, " months with ",CI_percent*100,
+                   "% CI\n  (",analysis_type,")"),collapse="")
      plot(time~assay,data=ANCOVAdata, xlim=c(0,84),ylim=c((Lper-10),(Lper+30)), main=main,
      xlab = "Time (months)", ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2, xaxt="n", frame.plot=FALSE)
-       axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
-       axis(1,at=0:100,tcl=-.2, labels=FALSE) 
+     axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
+     axis(1,at=0:100,tcl=-.2, labels=FALSE) 
     
      colors<-data.frame(colx=seq(1,100))         ### for when the batch# is not coded as 1, 2, 3, ...; it works great. - YJ
      LLegend<-paste("batch# ",c(Intable$batch))   
@@ -1370,8 +1399,8 @@ else {
       points(xx,yy,pch=16, col=i)    ### plot data points for each batch here -YJ
       mod<-lm(yy~xx) 
       abline(mod,lwd=2, col=i)       ### plot each regr. line for each batch -YJ
-      pred<-predict(mod, newdata=newx,interval = c("confidence"),level = 0.90,type="response")
-      lines(newx$xx,pred[,2],,col=i,lty=4,lwd=2)   ### plot lower 95% CI line -YJ
+      pred<-predict(mod, newdata=newx,interval = c("confidence"),level = level_one,type="response")
+      lines(newx$xx,pred[,2],col=i,lty=4,lwd=2)   ### plot lower 95% CI line -YJ
          }
      axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
      #add criteria limit
@@ -1402,7 +1431,7 @@ else {
 ##### if one-sided upper, start from here
 if (onesidedup ){
 cat("\n")
-cat("                     One-sided upper LC analysis                        \n\n")
+cat("  One-sided upper LC analysis                        \n\n")
 if (noPY){
 cat("       No solution can be found with this model. Please try others.       \n")
 cat("**************************************************************************\n")
@@ -1421,12 +1450,13 @@ else {
      ### windows(record = TRUE )  ### NOT working in linux/unix any more; change to dev.new()
      dev.new()
      shelflife<-as.integer(PPY)
-     main<-paste(c("estimated shelf-life =",shelflife, "months"),collapse=" ")    
+     main<-paste(c("estimated shelf-life = ",shelflife, " months with ",CI_percent*100,
+                   "% CI\n  (",analysis_type,")"),collapse="")
      plot(time~assay,data=ANCOVAdata,xlim=c(0,84),ylim=c((Uper-30),(Uper+10)), main=main,
      xlab = "Time (months)", ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2, xaxt="n", frame.plot=FALSE)
      axis(1,at=c(0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100),las=0)
-     axis(1,at=0:100,tcl=-.2, labels=FALSE)   
+     axis(1,at=0:100,tcl=-.2, labels=FALSE)
       
      colors<-data.frame(colx=seq(1,100))         ### for when the batch# is not coded as 1, 2, 3, ...; it works great. - YJ
      LLegend<-paste("batch# ",c(Intable$batch))   
@@ -1442,8 +1472,8 @@ else {
       points(xx,yy,pch=16, col=i)    ### plot data points for each batch here -YJ
       mod<-lm(yy~xx) 
       abline(mod,lwd=2, col=i)       ### plot each regr. line for each batch -YJ
-      pred<-predict(mod,newdata=newx,interval = c("confidence"),level = 0.90,type="response")
-      lines(newx$xx,pred[,3],,col=i,lty=4,lwd=2)    ### plot upper 95% CI line -YJ
+      pred<-predict(mod,newdata=newx,interval = c("confidence"),level = level_one,type="response")
+      lines(newx$xx,pred[,3],col=i,lty=4,lwd=2)    ### plot upper 95% CI line -YJ
          }
       axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
       #add criteria limit
@@ -1472,7 +1502,7 @@ else {
 ##### end of one-sided upper
 ##### if two-sided, start from here
 if (twosided){
-cat("                        Two-sided LC analysis                           \n\n")
+cat("  Two-sided LC analysis                           \n\n")
 if (noPY){
 cat("       No solution can be found with this model. Please try others.       \n")
 cat("**************************************************************************\n")
@@ -1493,7 +1523,8 @@ else {
 ### go to plot of single batch
 ### outline plot box 
      shelflife<-as.integer(PPY)
-     main<-paste(c("estimated shelf-life =",shelflife,"months"),collapse=" ")    
+     main<-paste(c("estimated shelf-life = ",shelflife, " months with ",CI_percent*100,
+                   "% CI\n  (",analysis_type,")"),collapse="")
      plot(time~assay,data=ANCOVAdata, xlim=c(0,84),ylim=c((Lper-10),(Uper+10)), main=main,
      xlab = "Time (months)", ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2, xaxt="n", frame.plot=FALSE)
@@ -1514,9 +1545,9 @@ else {
       points(xx,yy,pch=16, col=i)    ### plot data points for each batch here -YJ
       mod<-lm(yy~xx) 
       abline(mod,lwd=2, col=i)       ### plot each regr. line for each batch -YJ
-      pred<-predict(mod, newdata=newx,interval = c("confidence"),level = 0.95,type="response")
-      lines(newx$xx,pred[,2],,col=i,lty=4,lwd=2)    ### plot lower/upper 95% CI line -YJ
-      lines(newx$xx,pred[,3],,col=i,lty=4,lwd=2)
+      pred<-predict(mod, newdata=newx,interval = c("confidence"),level = level_two, type="response")
+      lines(newx$xx,pred[,2],col=i,lty=4,lwd=2)    ### plot lower/upper 95% CI line -YJ
+      lines(newx$xx,pred[,3],col=i,lty=4,lwd=2)
       }
      axis(1,tcl=-.5, tick=TRUE,labels=FALSE)
      #add criteria limit
@@ -1577,7 +1608,7 @@ if (!noSolution) {
        cat("## Please note: The output files (",output_to_txt,") and (",plots_to_pdf,")    \n")
        cat("   have been created and placed at ",filepath,                              "\n\n")
        cat("*****************************************************************************\n\n")
-   go()
+   MultipleBatchmenu()
      }
    }
  }

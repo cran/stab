@@ -1,6 +1,14 @@
 #Input assay data Menu for Data Analysis for Multiple Batches
 MultipleBatchmenu<-function(Multipledata)
 {
+stab_output_filename<-stab_output_filename
+onesidedlo <- onesidedlo
+onesidedup <- onesidedup
+twosided   <- twosided
+Lper<-Lper
+Uper<-Uper
+CI_percent<-CI_percent
+
 cat("\n")
 cat("****************************************************************************\n")
 cat("*            Step2-2: Data Analysis for Multiple Batches                   *\n")
@@ -36,8 +44,10 @@ if (pick == 1){
         }
      else {
         cat("\nEnter the file name to save data (no file extension!): \n")
-        Multiplename <-readline()
-        Multiplename<-paste(Multiplename,".RData",sep="")
+        MultiplenameTMP <-readline()
+        stab_output_filename<<-MultiplenameTMP
+        Multiplename<-paste(MultiplenameTMP,".RData",sep="")
+        MultiplenameCSV<-paste(MultiplenameTMP,".csv",sep="")
            if(file.exists(Multiplename)){
            cat("\n")
            cat("******************************************\n")
@@ -52,8 +62,10 @@ if (pick == 1){
                 }
                 else{
                 cat("\nEnter the file name to save data (no file extension!): \n")
-                Multiplename <-readline()
-                Multiplename<-paste(Multiplename,".RData",sep="")
+                MultiplenameTMP <-readline()
+                stab_output_filename<<-MultiplenameTMP
+                Multiplename<-paste(MultiplenameTMP,".RData",sep="")
+                MultiplenameCSV<-paste(MultiplenameTMP,".csv",sep="")
                 repeat{
                     if(file.exists(Multiplename))
                       {
@@ -63,6 +75,7 @@ if (pick == 1){
                       cat("* Please try again.                *\n")
                       cat("***********************************\n")
                       Multiplename<-readline()
+                      stab_output_filename<<-Multiplename
                       Multiplename<-paste(Multiplename,".RData",sep="")
                       }
                        else{
@@ -71,9 +84,11 @@ if (pick == 1){
                     }
              }
               saveRDS(Multipledata,file=Multiplename)
+              write.csv(Multipledata,MultiplenameCSV,row.names=FALSE)
            }
         else{
            saveRDS(Multipledata,file=Multiplename)
+           write.csv(Multipledata,MultiplenameCSV,row.names=FALSE)
           }
 cat("\n\n")
         return(MultipleAnalyze(Multipledata))
@@ -102,12 +117,17 @@ else {
      ### cat("\nEnter data file name (no extension): \n")
      ### Multiplename <-readline()
      ### Multiplename<-paste(Multiplename,".RData",sep="")
-     Multipledata<-readRDS(file.choose())                        
+     stab_output_filename_tmp<-""
+     stab_output_filename_tmp<-file.choose()
+     Multipledata<-readRDS(stab_output_filename_tmp)                   
      ### load(Multiplename)
-     Multipledata<-edit(Multipledata )
+     Multipledata<-edit(Multipledata)
      Multipledata<- na.omit(Multipledata)
      colnames(Multipledata)<-list("batch","time","assay")
      cat("\n\n")
+     stab_output_filename_tmp<-basename(stab_output_filename_tmp)
+     stab_output_filename_tmp<-gsub(".RData","",stab_output_filename_tmp,fixed=TRUE)
+     stab_output_filename<<-stab_output_filename_tmp
      show(Multipledata)
      
 cat("\n\n")

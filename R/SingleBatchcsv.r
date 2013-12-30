@@ -1,6 +1,14 @@
 #choose separator and decimal type
 SingleBatchcsv<-function()
 {
+stab_output_filename<-stab_output_filename
+onesidedlo <- onesidedlo
+onesidedup <- onesidedup
+twosided   <- twosided
+Lper<-Lper
+Uper<-Uper
+CI_percent<-CI_percent
+
 cat("\n")
 file.menu <- c("sep = comma (,) &  dec= point (.)",
                "sep = semicolon (;) &  dec= comma (,)",
@@ -19,10 +27,15 @@ if (pick == 1){
         ### cat("\nEnter Data file name(without file extension of .csv)\n")
         ### Single.file <-readline()
         ### Single.file<-paste(Single.file,".csv",sep="")
-        cnames<-c("Time","Assay")
-        Singledata<-read.csv(file.choose(),header=TRUE,row.names=NULL,col.names=cnames, sep=",",dec=".")
+        cnames<-c("time","assay")
+        stab_output_filename_tmp<-""
+        stab_output_filename_tmp<-file.choose()
+        Singledata<-read.csv(stab_output_filename_tmp,header=TRUE,row.names=NULL,col.names=cnames, sep=",",dec=".")
         Singledata<-edit(Singledata)
         Singledata<- na.omit(Singledata)
+        stab_output_filename_tmp<-basename(stab_output_filename_tmp)
+        stab_output_filename_tmp<-gsub(".csv","",stab_output_filename_tmp,fixed=TRUE)
+        stab_output_filename<<-stab_output_filename_tmp
         cat("\n\n")
         show(Singledata)
         cat("\n\n")
@@ -38,10 +51,15 @@ if (pick == 1){
         ### cat("\nEnter Data file name(without file extension of.csv)\n")
         ### Single.file <-readline()
         ### Single.file<-paste(Single.file,".csv",sep="")
-        cnames<-c("Time","Assay")
-        Singledata<-read.csv(file.choose(),header=TRUE,row.names=NULL,col.names=cnames, sep=";",dec=",")
+        cnames<-c("time","assay")
+        stab_output_filename_tmp<-""
+        stab_output_filename_tmp<-file.choose()
+        Singledata<-read.csv(stab_output_filename_tmp,header=TRUE,row.names=NULL,col.names=cnames, sep=";",dec=",")
         Singledata<-edit(Singledata)
         Singledata<- na.omit(Singledata)
+        stab_output_filename_tmp<-basename(stab_output_filename_tmp)
+        stab_output_filename_tmp<-gsub(".csv","",stab_output_filename_tmp,fixed=TRUE)
+        stab_output_filename<<-stab_output_filename_tmp
         cat("\n\n")
         show(Singledata)
         cat("\n\n")
@@ -56,10 +74,15 @@ if (pick == 1){
         ### cat("\nEnter Data file name(without file extension of.csv)\n")
         ### Single.file <-readline()
         ### Single.file<-paste(Single.file,".csv",sep="")
-        cnames<-c("Time","Assay")
-        Singledata<-read.csv(file.choose(),header=TRUE,row.names=NULL,col.names=cnames, sep=";",dec=".")
+        cnames<-c("time","assay")
+        stab_output_filename_tmp<-""
+        stab_output_filename_tmp<-file.choose()
+        Singledata<-read.csv(stab_output_filename_tmp,header=TRUE,row.names=NULL,col.names=cnames, sep=";",dec=".")
         Singledata<-edit(Singledata)
         Singledata<- na.omit(Singledata)
+        stab_output_filename_tmp<-basename(stab_output_filename_tmp)
+        stab_output_filename_tmp<-gsub(".csv","",stab_output_filename_tmp,fixed=TRUE)
+        stab_output_filename<<-stab_output_filename_tmp
         cat("\n\n")
         show(Singledata)
         cat("\n\n")
@@ -74,10 +97,15 @@ else {
         ### cat("\nEnter Data file name(without file extension of.csv)\n")
         ### Single.file <-readline()
         ### Single.file<-paste(Single.file,".csv",sep="")
-        cnames<-c("Time","Assay")
-        Singledata<-read.csv(file.choose(),header=TRUE,row.names=NULL,col.names=cnames, sep=" ",dec=",")
+        cnames<-c("time","assay")
+        stab_output_filename_tmp<-""
+        stab_output_filename_tmp<-file.choose()
+        Singledata<-read.csv(stab_output_filename_tmp,header=TRUE,row.names=NULL,col.names=cnames, sep=" ",dec=",")
         Singledata<-edit(Singledata)
         Singledata<- na.omit(Singledata)
+        stab_output_filename_tmp<-basename(stab_output_filename_tmp)
+        stab_output_filename_tmp<-gsub(".csv","",stab_output_filename_tmp,fixed=TRUE)
+        stab_output_filename<<-stab_output_filename_tmp
         cat("\n\n")
         show(Singledata)
         cat("\n\n")
@@ -92,10 +120,15 @@ else {
         ### cat("\nEnter Data file name(without file extension of.csv)\n")
         ### Single.file <-readline()
         ### Single.file<-paste(Single.file,".csv",sep="")
-        cnames<-c("Time","Assay")
-        Singledata<-read.csv(file.choose(),header=TRUE,row.names=NULL,col.names=cnames, sep=" ",dec=".")
+        cnames<-c("time","assay")
+        stab_output_filename_tmp<-""
+        stab_output_filename_tmp<-file.choose()
+        Singledata<-read.csv(stab_output_filename_tmp,header=TRUE,row.names=NULL,col.names=cnames, sep=" ",dec=".")
         Singledata<-edit(Singledata)
         Singledata<- na.omit(Singledata)
+        stab_output_filename_tmp<-basename(stab_output_filename_tmp)
+        stab_output_filename_tmp<-gsub(".csv","",stab_output_filename_tmp,fixed=TRUE)
+        stab_output_filename<<-stab_output_filename_tmp
         cat("\n\n")
         show(Singledata)
         cat("\n\n")
@@ -111,10 +144,15 @@ else {
         ### cat("\nEnter Data file name(without file extension of.csv)\n")
         ### Single.file <-readline()
         ### Single.file<-paste(Single.file,".csv",sep="")
-        cnames<-c("Time","Assay")
-        Singledata<-read.csv(file.choose(),header=TRUE,row.names=NULL,col.names=cnames, sep="\t",dec=",")
+        cnames<-c("time","assay")
+        stab_output_filename_tmp<-""
+        stab_output_filename_tmp<-file.choose()
+        Singledata<-read.csv(stab_output_filename_tmp,header=TRUE,row.names=NULL,col.names=cnames, sep="\t",dec=",")
         Singledata<-edit(Singledata)
         Singledata<- na.omit(Singledata)
+        stab_output_filename_tmp<-basename(stab_output_filename_tmp)
+        stab_output_filename_tmp<-gsub(".csv","",stab_output_filename_tmp,fixed=TRUE)
+        stab_output_filename<<-stab_output_filename_tmp
         cat("\n\n")
         show(Singledata)
         cat("\n\n")
@@ -129,10 +167,15 @@ else {
         ### cat("\nEnter Data file name(without file extension of.csv)\n")
         ### Single.file <-readline()
         ### Single.file<-paste(Single.file,".csv",sep="")
-        cnames<-c("Time","Assay")
-        Singledata<-read.csv(file.choose(),header=TRUE,row.names=NULL,col.names=cnames, sep="\t",dec=".")
+        cnames<-c("time","assay")
+        stab_output_filename_tmp<-""
+        stab_output_filename_tmp<-file.choose()
+        Singledata<-read.csv(stab_output_filename_tmp,header=TRUE,row.names=NULL,col.names=cnames, sep="\t",dec=".")
         Singledata<-edit(Singledata)
         Singledata<- na.omit(Singledata)
+        stab_output_filename_tmp<-basename(stab_output_filename_tmp)
+        stab_output_filename_tmp<-gsub(".csv","",stab_output_filename_tmp,fixed=TRUE)
+        stab_output_filename<<-stab_output_filename_tmp
         cat("\n\n")
         show(Singledata)
         cat("\n\n")
@@ -147,10 +190,15 @@ else {
         ### cat("\nEnter Data file name(without file extension of.csv)\n")
         ### Single.file <-readline()
         ### Single.file<-paste(Single.file,".csv",sep="")
-        cnames<-c("Time","Assay")
-        Singledata<-read.csv(file.choose(),header=TRUE,row.names=NULL,col.names=cnames, sep=":",dec=",")
+        cnames<-c("time","assay")
+        stab_output_filename_tmp<-""
+        stab_output_filename_tmp<-file.choose()
+        Singledata<-read.csv(stab_output_filename_tmp,header=TRUE,row.names=NULL,col.names=cnames, sep=":",dec=",")
         Singledata<-edit(Singledata)
         Singledata<- na.omit(Singledata)
+        stab_output_filename_tmp<-basename(stab_output_filename_tmp)
+        stab_output_filename_tmp<-gsub(".csv","",stab_output_filename_tmp,fixed=TRUE)
+        stab_output_filename<<-stab_output_filename_tmp
         cat("\n\n")
         show(Singledata)
         cat("\n\n")
@@ -165,10 +213,15 @@ else {
         ### cat("\nEnter Data file name(without file extension of.csv)\n")
         ### Single.file <-readline()
         ### Single.file<-paste(Single.file,".csv",sep="")
-        cnames<-c("Time","Assay")
-        Singledata<-read.csv(file.choose(),header=TRUE,row.names=NULL,col.names=cnames, sep=":",dec=".")
+        cnames<-c("time","assay")
+        stab_output_filename_tmp<-""
+        stab_output_filename_tmp<-file.choose()
+        Singledata<-read.csv(stab_output_filename_tmp,header=TRUE,row.names=NULL,col.names=cnames, sep=":",dec=".")
         Singledata<-edit(Singledata)
         Singledata<- na.omit(Singledata)
+        stab_output_filename_tmp<-basename(stab_output_filename_tmp)
+        stab_output_filename_tmp<-gsub(".csv","",stab_output_filename_tmp,fixed=TRUE)
+        stab_output_filename<<-stab_output_filename_tmp
         cat("\n\n")
         show(Singledata)
         cat("\n\n")

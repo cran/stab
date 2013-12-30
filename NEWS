@@ -3,6 +3,21 @@ data analysis of drug stability for shelf life estimation
 
 Update log
 ---
+~ 12/10/2013 (0.1.8)
+---
+   - fixed output file as automatically selected from input file name;
+     and will check it the output files exists or not; it will not
+     overwrite the existing file and rename the output automatically
+     with "xxx_01.txt" or "xxx_01.pdf" if necessary.
+   - also added the exported raw dataset as .csv format; original was 
+     .RData only.
+   - fixed %CI of user's defined;
+   - fixed .csv dataset loading problem with single batch study;
+   - fixed some output formats;
+   - fixed model #3 output plots.
+   - fixed demo module (no pdf output; but display plots on screen);
+   - added stab_setup() for stab setup file; like bear...
+
 ~ 11/29/2013 (0.1.7)
 ---
    - set CI as option (default is 95%);

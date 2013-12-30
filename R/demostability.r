@@ -444,7 +444,7 @@ else {
      #i<-formatC(PX,format="f",digits=2) 
      #i<-round(PX,3) #same as the above 
      shelflife<-as.integer(PY)
-     main<-paste(c("Shelf life =",shelflife, "months/weeks (PgDn to switch plots)"),collapse=" ")
+     main<-paste(c("Shelf life =",shelflife, "months/weeks"),collapse=" ")
      x<-ANCOVAdata$time
      y<-ANCOVAdata$assay
      plot(x,y,xlim=c(0,2.0*max(ANCOVAdata$time)),ylim=c((Lper-10),(Lper+30)),main=main,
@@ -499,7 +499,7 @@ else {
      #i<-formatC(PX,format="f",digits=2) 
      #i<-round(PX,3) #same as the above 
      shelflife<-as.integer(PX)
-     main<-paste(c("Shelf life =",shelflife, "months/weeks (PgDn to switch plots)"),collapse=" ")
+     main<-paste(c("Shelf life =",shelflife, "months/weeks"),collapse=" ")
      x<-ANCOVAdata$time
      y<-ANCOVAdata$assay
      plot(x,y,xlim=c(0,2.0*max(ANCOVAdata$time)),ylim=c((Uper-30),(Uper+10)),main=main,
@@ -554,7 +554,7 @@ if  (PX>=PY)  {
      #i<-formatC(PY,format="f",digits=2)    # HY used this statement. YJ
      #i<-round(PY,3)
      shelflife<-as.integer(PY)
-     main<-paste(c("Shelf life =",shelflife, "months/weeks (PgDn to switch plots)"),collapse=" ")
+     main<-paste(c("Shelf life =",shelflife, "months/weeks"),collapse=" ")
      x<-ANCOVAdata$time
      y<-ANCOVAdata$assay
      plot(x,y,xlim=c(0,2.0*max(ANCOVAdata$time)),ylim=c((Lper-10),(Uper+10)), main=main,
@@ -600,7 +600,7 @@ else {
       #i<-formatC(PX,format="f",digits=2) 
       #i<-round(PX,3) #same as the above 
      shelflife<-as.integer(PX)
-     main<-paste(c("Shelf life =",shelflife, "months/weeks (PgDn to switch plots)"),collapse=" ")
+     main<-paste(c("Shelf life =",shelflife, "months/weeks"),collapse=" ")
      x<-ANCOVAdata$time
      y<-ANCOVAdata$assay
      plot(x,y,xlim=c(0,2.0*max(ANCOVAdata$time)),ylim=c((Lper-10),(Uper+10)),main=main,
@@ -639,7 +639,7 @@ else {
 ### end of two-sided.
 ### do Q-Q plot only if there is at least one solution (shelf life)
 if (!noSolution) {
-    qqnorm(output$Res, las=1, main = "Normal Q-Q Plot of Residuals (PgUp to switch plots)", 
+    qqnorm(output$Res, las=1, main = "Normal Q-Q Plot of Residuals", 
            col=c(ANCOVAdata$batch))
       
          LLegend<-paste("batch#",c(Intable$batch))
@@ -647,8 +647,6 @@ if (!noSolution) {
                text.width = strwidth("10000000"),
                lty=1, col=c(Intable$batch), xjust = 1, yjust = 1)
       }
-           
-    go()
 }
 
 ###########################################################################################
@@ -1095,7 +1093,7 @@ else {
      #### outline plot box 
      shelflife<-as.integer(PPY)
      
-     main<-paste(c("Shelf life =",shelflife, "months/weeks (PgDn to switch plots)"),collapse=" ")    
+     main<-paste(c("Shelf life =",shelflife, "months/weeks"),collapse=" ")    
      plot(time~assay,data=ANCOVAdata, xlim=c(0,2.0*max(ANCOVAdata$time)),ylim=c((Lper-10),(Lper+30)), main=main,
      xlab = "Time (months/weeks)", ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
@@ -1154,7 +1152,7 @@ else {
      #i<-formatC(PPX,format="f",digits=2) 
      #i<-round(PX,3) same output as the above... 
      shelflife<-as.integer(PPX)
-     main<-paste(c("Shelf life =",shelflife, "months/weeks (PgDn to switch plots)"),collapse=" ")    
+     main<-paste(c("Shelf life =",shelflife, "months/weeks"),collapse=" ")    
      plot(time~assay,data=ANCOVAdata,xlim=c(0,2.0*max(ANCOVAdata$time)),ylim=c((Uper-30),(Uper+10)), main=main,
      xlab = "Time (months/weeks)", ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
@@ -1215,7 +1213,7 @@ if  (PPX>=PPY)  {
      #i<-round(PPY,3)
      #### outline plot box 
      shelflife<-as.integer(PPY)
-     main<-paste(c("Shelf life =",shelflife, "months/weeks (PgDn to switch plots)"),collapse=" ")    
+     main<-paste(c("Shelf life =",shelflife, "months/weeks"),collapse=" ")    
      plot(time~assay,data=ANCOVAdata, xlim=c(0,2.0*max(ANCOVAdata$time)),ylim=c((Lper-10),(Uper+10)), main=main,
      xlab = "Time (months/weeks)", ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
@@ -1267,7 +1265,7 @@ else {
      #i<-formatC(PPX,format="f",digits=2) 
      #i<-round(PX,3) same output as the above... 
      shelflife<-as.integer(PPX)
-     main<-paste(c("Shelf life =",shelflife, "months/weeks (PgDn to switch plots)"),collapse=" ")    
+     main<-paste(c("Shelf life =",shelflife, "months/weeks"),collapse=" ")    
      plot(time~assay,data=ANCOVAdata,xlim=c(0,2.0*max(ANCOVAdata$time)),ylim=c((Lper-10),(Uper+10)), main=main,
      xlab = "Time (months/weeks)", ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
@@ -1311,15 +1309,13 @@ else {
 ### end of two-sided.
 ### do Q-Q plot only if there is at least one solution (shelf life)
 if (!noSolution) {
-    qqnorm(QQ$value, las=1, main = "Normal Q-Q Plot of Residuals (PgUp to switch plots)", col=c(QQ$L1))  
+    qqnorm(QQ$value, las=1, main = "Normal Q-Q Plot of Residuals", col=c(QQ$L1))  
       
     LLegend<-paste("batch#",c(Intable$batch)) 
     temp <- legend("topleft", legend = LLegend,
             text.width = strwidth("10000000"),
             lty=1, col=c(Intable$batch), xjust = 1, yjust = 1)
      }
-       
-   go()
 }
 ########################################################################################
 else {
@@ -1745,12 +1741,12 @@ else {
      cat("\n\n")
      ### windows(record = TRUE )  ### NOT working in linux/unix any more; change to dev.new()
      dev.new()
-          #go to plot of single batch
+     #go to plot of single batch
      #i<-formatC(PPY,format="f",digits=2) 
      #i<-round(PPY,3)
      #### outline plot box 
      shelflife<-as.integer(PPY)
-     main<-paste(c("Shelf life =",shelflife,"months/weeks (PgDn to switch plots)"),collapse=" ")    
+     main<-paste(c("Shelf life =",shelflife,"months/weeks"),collapse=" ")    
      plot(time~assay,data=ANCOVAdata, xlim=c(0,2.0*max(ANCOVAdata$time)),ylim=c((Lper-10),(Lper+30)), main=main,
      xlab = "Time (months)", ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
@@ -1809,7 +1805,7 @@ else {
      #i<-formatC(PPX,format="f",digits=2) 
      #i<-round(PX,3) ### same output as the above... 
      shelflife<-as.integer(PPX)
-     main<-paste(c("Shelf life =",shelflife, "months/weeks (PgDn to switch plots)"),collapse=" ")    
+     main<-paste(c("Shelf life =",shelflife, "months/weeks"),collapse=" ")    
      plot(time~assay,data=ANCOVAdata,xlim=c(0,2.0*max(ANCOVAdata$time)),ylim=c((Uper-30),(Uper+10)), main=main,
      xlab = "Time (months/weeks)", ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
@@ -1870,7 +1866,7 @@ if  (PPX>=PPY)  {
      #i<-round(PPY,3)
      #### outline plot box 
      shelflife<-as.integer(PPY)
-     main<-paste(c("Shelf life =",shelflife,"months/weeks (PgDn to switch plots)"),collapse=" ")    
+     main<-paste(c("Shelf life =",shelflife,"months/weeks"),collapse=" ")    
      plot(time~assay,data=ANCOVAdata, xlim=c(0,2.0*max(ANCOVAdata$time)),ylim=c((Lper-10),(Uper+10)), main=main,
      xlab = "Time (months)", ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
@@ -1921,7 +1917,7 @@ else {
      #i<-formatC(PPX,format="f",digits=2) 
      #i<-round(PX,3) ### same as the above...
      shelflife<-as.integer(PPX)
-     main<-paste(c("Shelf life =",shelflife, "months/weeks (PgDn to switch plots)"),collapse=" ")    
+     main<-paste(c("Shelf life =",shelflife, "months/weeks"),collapse=" ")    
      plot(time~assay,data=ANCOVAdata,xlim=c(0,2.0*max(ANCOVAdata$time)),ylim=c((Lper-10),(Uper+10)), main=main,
      xlab = "Time (months/weeks)" , ylab = "Assay (%)", pch = 16, cex.lab = 1.5,
      lab=c(20,10,30),lty=2,lwd=2, xaxt="n")   
@@ -1965,15 +1961,14 @@ else {
 ### end of two-sided.
 ### do Q-Q plot only if there is at least one solution (shelf life)
 if (!noSolution) {
-    qqnorm(QQ$value, las=1, main = "Normal Q-Q Plot of Residuals (PgUp to switch plots)", col=c(QQ$L1))  
+    dev.new()
+    qqnorm(QQ$value, las=1, main = "Normal Q-Q Plot of Residuals", col=c(QQ$L1))  
       
     LLegend<-paste("batch#",c(Intable$batch)) 
     temp <- legend("topleft", legend = LLegend,
             text.width = strwidth("10000000"),
             lty=1, col=c(Intable$batch), xjust = 1, yjust = 1)
      }
-       
-   go()
      }
    }
  }
