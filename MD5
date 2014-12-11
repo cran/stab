@@ -1,6 +1,6 @@
-797d7f1a8524b3f59b561fe42c9824a9 *DESCRIPTION
+808c0919f50c030a982dbe9224e66ecb *DESCRIPTION
 42e1b7da3af00d516f6b1e1e3c4b6d98 *NAMESPACE
-02cf1fb3877845dd6c92f607403750a1 *NEWS
+1c7959b678534d9536ee8911f41f6df6 *NEWS
 b425c3f3bbe091deead05aaf5a7342ed *R/MultipleAnalyze.r
 fe0b1e55d1ca678b06ae2f467b78ccbf *R/MultipleBatchcsv.r
 44adbf3362a01f58c9be38fe325fefe2 *R/MultipleBatchmenu.r
@@ -11,13 +11,13 @@ ccf92acb3b56eb687c947e8cb6c8e6d6 *R/SingleBatchcsv.r
 bc5bcef3386e5cfa04351d72438dc003 *R/bye.r
 9384f9615834d742bc1b391fce32e826 *R/decisiontree.r
 32000ad66fb2bd4fa1ac7abc8d064a6d *R/demostability.r
-a7212a3c5b6852fcc86a75208df25e55 *R/go.r
-9c4181c6431b66d5f4098c944078f6c7 *R/stab.setup.r
-f912b6944cd2cef210572acdf592fec2 *R/stab.version.r
+af9d3636e6e35333a8e6dc5dbe295a2e *R/go.r
+8b030650aa68fb2142de8cdbbf13302f *R/stab.setup.r
+cc4a1b035f539ce3bc35a33f3abef8a1 *R/stab.version.r
 44784aec922a3efa5948a47ad7c4b04c *R/stab_test.r
 5297a7d14e52713cbf2026bd4c57147a *R/stabilitymenu.r
 bc1545755dc6e6b0e35ac34bcb796f52 *R/statistical.r
-06406e2b31a206757edeb11898abe00d *R/zzz.R
+ed8f24e16317127f85fd42f13b98248f *R/zzz.R
 3f1004bb4fc15d793e80699d90ccbdbe *demo/00Index
 55f8639db980e6a13bebb3087cb82b43 *demo/stab.demo.r
 5fee05e89c9dd2d9d1ba8da2a9947ab0 *inst/extdata/p602.RData

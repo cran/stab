@@ -3,6 +3,12 @@ data analysis of drug stability for shelf life estimation
 
 Update log
 ---
+~ 12/11/2014 (0.1.9)
+---
+   - added citation into output files;
+   - fixed stab.setup() & go() to avoid crash;
+   - added system info into output files;
+   
 ~ 12/10/2013 (0.1.8)
 ---
    - fixed output file as automatically selected from input file name;

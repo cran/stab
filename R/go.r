@@ -41,9 +41,11 @@ cat("\n")
         cat("    'x', not 'Quit') directly if use defaults.\n\n")
         readline(" Press Enter to proceed...\n")
         stab.set<-readRDS("stab.setup.rds");stab.set<-edit(stab.set)
-        if(stab.set[2,2]<=0 ||stab.set[2,2]>100.) stab.set[2,2]<<-90     ### set as default if going wrong.-> Lper
-        if(stab.set[3,2]<=0 ||stab.set[3,2]>150.) stab.set[3,2]<<-110    ### set as default if going wrong.-> Uper
-        if(stab.set[4,2]<=0 ||stab.set[4,2]>100.) stab.set[4,2]<<-95     ### set as default if going wrong.-> Lper & Uper
+        stab.set[1,2]<-as.integer(stab.set[1,2])
+        if(stab.set[1,2]<0  ||stab.set[1,2]>2)    stab.set[1,2]<-0      ### set as default if going wrong.-> method
+        if(stab.set[2,2]<=0 ||stab.set[2,2]>100.) stab.set[2,2]<-90     ### set as default if going wrong.-> Lper
+        if(stab.set[3,2]<=0 ||stab.set[3,2]>150.) stab.set[3,2]<-110    ### set as default if going wrong.-> Uper
+        if(stab.set[4,2]<=0 ||stab.set[4,2]>100.) stab.set[4,2]<-95     ### set as default if going wrong.-> CI
         saveRDS(stab.set,"stab.setup.rds")
         go()
        }

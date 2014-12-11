@@ -23,22 +23,6 @@ if(!file.exists("stab_setup_readme.txt")){
      sink(zz,split=TRUE)
 }  ### set 'split=TRUE' to see output on the screen simultaneously. -YJ
 
-if(file.exists("stab.setup.rds")){
-     cat("\n\n  How to setup stab for R:\n\n")
-     cat("----------- CI and related Schemes ----------\n")
-     cat(" Methods                               Values\n")
-     cat("---------------------------------------------\n")
-     cat(" one-sided lower LC (default).............. 0 \n")
-     cat(" one-sided upper LC ....................... 1 \n")
-     cat(" two-sided LC ............................. 2 \n")
-     cat("--------------------------------------------- \n")
-     cat(" % lower limit of acceptance (default).... 90 \n")
-     cat(" % upper limit of acceptance (default)... 110 \n")
-     cat(" % CI (default) .......................... 95 \n")
-     cat("---------------------------------------------\n\n")
-     stab.set<-readRDS("stab.setup.rds")
-  }
- else{
      cat("\n\n  How to setup stab for R:\n\n")
      cat("----------- CI and related Schemes ----------\n")
      cat(" Methods                               Values\n")
@@ -52,7 +36,11 @@ if(file.exists("stab.setup.rds")){
      cat(" % CI (default) .......................... 95 \n")
      cat("---------------------------------------------\n\n")
 
-     stab.set<-data.frame(Methods=c("method (0/1/2)","lower limit (%)","upper limit (%)","% CI (%)"),
+if(file.exists("stab.setup.rds")){
+     stab.set<-readRDS("stab.setup.rds")
+  }
+ else{
+     stab.set<-data.frame(Methods=c("method (0/1/2)","lower limit (%)","upper limit (%)","CI (%)"),
                           Setting=c(0,90,110,95))
      saveRDS(stab.set,"stab.setup.rds")
 }
@@ -68,7 +56,7 @@ if(file.exists("stab.setup.rds")){
   if(stab.set[1,2]==1) {method_txt = "  one-sided upper LC";onesidedlo<<-FALSE;onesidedup<<-TRUE;twosided<<-FALSE}
   if(stab.set[1,2]>1)  {method_txt = "  two-sided LC";onesidedlo<<-FALSE;onesidedup<<-FALSE;twosided<<-TRUE}
   
-  stab.set_txt<-data.frame(Methods=c("method (0/1/2)","lower limit (%)","upper limit (%)","% CI (%)"),
+  stab.set_txt<-data.frame(Methods=c("method (0/1/2)","lower limit (%)","upper limit (%)","CI (%)"),
                           Setting=c(stab.set[1,2],stab.set[2,2],stab.set[3,2],stab.set[4,2]),
                           which_is=c(method_txt,"as defined","as defined","as defined"))
 

@@ -1,16 +1,16 @@
 Package: stab
-Version: 0.1.8
-Date: 2013-12-30
-Title: data analysis of drug stability for shelf life estimation
+Version: 0.1.9
+Date: 2014-12-11
+Title: Data Analysis for Drug Stability
 Author: Hsin-ya Lee, Yung-jin Lee <mobilepk@gmail.com>
 Maintainer: Yung-jin Lee <mobilepk@gmail.com>
 Depends: R (>= 2.12.0), stats4, MASS, reshape
-Description: data analysis of drug stability (shelf life estimation)
+Description: Data analysis of drug stability for shelf-life estimation
   based on ICH Q1E guideline with single-factor analysis for single-batch
   or multiple-batch.
 License: GPL (>= 2)
 URL: http://pkpd.kmu.edu.tw/stability
-Packaged: 2013-12-29 23:59:40 UTC; datawalker
+Packaged: 2014-12-11 13:36:58 UTC; datawalker
 NeedsCompilation: no
 Repository: CRAN
-Date/Publication: 2013-12-30 07:44:37
+Date/Publication: 2014-12-11 16:58:11
